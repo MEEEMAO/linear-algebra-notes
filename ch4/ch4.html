@@ -1,0 +1,1421 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Linear Algebra Chapter 4 對角化學習講義</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <style>
+    :root {
+      --bg: #f7f5ef;
+      --paper: #ffffff;
+      --ink: #20242a;
+      --muted: #5f6975;
+      --line: #d9dedc;
+      --blue: #245b9d;
+      --blue-soft: #e8f0fb;
+      --green: #2f7d62;
+      --green-soft: #e9f4ef;
+      --amber: #a86415;
+      --amber-soft: #fff3df;
+      --red: #a33a38;
+      --red-soft: #fbeceb;
+      --violet: #6651a6;
+      --violet-soft: #f0edfb;
+      --shadow: 0 12px 30px rgba(31, 43, 55, 0.08);
+      --max: 1120px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Avenir Next", "PingFang TC", "Noto Sans TC", system-ui, sans-serif;
+      line-height: 1.85;
+      font-size: 16px;
+      overflow-x: hidden;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid var(--line);
+      background: rgba(247, 245, 239, 0.94);
+      backdrop-filter: blur(14px);
+    }
+
+    .topbar-inner {
+      width: min(var(--max), calc(100% - 32px));
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 12px 0;
+    }
+
+    .brand {
+      font-weight: 800;
+      color: var(--blue);
+      letter-spacing: 0;
+      white-space: nowrap;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .button {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--paper);
+      color: var(--ink);
+      padding: 7px 12px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(31, 43, 55, 0.05);
+    }
+
+    .button:hover {
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+
+    header {
+      background: #12314f;
+      color: #fff;
+      border-bottom: 6px solid #d9a24a;
+    }
+
+    .hero {
+      width: min(var(--max), calc(100% - 32px));
+      margin: 0 auto;
+      padding: 48px 0 42px;
+    }
+
+    .kicker {
+      display: inline-block;
+      margin-bottom: 12px;
+      padding: 4px 10px;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 8px;
+      color: #dfeeff;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    h1, h2, h3, h4 {
+      margin: 0;
+      line-height: 1.22;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      max-width: 840px;
+      font-size: clamp(2.1rem, 5vw, 4rem);
+      font-weight: 900;
+    }
+
+    .subtitle {
+      max-width: 820px;
+      margin: 18px 0 0;
+      color: #d6e2ef;
+      font-size: 1.08rem;
+    }
+
+    .hero-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .hero-links a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 36px;
+      padding: 6px 12px;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      border-radius: 8px;
+      color: #fff;
+      text-decoration: none;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    main {
+      width: min(var(--max), calc(100% - 32px));
+      margin: 28px auto 72px;
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    nav {
+      position: sticky;
+      top: 66px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    nav h2 {
+      font-size: 1rem;
+      margin-bottom: 10px;
+      color: var(--blue);
+    }
+
+    nav ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    nav li + li {
+      margin-top: 6px;
+    }
+
+    nav a {
+      display: block;
+      padding: 8px 10px;
+      border-radius: 8px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.94rem;
+    }
+
+    nav a:hover {
+      color: var(--blue);
+      background: var(--blue-soft);
+    }
+
+    .content {
+      min-width: 0;
+    }
+
+    section {
+      margin-bottom: 28px;
+      scroll-margin-top: 86px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .badge {
+      display: inline-grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: var(--blue);
+      color: #fff;
+      font-weight: 900;
+      flex: 0 0 auto;
+    }
+
+    h2 {
+      font-size: clamp(1.55rem, 3vw, 2.15rem);
+      color: #152232;
+    }
+
+    h3 {
+      margin: 26px 0 10px;
+      color: #24384d;
+      font-size: 1.26rem;
+    }
+
+    h4 {
+      margin: 18px 0 8px;
+      color: #2f3e4e;
+      font-size: 1.05rem;
+    }
+
+    p {
+      margin: 10px 0;
+    }
+
+    ul, ol {
+      margin: 10px 0 10px 1.35rem;
+      padding: 0;
+    }
+
+    li + li {
+      margin-top: 6px;
+    }
+
+    .card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-left: 5px solid var(--blue);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 20px 22px;
+      margin: 14px 0;
+      max-width: 100%;
+      overflow-x: auto;
+    }
+
+    .plain {
+      border-left-color: var(--line);
+    }
+
+    .intuition {
+      border-left-color: var(--amber);
+      background: var(--amber-soft);
+    }
+
+    .theorem {
+      border-left-color: var(--blue);
+      background: var(--blue-soft);
+    }
+
+    .proof {
+      border-left-color: var(--green);
+      background: var(--green-soft);
+    }
+
+    .example {
+      border-left-color: var(--violet);
+      background: var(--violet-soft);
+    }
+
+    .warning {
+      border-left-color: var(--red);
+      background: var(--red-soft);
+    }
+
+    .summary {
+      border-left-color: var(--amber);
+      background: #fffaf1;
+    }
+
+    .label {
+      display: inline-block;
+      margin-bottom: 8px;
+      color: #1b3147;
+      font-weight: 800;
+    }
+
+    .math-block {
+      overflow-x: auto;
+      padding: 8px 0;
+    }
+
+    .katex-display {
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding-bottom: 2px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      display: table;
+    }
+
+    th, td {
+      text-align: left;
+      vertical-align: top;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      overflow-wrap: anywhere;
+    }
+
+    th {
+      color: #18314f;
+      background: #edf2f6;
+      font-weight: 800;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .steps {
+      counter-reset: step;
+      list-style: none;
+      margin-left: 0;
+    }
+
+    .steps li {
+      counter-increment: step;
+      position: relative;
+      padding-left: 42px;
+    }
+
+    .steps li::before {
+      content: counter(step);
+      position: absolute;
+      left: 0;
+      top: 2px;
+      display: grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: var(--blue);
+      color: #fff;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .checklist {
+      list-style: none;
+      margin-left: 0;
+    }
+
+    .checklist li {
+      padding-left: 28px;
+      position: relative;
+    }
+
+    .checklist li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.72em;
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      background: var(--green);
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 0.93rem;
+    }
+
+    code {
+      padding: 1px 5px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #f2f4f6;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: 0.92em;
+    }
+
+    footer {
+      width: min(var(--max), calc(100% - 32px));
+      margin: 0 auto 48px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 880px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+
+      nav {
+        position: static;
+      }
+
+      .two-col {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .topbar-inner {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .hero {
+        padding: 34px 0;
+      }
+
+      .card {
+        padding: 16px;
+      }
+
+      table {
+        display: block;
+        overflow-x: auto;
+      }
+    }
+
+    @media print {
+      .topbar, nav {
+        display: none;
+      }
+
+      body {
+        background: #fff;
+      }
+
+      header {
+        color: #111;
+        background: #fff;
+        border-bottom: 2px solid #111;
+      }
+
+      main {
+        display: block;
+        width: 100%;
+      }
+
+      .card {
+        break-inside: avoid;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+<nav aria-label="講義導覽" style="position:relative;z-index:10;padding:10px 20px;border-bottom:1px solid #dce0d7;background:#f7f6f2;text-align:left;font:13px/1.6 -apple-system,BlinkMacSystemFont,'Microsoft JhengHei',sans-serif"><a href="../index.html" style="color:#315f4b;text-decoration:none;font-weight:600">← 線性代數講義目錄</a></nav>
+
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">Linear Algebra CH4</div>
+      <div class="top-actions">
+        <button class="button" type="button" onclick="window.print()">列印</button>
+      </div>
+    </div>
+  </div>
+
+  <header>
+    <div class="hero">
+      <span class="kicker">Chapter 4 Diagonalization</span>
+      <h1>對角化與微分方程系統</h1>
+      <p class="subtitle">
+        本講義依照 Chapter 4 投影片整理，重點是把「矩陣作用」換到 eigenvector basis 中，
+        讓矩陣變成對角矩陣，進而簡化矩陣次方與線性微分方程系統。
+      </p>
+      <div class="hero-links">
+        <a href="#intuition">一句話理解</a>
+        <a href="#diagonalization">4.1 對角化</a>
+        <a href="#diffeq">4.2 微分方程</a>
+        <a href="#examples">例題解題</a>
+        <a href="#summary">重點整理</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <nav aria-label="章節導覽">
+      <h2>導覽</h2>
+      <ul>
+        <li><a href="#intuition">一句話白話理解</a></li>
+        <li><a href="#similarity">相似矩陣</a></li>
+        <li><a href="#diagonalization">對角化核心定理</a></li>
+        <li><a href="#proof-main">證明主線</a></li>
+        <li><a href="#multiplicity">重數判斷法</a></li>
+        <li><a href="#powers">矩陣次方</a></li>
+        <li><a href="#jordan">Jordan form</a></li>
+        <li><a href="#diffeq">微分方程系統</a></li>
+        <li><a href="#examples">例題解題說明</a></li>
+        <li><a href="#summary">重點整理</a></li>
+      </ul>
+    </nav>
+
+    <div class="content">
+      <section id="intuition">
+        <div class="section-title">
+          <span class="badge">0</span>
+          <h2>一句話白話理解</h2>
+        </div>
+        <div class="card intuition">
+          <span class="label">核心直覺</span>
+          <p>
+            對角化就是「找到一組剛好順著矩陣伸縮方向的座標軸」，在這組座標中，
+            矩陣不再混合各方向，只是在每個 eigenvector 方向上各自乘上一個 eigenvalue。
+          </p>
+        </div>
+        <div class="card plain">
+          <p>
+            如果原本的矩陣 \(A\) 會把不同座標分量混在一起，那計算 \(A^k\)、分析動態系統 \(y'=Ay\)
+            都會很麻煩。若能找到 eigenvector basis，把座標換成這組 basis，矩陣就變成
+            \[
+              D=P^{-1}AP.
+            \]
+            其中 \(D\) 是對角矩陣。這代表原本複雜的矩陣運算，被拆成數個互不干擾的一維問題。
+          </p>
+        </div>
+      </section>
+
+      <section id="similarity">
+        <div class="section-title">
+          <span class="badge">1</span>
+          <h2>相似矩陣與不變量</h2>
+        </div>
+        <div class="card theorem">
+          <span class="label">定義：similar matrices</span>
+          <p>
+            若 \(A\) 和 \(B\) 是同階方陣，且存在可逆矩陣 \(P\) 使得
+            \[
+              B=P^{-1}AP,
+            \]
+            則稱 \(B\) similar to \(A\)，也稱 \(A\) 與 \(B\) 是相似矩陣。
+          </p>
+        </div>
+        <div class="card plain">
+          <span class="label">這個式子的意思</span>
+          <p>
+            \(P\) 可以理解成「把新座標轉回原座標」的矩陣，而 \(P^{-1}\) 是「從原座標換到新座標」。
+            因此 \(P^{-1}AP\) 不是把線性轉換換掉，而是用另一套座標描述同一個線性轉換。
+          </p>
+          <p>
+            也就是說，相似矩陣代表同一個線性轉換在不同座標系下的矩陣表示。
+          </p>
+        </div>
+        <div class="card summary">
+          <span class="label">Similarity invariants</span>
+          <p>相似矩陣共享很多性質，這些性質稱為 similarity invariants。</p>
+          <table>
+            <thead>
+              <tr>
+                <th>不變量</th>
+                <th>理由或用途</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>\(\det(A)\)</td>
+                <td>\(\det(P^{-1}AP)=\det(P^{-1})\det(A)\det(P)=\det(A)\)</td>
+              </tr>
+              <tr>
+                <td>可逆性</td>
+                <td>\(A\) 可逆當且僅當 \(P^{-1}AP\) 可逆</td>
+              </tr>
+              <tr>
+                <td>rank, nullity</td>
+                <td>換座標不改變轉換本身的壓縮程度與 null space 維度</td>
+              </tr>
+              <tr>
+                <td>trace</td>
+                <td>相似轉換下 trace 不變，可用來快速排除不相似</td>
+              </tr>
+              <tr>
+                <td>characteristic polynomial</td>
+                <td>\(\det(\lambda I-P^{-1}AP)=\det(P^{-1}(\lambda I-A)P)=\det(\lambda I-A)\)</td>
+              </tr>
+              <tr>
+                <td>eigenvalues</td>
+                <td>由 characteristic polynomial 不變推出</td>
+              </tr>
+              <tr>
+                <td>eigenspace dimension</td>
+                <td>同一個 eigenvalue 的 eigenspace 維度也不變</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="diagonalization">
+        <div class="section-title">
+          <span class="badge">2</span>
+          <h2>對角化的核心定理</h2>
+        </div>
+        <div class="card theorem">
+          <span class="label">定義：diagonalizable</span>
+          <p>
+            方陣 \(A\) 稱為 diagonalizable，若存在可逆矩陣 \(P\)，使得
+            \[
+              P^{-1}AP=D
+            \]
+            為對角矩陣。此時稱 \(P\) diagonalizes \(A\)。
+          </p>
+        </div>
+        <div class="card theorem">
+          <span class="label">Theorem 4.1.2</span>
+          <p>若 \(A\) 是 \(n\times n\) 矩陣，以下兩件事等價：</p>
+          <ol>
+            <li>\(A\) is diagonalizable.</li>
+            <li>\(A\) has \(n\) linearly independent eigenvectors.</li>
+          </ol>
+        </div>
+        <div class="card intuition">
+          <span class="label">白話版</span>
+          <p>
+            要把 \(A\) 變成對角矩陣，你需要一整組 eigenvectors 當座標軸。
+            \(n\times n\) 矩陣需要 \(n\) 個線性獨立的座標軸，所以剛好需要 \(n\) 個 linearly independent eigenvectors。
+          </p>
+        </div>
+      </section>
+
+      <section id="proof-main">
+        <div class="section-title">
+          <span class="badge">3</span>
+          <h2>證明過程：為什麼對角化等價於 eigenvector basis</h2>
+        </div>
+        <div class="card proof">
+          <span class="label">方向一：\(A\) 可對角化 \(\Rightarrow\) 有 \(n\) 個線性獨立 eigenvectors</span>
+          <p>
+            假設 \(A\) 可對角化，則存在可逆矩陣 \(P\) 和對角矩陣 \(D\)，使得
+            \[
+              P^{-1}AP=D.
+            \]
+            左乘 \(P\)，可改寫成
+            \[
+              AP=PD.
+            \]
+          </p>
+          <p>
+            把 \(P\) 的 columns 寫成
+            \[
+              P=[p_1\ p_2\ \cdots\ p_n],
+            \]
+            把 \(D\) 寫成
+            \[
+              D=\operatorname{diag}(\lambda_1,\lambda_2,\ldots,\lambda_n).
+            \]
+          </p>
+          <p>
+            由矩陣乘法的 column view：
+            \[
+              AP=[Ap_1\ Ap_2\ \cdots\ Ap_n],
+            \]
+            而右邊
+            \[
+              PD=[\lambda_1p_1\ \lambda_2p_2\ \cdots\ \lambda_np_n].
+            \]
+            因為 \(AP=PD\)，所以每一欄都相等：
+            \[
+              Ap_i=\lambda_i p_i,\quad i=1,\ldots,n.
+            \]
+            這正是 eigenvector 的定義。
+          </p>
+          <p>
+            又因為 \(P\) 可逆，所以 \(P\) 的 columns \(p_1,\ldots,p_n\) 線性獨立。因此 \(A\) 有 \(n\) 個 linearly independent eigenvectors。
+          </p>
+        </div>
+
+        <div class="card proof">
+          <span class="label">方向二：有 \(n\) 個線性獨立 eigenvectors \(\Rightarrow\) \(A\) 可對角化</span>
+          <p>
+            假設 \(A\) 有 \(n\) 個線性獨立 eigenvectors：
+            \[
+              p_1,p_2,\ldots,p_n,
+            \]
+            且它們對應的 eigenvalues 是
+            \[
+              \lambda_1,\lambda_2,\ldots,\lambda_n.
+            \]
+          </p>
+          <p>
+            令
+            \[
+              P=[p_1\ p_2\ \cdots\ p_n],\qquad
+              D=\operatorname{diag}(\lambda_1,\lambda_2,\ldots,\lambda_n).
+            \]
+            因為 \(p_i\) 是 eigenvector，所以 \(Ap_i=\lambda_i p_i\)。把所有欄合起來：
+            \[
+              AP=[Ap_1\ \cdots\ Ap_n]
+              =[\lambda_1p_1\ \cdots\ \lambda_np_n]
+              =PD.
+            \]
+          </p>
+          <p>
+            由於 \(p_1,\ldots,p_n\) 線性獨立，\(P\) 可逆，因此
+            \[
+              P^{-1}AP=D.
+            \]
+            所以 \(A\) 可對角化。
+          </p>
+        </div>
+
+        <div class="card summary">
+          <span class="label">對角化流程</span>
+          <ol class="steps">
+            <li>求 characteristic equation \(\det(\lambda I-A)=0\)，找出 eigenvalues。</li>
+            <li>對每個 \(\lambda\)，解 \((A-\lambda I)x=0\)，找 eigenspace 的 basis。</li>
+            <li>把所有 eigenspace basis vectors 合在一起。如果總數不到 \(n\)，就不能對角化。</li>
+            <li>若總數剛好有 \(n\) 個線性獨立向量，把它們排成 \(P=[p_1\cdots p_n]\)。</li>
+            <li>令 \(D\) 的對角線依照 \(P\) 的欄順序放入對應 eigenvalues，得到 \(P^{-1}AP=D\)。</li>
+          </ol>
+        </div>
+      </section>
+
+      <section id="distinct">
+        <div class="section-title">
+          <span class="badge">4</span>
+          <h2>不同 eigenvalues 會自動給線性獨立 eigenvectors</h2>
+        </div>
+        <div class="card theorem">
+          <span class="label">Theorem 4.1.3</span>
+          <p>
+            若 \(v_1,\ldots,v_k\) 是矩陣 \(A\) 對應到不同 eigenvalues
+            \(\lambda_1,\ldots,\lambda_k\) 的 eigenvectors，則
+            \[
+              \{v_1,\ldots,v_k\}
+            \]
+            是線性獨立集合。
+          </p>
+        </div>
+        <div class="card proof">
+          <span class="label">證明想法</span>
+          <p>
+            假設有線性關係
+            \[
+              c_1v_1+c_2v_2+\cdots+c_kv_k=0.
+            \]
+            我們要證明所有 \(c_i=0\)。
+          </p>
+          <p>
+            對上式作用
+            \[
+              (A-\lambda_2I)(A-\lambda_3I)\cdots(A-\lambda_kI).
+            \]
+            對於 \(v_2,\ldots,v_k\)，其中某一個因子會把它殺掉，因為
+            \[
+              (A-\lambda_jI)v_j=Av_j-\lambda_jv_j=0.
+            \]
+            只剩下 \(v_1\) 這項：
+            \[
+              c_1(\lambda_1-\lambda_2)(\lambda_1-\lambda_3)\cdots(\lambda_1-\lambda_k)v_1=0.
+            \]
+            由於 eigenvalues 彼此不同，括號乘積不為 0；且 \(v_1\neq 0\)，所以 \(c_1=0\)。
+            同理可證每個 \(c_i=0\)。
+          </p>
+        </div>
+        <div class="card theorem">
+          <span class="label">Theorem 4.1.4</span>
+          <p>
+            若 \(n\times n\) 矩陣 \(A\) 有 \(n\) 個不同 eigenvalues，則 \(A\) diagonalizable。
+          </p>
+        </div>
+        <div class="card warning">
+          <span class="label">注意：反過來不一定對</span>
+          <p>
+            有 \(n\) 個不同 eigenvalues 一定可對角化，但可對角化不代表一定有 \(n\) 個不同 eigenvalues。
+            例如 identity matrix \(I_3\) 只有一個 eigenvalue \(\lambda=1\)，但它有 3 維 eigenspace，所以仍可對角化。
+          </p>
+        </div>
+      </section>
+
+      <section id="multiplicity">
+        <div class="section-title">
+          <span class="badge">5</span>
+          <h2>代數重數與幾何重數</h2>
+        </div>
+        <div class="card theorem">
+          <span class="label">定義</span>
+          <p>
+            對 eigenvalue \(\lambda_0\)：
+          </p>
+          <ul>
+            <li>Algebraic multiplicity：\((\lambda-\lambda_0)\) 在 characteristic polynomial 中出現的次數。</li>
+            <li>Geometric multiplicity：eigenspace \(E_{\lambda_0}=\operatorname{Null}(A-\lambda_0I)\) 的維度。</li>
+          </ul>
+        </div>
+        <div class="card theorem">
+          <span class="label">Theorem 4.1.6</span>
+          <ol>
+            <li>每個 eigenvalue 的 geometric multiplicity \(\leq\) algebraic multiplicity。</li>
+            <li>\(A\) diagonalizable 當且僅當 characteristic polynomial 可完全分解成一次因式，且每個 eigenvalue 的 geometric multiplicity 都等於 algebraic multiplicity。</li>
+          </ol>
+        </div>
+        <div class="card intuition">
+          <span class="label">白話判斷</span>
+          <p>
+            Algebraic multiplicity 告訴你「理論上這個 eigenvalue 最多能提供幾個方向」；
+            geometric multiplicity 告訴你「實際上找到了幾個獨立 eigenvector 方向」。
+            對角化需要湊滿 \(n\) 個獨立 eigenvectors，所以每個 eigenvalue 都不能少給方向。
+          </p>
+        </div>
+        <div class="card summary">
+          <span class="label">判斷 diagonalizable 的快速檢查表</span>
+          <ul class="checklist">
+            <li>若有 \(n\) 個 distinct eigenvalues，直接可對角化。</li>
+            <li>若有重根，必須檢查每個重根的 eigenspace 維度。</li>
+            <li>若某個 eigenvalue 的 geometric multiplicity 小於 algebraic multiplicity，不能對角化。</li>
+            <li>若所有 eigenvalues 的 geometric multiplicities 加總為 \(n\)，可以對角化。</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="powers">
+        <div class="section-title">
+          <span class="badge">6</span>
+          <h2>用對角化計算矩陣次方</h2>
+        </div>
+        <div class="card plain">
+          <p>
+            若 \(P^{-1}AP=D\)，則 \(A=PDP^{-1}\)。因此：
+            \[
+              A^k=(PDP^{-1})^k=PD^kP^{-1}.
+            \]
+            中間的 \(P^{-1}P\) 會相消，所以只剩下 \(D^k\)。
+          </p>
+        </div>
+        <div class="card theorem">
+          <span class="label">為什麼 \(D^k\) 好算</span>
+          <p>
+            若
+            \[
+              D=\operatorname{diag}(\lambda_1,\lambda_2,\ldots,\lambda_n),
+            \]
+            則
+            \[
+              D^k=\operatorname{diag}(\lambda_1^k,\lambda_2^k,\ldots,\lambda_n^k).
+            \]
+            所以矩陣次方被降成純量次方。
+          </p>
+        </div>
+        <div class="card theorem">
+          <span class="label">Theorem 4.1.5</span>
+          <p>
+            若 \(\lambda\) 是 \(A\) 的 eigenvalue，\(x\) 是對應 eigenvector，則對任何正整數 \(k\)，
+            \(\lambda^k\) 是 \(A^k\) 的 eigenvalue，且 \(x\) 仍是對應 eigenvector。
+          </p>
+          <p>
+            因為
+            \[
+              A^kx=A^{k-1}(Ax)=A^{k-1}(\lambda x)=\lambda A^{k-1}x=\cdots=\lambda^kx.
+            \]
+          </p>
+        </div>
+      </section>
+
+      <section id="jordan">
+        <div class="section-title">
+          <span class="badge">7</span>
+          <h2>Jordan Form：不能對角化時的替代形狀</h2>
+        </div>
+        <div class="card plain">
+          <p>
+            若矩陣沒有足夠的 eigenvectors，就不能變成完全對角矩陣。
+            但在更廣的條件下，可以用 generalized eigenvectors 把矩陣化成 Jordan canonical form。
+          </p>
+        </div>
+        <div class="card theorem">
+          <span class="label">Generalized eigenvector</span>
+          <p>
+            若 \(\lambda\) 是 \(A\) 的 eigenvalue，且非零向量 \(x\) 滿足
+            \[
+              (A-\lambda I)^p x=0
+            \]
+            對某個正整數 \(p\) 成立，則 \(x\) 是對應 \(\lambda\) 的 generalized eigenvector。
+          </p>
+        </div>
+        <div class="card theorem">
+          <span class="label">Jordan block</span>
+          <p>
+            \[
+              J_k(\lambda)=
+              \begin{bmatrix}
+                \lambda & 1 & 0 & \cdots & 0\\
+                0 & \lambda & 1 & \cdots & 0\\
+                0 & 0 & \lambda & \ddots & 0\\
+                \vdots & \vdots & \ddots & \ddots & 1\\
+                0 & 0 & 0 & 0 & \lambda
+              \end{bmatrix}.
+            \]
+            它不是對角矩陣，但只比對角矩陣多了上方的一排 1，是「最接近對角」的標準形。
+          </p>
+        </div>
+        <div class="card intuition">
+          <span class="label">自學時怎麼看 Jordan form</span>
+          <p>
+            本章主線仍是對角化。Jordan form 可以先理解成補救機制：
+            當普通 eigenvectors 不夠時，用 generalized eigenvectors 補出一組 basis，
+            讓矩陣至少化成由 Jordan blocks 組成的簡化型。
+          </p>
+        </div>
+      </section>
+
+      <section id="diffeq">
+        <div class="section-title">
+          <span class="badge">8</span>
+          <h2>微分方程系統：對角化的應用</h2>
+        </div>
+        <div class="card intuition">
+          <span class="label">一句話理解</span>
+          <p>
+            線性微分方程系統 \(y'=Ay\) 的難點是變數互相影響；如果 \(A\) 可對角化，
+            就能換到 eigenvector coordinates，讓系統拆成多個互不影響的一階方程。
+          </p>
+        </div>
+        <div class="card plain">
+          <span class="label">一維基礎</span>
+          <p>
+            對一階方程
+            \[
+              y'=ay,
+            \]
+            通解是
+            \[
+              y=ce^{at}.
+            \]
+            若有初始條件 \(y(0)=y_0\)，則 \(c=y_0\)。
+          </p>
+        </div>
+        <div class="card theorem">
+          <span class="label">系統形式</span>
+          <p>
+            常係數一階齊次線性系統可寫成
+            \[
+              y'=Ay,
+            \]
+            其中 \(y(t)\) 是向量函數，\(A\) 是常數矩陣。
+          </p>
+          <p>
+            若
+            \[
+              D=\operatorname{diag}(\lambda_1,\ldots,\lambda_n),
+            \]
+            則系統
+            \[
+              u'=Du
+            \]
+            會拆成
+            \[
+              u_i'=\lambda_i u_i,
+            \]
+            所以
+            \[
+              u_i=c_ie^{\lambda_i t}.
+            \]
+          </p>
+        </div>
+        <div class="card proof">
+          <span class="label">為什麼對角化可以解 \(y'=Ay\)</span>
+          <p>
+            若 \(A\) 可對角化，令
+            \[
+              D=P^{-1}AP.
+            \]
+            用新變數 \(u\) 表示
+            \[
+              y=Pu.
+            \]
+            因為 \(P\) 是常數矩陣，所以
+            \[
+              y'=Pu'.
+            \]
+            代入 \(y'=Ay\)：
+            \[
+              Pu'=A(Pu).
+            \]
+            左乘 \(P^{-1}\)：
+            \[
+              u'=P^{-1}APu=Du.
+            \]
+            這樣就把原本互相耦合的系統化成 diagonal system。
+          </p>
+        </div>
+        <div class="card summary">
+          <span class="label">解題流程</span>
+          <ol class="steps">
+            <li>求 \(A\) 的 eigenvalues 與 eigenvectors。</li>
+            <li>若能湊滿 eigenvector basis，形成 \(P\)，並得到 \(D=P^{-1}AP\)。</li>
+            <li>令 \(y=Pu\)，把系統化成 \(u'=Du\)。</li>
+            <li>解 \(u_i'= \lambda_i u_i\)，得到 \(u_i=c_ie^{\lambda_i t}\)。</li>
+            <li>回代 \(y=Pu\)，並用初始條件解出常數。</li>
+          </ol>
+          <p>
+            最常用的濃縮寫法是：
+            \[
+              y(t)=c_1e^{\lambda_1t}v_1+\cdots+c_ne^{\lambda_nt}v_n.
+            \]
+          </p>
+        </div>
+        <div class="card theorem">
+          <span class="label">二維穩定性判斷</span>
+          <p>
+            對 \(2\times2\) 系統 \(y'=Ay\)，若所有解都要在 \(t\to\infty\) 時趨近 0，
+            eigenvalues 的 real parts 必須都小於 0。對實係數 \(2\times2\) 矩陣：
+            \[
+              \operatorname{tr}(A)&lt;0,\qquad \det(A)&gt;0
+            \]
+            是判斷兩個 eigenvalues 都在左半平面的常用條件。
+          </p>
+        </div>
+      </section>
+
+      <section id="examples">
+        <div class="section-title">
+          <span class="badge">9</span>
+          <h2>例題解題說明</h2>
+        </div>
+
+        <div class="card example">
+          <span class="label">例題 1：對角化一個 \(2\times2\) 矩陣</span>
+          <p>
+            對
+            \[
+              A=\begin{bmatrix}3&1\\0&2\end{bmatrix}
+            \]
+            找 \(P,D\) 使 \(P^{-1}AP=D\)。
+          </p>
+          <h4>Step 1：求 eigenvalues</h4>
+          <p>
+            \[
+              \det(\lambda I-A)=
+              \det\begin{bmatrix}\lambda-3&-1\\0&\lambda-2\end{bmatrix}
+              =(\lambda-3)(\lambda-2).
+            \]
+            所以 eigenvalues 是 \(\lambda=3,2\)。
+          </p>
+          <h4>Step 2：求 eigenvectors</h4>
+          <p>
+            \(\lambda=3\)：
+            \[
+              (A-3I)x=
+              \begin{bmatrix}0&1\\0&-1\end{bmatrix}
+              \begin{bmatrix}x_1\\x_2\end{bmatrix}=0
+              \Rightarrow x_2=0.
+            \]
+            可取
+            \[
+              v_1=\begin{bmatrix}1\\0\end{bmatrix}.
+            \]
+          </p>
+          <p>
+            \(\lambda=2\)：
+            \[
+              (A-2I)x=
+              \begin{bmatrix}1&1\\0&0\end{bmatrix}
+              \begin{bmatrix}x_1\\x_2\end{bmatrix}=0
+              \Rightarrow x_1=-x_2.
+            \]
+            可取
+            \[
+              v_2=\begin{bmatrix}-1\\1\end{bmatrix}.
+            \]
+          </p>
+          <h4>Step 3：組成 \(P,D\)</h4>
+          <p>
+            \[
+              P=\begin{bmatrix}1&-1\\0&1\end{bmatrix},
+              \qquad
+              D=\begin{bmatrix}3&0\\0&2\end{bmatrix}.
+            \]
+            因為 \(P\) 的 columns 是線性獨立 eigenvectors，所以
+            \[
+              P^{-1}AP=D.
+            \]
+          </p>
+        </div>
+
+        <div class="card example">
+          <span class="label">例題 2：判斷不可對角化</span>
+          <p>
+            判斷
+            \[
+              A=\begin{bmatrix}2&1\\0&2\end{bmatrix}
+            \]
+            是否可對角化。
+          </p>
+          <p>
+            characteristic polynomial 是
+            \[
+              \det(\lambda I-A)=(\lambda-2)^2.
+            \]
+            所以 \(\lambda=2\) 的 algebraic multiplicity 是 2。
+          </p>
+          <p>
+            但
+            \[
+              A-2I=\begin{bmatrix}0&1\\0&0\end{bmatrix},
+            \]
+            解 \((A-2I)x=0\) 得到 \(x_2=0\)，所以 eigenspace 是
+            \[
+              E_2=\operatorname{span}\left\{
+              \begin{bmatrix}1\\0\end{bmatrix}
+              \right\}.
+            \]
+            它只有 1 維。
+          </p>
+          <p>
+            結論：geometric multiplicity \(1\) 小於 algebraic multiplicity \(2\)，
+            因此 \(A\) 不可對角化。
+          </p>
+        </div>
+
+        <div class="card example">
+          <span class="label">例題 3：用對角化算 \(A^k\)</span>
+          <p>
+            設
+            \[
+              A=\begin{bmatrix}3&1\\1&3\end{bmatrix}.
+            \]
+            求 \(A^k\)。
+          </p>
+          <p>
+            \[
+              \det(\lambda I-A)=(\lambda-4)(\lambda-2),
+            \]
+            所以 eigenvalues 是 \(4,2\)。對應 eigenvectors 可取
+            \[
+              v_1=\begin{bmatrix}1\\1\end{bmatrix},
+              \qquad
+              v_2=\begin{bmatrix}1\\-1\end{bmatrix}.
+            \]
+          </p>
+          <p>
+            因此
+            \[
+              P=\begin{bmatrix}1&1\\1&-1\end{bmatrix},
+              \qquad
+              D=\begin{bmatrix}4&0\\0&2\end{bmatrix}.
+            \]
+            由 \(A^k=PD^kP^{-1}\)，且
+            \[
+              P^{-1}=\frac12
+              \begin{bmatrix}1&1\\1&-1\end{bmatrix},
+            \]
+            可得
+            \[
+              A^k=
+              \frac12
+              \begin{bmatrix}
+                4^k+2^k & 4^k-2^k\\
+                4^k-2^k & 4^k+2^k
+              \end{bmatrix}.
+            \]
+          </p>
+        </div>
+
+        <div class="card example">
+          <span class="label">例題 4：由 characteristic equation 判斷矩陣大小與 eigenspace 可能維度</span>
+          <p>
+            若 characteristic equation 是
+            \[
+              \lambda^2(\lambda-1)(\lambda-2)^3=0,
+            \]
+            問矩陣大小與各 eigenspace 可能維度。
+          </p>
+          <p>
+            characteristic polynomial 的總次數是
+            \[
+              2+1+3=6,
+            \]
+            所以矩陣是 \(6\times6\)。
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>Eigenvalue</th>
+                <th>Algebraic multiplicity</th>
+                <th>Geometric multiplicity 可能範圍</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>\(\lambda=0\)</td>
+                <td>2</td>
+                <td>\(1\leq g_0\leq2\)</td>
+              </tr>
+              <tr>
+                <td>\(\lambda=1\)</td>
+                <td>1</td>
+                <td>\(g_1=1\)</td>
+              </tr>
+              <tr>
+                <td>\(\lambda=2\)</td>
+                <td>3</td>
+                <td>\(1\leq g_2\leq3\)</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            若最後真的要判斷可不可對角化，必須實際求 \(\operatorname{Null}(A-\lambda I)\) 的維度。
+            只有 \(g_0=2, g_1=1, g_2=3\) 時才可對角化。
+          </p>
+        </div>
+
+        <div class="card example">
+          <span class="label">例題 5：解微分方程系統</span>
+          <p>
+            解
+            \[
+              y'=
+              \begin{bmatrix}1&4\\2&3\end{bmatrix}y.
+            \]
+          </p>
+          <h4>Step 1：求 eigenvalues</h4>
+          <p>
+            \[
+              \det(A-\lambda I)
+              =
+              \det\begin{bmatrix}1-\lambda&4\\2&3-\lambda\end{bmatrix}
+              =(1-\lambda)(3-\lambda)-8
+              =\lambda^2-4\lambda-5.
+            \]
+            因此
+            \[
+              \lambda=5,-1.
+            \]
+          </p>
+          <h4>Step 2：求 eigenvectors</h4>
+          <p>
+            對 \(\lambda=5\)，可取
+            \[
+              v_1=\begin{bmatrix}1\\1\end{bmatrix}.
+            \]
+            對 \(\lambda=-1\)，可取
+            \[
+              v_2=\begin{bmatrix}-2\\1\end{bmatrix}.
+            \]
+          </p>
+          <h4>Step 3：寫出通解</h4>
+          <p>
+            \[
+              y(t)=c_1e^{5t}
+              \begin{bmatrix}1\\1\end{bmatrix}
+              +c_2e^{-t}
+              \begin{bmatrix}-2\\1\end{bmatrix}.
+            \]
+            也就是
+            \[
+              \begin{aligned}
+              y_1(t)&=c_1e^{5t}-2c_2e^{-t},\\
+              y_2(t)&=c_1e^{5t}+c_2e^{-t}.
+              \end{aligned}
+            \]
+          </p>
+          <h4>Step 4：套初始條件</h4>
+          <p>
+            若題目給 \(y_1(0)=0,\ y_2(0)=0\)，則
+            \[
+              c_1-2c_2=0,\qquad c_1+c_2=0.
+            \]
+            解得 \(c_1=c_2=0\)，所以解是零解：
+            \[
+              y(t)=\begin{bmatrix}0\\0\end{bmatrix}.
+            \]
+          </p>
+          <p class="small">
+            這不是計算錯誤，而是 homogeneous linear system 的特性：零初始條件會給零解。
+          </p>
+        </div>
+
+        <div class="card example">
+          <span class="label">例題 6：把二階微分方程改成一階系統</span>
+          <p>
+            解
+            \[
+              y''-y'-6y=0.
+            \]
+            令
+            \[
+              y_1=y,\qquad y_2=y'.
+            \]
+            則
+            \[
+              y_1'=y_2,
+            \]
+            且由原式 \(y''=y'+6y\)，得到
+            \[
+              y_2'=6y_1+y_2.
+            \]
+          </p>
+          <p>
+            因此系統為
+            \[
+              \begin{bmatrix}y_1'\\y_2'\end{bmatrix}
+              =
+              \begin{bmatrix}0&1\\6&1\end{bmatrix}
+              \begin{bmatrix}y_1\\y_2\end{bmatrix}.
+            \]
+            其 eigenvalues 為 \(3,-2\)，所以
+            \[
+              y_1(t)=c_1e^{3t}+c_2e^{-2t}.
+            \]
+            因為 \(y_1=y\)，原本二階方程的通解是
+            \[
+              y(t)=c_1e^{3t}+c_2e^{-2t}.
+            \]
+          </p>
+        </div>
+      </section>
+
+      <section id="summary">
+        <div class="section-title">
+          <span class="badge">10</span>
+          <h2>重點整理</h2>
+        </div>
+        <div class="two-col">
+          <div class="card summary">
+            <span class="label">4.1 對角化</span>
+            <ul class="checklist">
+              <li>\(B=P^{-1}AP\) 表示同一個線性轉換換座標後的矩陣。</li>
+              <li>對角化就是讓 \(P^{-1}AP=D\) 變成 diagonal matrix。</li>
+              <li>\(A\) 可對角化當且僅當有 \(n\) 個 linearly independent eigenvectors。</li>
+              <li>不同 eigenvalues 的 eigenvectors 一定線性獨立。</li>
+              <li>\(n\) 個 distinct eigenvalues 是可對角化的充分條件。</li>
+              <li>重根時要比較 geometric multiplicity 和 algebraic multiplicity。</li>
+              <li>若 \(A=PDP^{-1}\)，則 \(A^k=PD^kP^{-1}\)。</li>
+            </ul>
+          </div>
+          <div class="card summary">
+            <span class="label">4.2 微分方程</span>
+            <ul class="checklist">
+              <li>一維方程 \(y'=ay\) 的解是 \(y=ce^{at}\)。</li>
+              <li>系統 \(y'=Ay\) 若 \(A\) 是 diagonal，會拆成多個一維方程。</li>
+              <li>若 \(A\) 可對角化，令 \(y=Pu\)，可得到 \(u'=Du\)。</li>
+              <li>通解可寫成 eigenvector 組合：\(y(t)=\sum c_ie^{\lambda_it}v_i\)。</li>
+              <li>初始條件用來解出常數 \(c_i\)。</li>
+              <li>二維系統趨近 0 常看 eigenvalues real parts；常用條件是 \(\operatorname{tr}(A)&lt;0\)、\(\det(A)&gt;0\)。</li>
+            </ul>
+          </div>
+        </div>
+        <div class="card intuition">
+          <span class="label">最後記法</span>
+          <p>
+            Chapter 4 的核心不是背公式，而是看懂「換到 eigenvector basis」這件事：
+            在原座標中，\(A\) 可能混合變數；在 eigenvector 座標中，\(A\) 只做各方向的伸縮。
+            這就是為什麼對角化能同時處理矩陣次方與微分方程系統。
+          </p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <p>Source: ch4_20260514.pdf（課堂原始投影片）. 本 HTML 講義為自學整理版，公式以 Chapter 4 Diagonalization 與 Differential Equation 投影片內容為主。</p>
+  </footer>
+
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      if (window.renderMathInElement) {
+        window.renderMathInElement(document.body, {
+          delimiters: [
+            { left: "$$", right: "$$", display: true },
+            { left: "\\[", right: "\\]", display: true },
+            { left: "\\(", right: "\\)", display: false }
+          ],
+          throwOnError: false
+        });
+      }
+    });
+  </script>
+</body>
+</html>

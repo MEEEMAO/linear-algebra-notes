@@ -1,0 +1,1750 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Linear Algebra Chapter 6 二次型與正交化自學講義</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <style>
+    :root {
+      --bg: #f4f7f8;
+      --paper: #ffffff;
+      --ink: #1e2933;
+      --muted: #5f6c78;
+      --line: #d7e0e6;
+      --navy: #174063;
+      --navy-soft: #e7f0f7;
+      --teal: #26705f;
+      --teal-soft: #e6f3ef;
+      --gold: #a66f14;
+      --gold-soft: #fff4df;
+      --red: #9d3b3b;
+      --red-soft: #faeceb;
+      --violet: #5c4c9d;
+      --violet-soft: #efedfb;
+      --shadow: 0 12px 28px rgba(25, 46, 63, 0.08);
+      --max: 1180px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Avenir Next", "PingFang TC", "Noto Sans TC", system-ui, sans-serif;
+      line-height: 1.86;
+      font-size: 16px;
+      overflow-x: hidden;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      border-bottom: 1px solid var(--line);
+      background: rgba(244, 247, 248, 0.95);
+      backdrop-filter: blur(14px);
+    }
+
+    .topbar-inner {
+      width: min(var(--max), calc(100% - 32px));
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 12px 0;
+    }
+
+    .brand {
+      color: var(--navy);
+      font-weight: 800;
+      letter-spacing: 0;
+      white-space: nowrap;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 34px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--paper);
+      color: var(--ink);
+      padding: 6px 12px;
+      font: inherit;
+      font-size: 0.9rem;
+      text-decoration: none;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(25, 46, 63, 0.05);
+    }
+
+    .button:hover {
+      color: var(--navy);
+      border-color: var(--navy);
+    }
+
+    header {
+      background:
+        linear-gradient(135deg, rgba(23, 64, 99, 0.96), rgba(38, 112, 95, 0.9)),
+        #174063;
+      color: #ffffff;
+      border-bottom: 6px solid #d6a34b;
+    }
+
+    .hero {
+      width: min(var(--max), calc(100% - 32px));
+      margin: 0 auto;
+      padding: 54px 0 46px;
+    }
+
+    .kicker {
+      display: inline-block;
+      margin-bottom: 14px;
+      padding: 4px 10px;
+      border: 1px solid rgba(255, 255, 255, 0.38);
+      border-radius: 8px;
+      color: #e8f3ff;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      margin: 0;
+      line-height: 1.22;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      max-width: 940px;
+      font-size: clamp(2.15rem, 5vw, 4.05rem);
+      font-weight: 900;
+    }
+
+    .subtitle {
+      max-width: 880px;
+      margin: 18px 0 0;
+      color: #e2edf7;
+      font-size: 1.08rem;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 26px;
+    }
+
+    .hero-step {
+      min-height: 100px;
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      border-radius: 8px;
+      padding: 14px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .hero-step strong {
+      display: block;
+      margin-bottom: 4px;
+      color: #ffffff;
+    }
+
+    .hero-step span {
+      color: #dcebf7;
+      font-size: 0.94rem;
+    }
+
+    main {
+      width: min(var(--max), calc(100% - 32px));
+      margin: 28px auto 76px;
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    nav {
+      position: sticky;
+      top: 66px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    nav h2 {
+      color: var(--navy);
+      font-size: 1rem;
+      margin-bottom: 10px;
+    }
+
+    nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    nav li + li {
+      margin-top: 6px;
+    }
+
+    nav a {
+      display: block;
+      border-radius: 8px;
+      color: var(--muted);
+      text-decoration: none;
+      padding: 8px 10px;
+      font-size: 0.94rem;
+    }
+
+    nav a:hover {
+      background: var(--navy-soft);
+      color: var(--navy);
+    }
+
+    .content {
+      min-width: 0;
+    }
+
+    section {
+      margin-bottom: 30px;
+      scroll-margin-top: 86px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .section-title .num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 8px;
+      background: var(--navy);
+      color: #ffffff;
+      font-weight: 900;
+      flex: 0 0 auto;
+    }
+
+    .section-title h2 {
+      color: var(--navy);
+      font-size: clamp(1.45rem, 2.7vw, 2.2rem);
+    }
+
+    .panel,
+    .origin,
+    .purpose,
+    .process,
+    .example,
+    .summary,
+    .warning,
+    .note {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+    }
+
+    .panel,
+    .origin,
+    .purpose,
+    .process,
+    .example,
+    .summary,
+    .warning,
+    .note {
+      padding: 18px;
+    }
+
+    .panel {
+      padding: 22px;
+    }
+
+    .origin {
+      border-left: 6px solid var(--gold);
+      background: var(--gold-soft);
+    }
+
+    .purpose {
+      border-left: 6px solid var(--teal);
+      background: var(--teal-soft);
+    }
+
+    .process {
+      border-left: 6px solid var(--navy);
+      background: #fbfcfe;
+    }
+
+    .summary {
+      border-left: 6px solid var(--violet);
+      background: var(--violet-soft);
+    }
+
+    .example {
+      border-left: 6px solid var(--red);
+      background: var(--red-soft);
+    }
+
+    .warning {
+      border-left: 6px solid var(--red);
+      background: #fff7f7;
+      color: #6f2b2b;
+    }
+
+    .note {
+      border-left: 6px solid var(--teal);
+      background: #f7fcfb;
+    }
+
+    .block-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .tri-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin: 14px 0;
+    }
+
+    .flow div {
+      min-height: 90px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcfe;
+      padding: 12px;
+    }
+
+    .flow strong,
+    .concept-label {
+      display: block;
+      color: var(--navy);
+      margin-bottom: 4px;
+      font-weight: 800;
+    }
+
+    .origin h3,
+    .purpose h3,
+    .process h3,
+    .example h3,
+    .summary h3,
+    .warning h3,
+    .note h3,
+    .panel h3 {
+      margin-bottom: 10px;
+      color: var(--navy);
+      font-size: 1.12rem;
+    }
+
+    p {
+      margin: 0 0 12px;
+    }
+
+    p:last-child {
+      margin-bottom: 0;
+    }
+
+    ul,
+    ol {
+      margin: 0;
+      padding-left: 22px;
+    }
+
+    li + li {
+      margin-top: 7px;
+    }
+
+    .compact-list li {
+      margin-top: 4px;
+    }
+
+    .formula {
+      margin: 14px 0;
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcfe;
+      overflow-x: auto;
+    }
+
+    .mini-table,
+    .check-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      overflow: hidden;
+      border-radius: 8px;
+    }
+
+    .mini-table th,
+    .mini-table td,
+    .check-table th,
+    .check-table td {
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .mini-table th,
+    .check-table th {
+      background: var(--navy-soft);
+      color: var(--navy);
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #ffffff;
+      color: var(--muted);
+      padding: 3px 9px;
+      font-size: 0.9rem;
+    }
+
+    footer {
+      width: min(var(--max), calc(100% - 32px));
+      margin: 0 auto 40px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    @media print {
+      .topbar,
+      nav {
+        display: none;
+      }
+
+      body {
+        background: #ffffff;
+      }
+
+      header {
+        color: #000000;
+        background: #ffffff;
+        border-bottom: 2px solid #000000;
+      }
+
+      main {
+        display: block;
+        width: 100%;
+        margin: 20px 0;
+      }
+
+      .panel,
+      .origin,
+      .purpose,
+      .process,
+      .example,
+      .summary,
+      .warning,
+      .note {
+        box-shadow: none;
+        break-inside: avoid;
+      }
+    }
+
+    @media (max-width: 940px) {
+      main {
+        display: block;
+      }
+
+      nav {
+        position: static;
+        margin-bottom: 20px;
+      }
+
+      .hero-grid,
+      .block-grid,
+      .tri-grid,
+      .flow {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .topbar-inner {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .hero {
+        padding: 40px 0 34px;
+      }
+
+      .panel,
+      .origin,
+      .purpose,
+      .process,
+      .example,
+      .summary,
+      .warning,
+      .note {
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+<nav aria-label="講義導覽" style="position:relative;z-index:10;padding:10px 20px;border-bottom:1px solid #dce0d7;background:#f7f6f2;text-align:left;font:13px/1.6 -apple-system,BlinkMacSystemFont,'Microsoft JhengHei',sans-serif"><a href="../index.html" style="color:#315f4b;text-decoration:none;font-weight:600">← 線性代數講義目錄</a></nav>
+
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">Linear Algebra CH6</div>
+      <div class="top-actions">
+        <button class="button" type="button" onclick="window.print()">列印</button>
+        <a class="button" href="#top">回到頂端</a>
+      </div>
+    </div>
+  </div>
+
+  <header id="top">
+    <div class="hero">
+      <div class="kicker">Chapter 6 General Linear Transformations</div>
+      <h1>正交化、Hermitian 矩陣與二次型</h1>
+      <p class="subtitle">
+        本講義依照 `ch6_0516.pdf` 的進度整理。這章的核心不是多學幾個公式，而是學會用「正交座標」重新看一個二次式，讓含有交叉項的形狀變成沿主軸分開的標準形式。
+      </p>
+      <div class="hero-grid">
+        <div class="hero-step">
+          <strong>1. 先建立幾何語言</strong>
+          <span>內積、長度、正交、正交規範。</span>
+        </div>
+        <div class="hero-step">
+          <strong>2. 把基底整理乾淨</strong>
+          <span>Gram-Schmidt 將任意獨立向量變成正交向量。</span>
+        </div>
+        <div class="hero-step">
+          <strong>3. 用對稱性保證好基底</strong>
+          <span>Hermitian 與 real symmetric 矩陣有正交特徵向量。</span>
+        </div>
+        <div class="hero-step">
+          <strong>4. 處理二次型</strong>
+          <span>分類正定性、找極值、轉 principal axes。</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <nav aria-label="章節導覽">
+      <h2>導覽</h2>
+      <ul>
+        <li><a href="#map">本章地圖</a></li>
+        <li><a href="#inner-product">6.1.1 內積與長度</a></li>
+        <li><a href="#gram-schmidt">Gram-Schmidt 正交化</a></li>
+        <li><a href="#hermitian">6.1.2 Hermitian 矩陣</a></li>
+        <li><a href="#quadratic">6.1.3 實二次型</a></li>
+        <li><a href="#definiteness">正定性判斷</a></li>
+        <li><a href="#rayleigh">Rayleigh Quotient</a></li>
+        <li><a href="#principal-axis">6.1.4 Principal Axis</a></li>
+        <li><a href="#examples">PDF 例題詳解</a></li>
+        <li><a href="#review">自學檢核</a></li>
+      </ul>
+    </nav>
+
+    <div class="content">
+      <section id="map">
+        <div class="section-title">
+          <span class="num">0</span>
+          <h2>本章地圖</h2>
+        </div>
+        <div class="panel">
+          <p>
+            Chapter 6 的投影片標題是 General Linear Transformations，但內容集中在「Quadratic Forms and Their Applications」。請先把整章想成一條連續路線：
+          </p>
+          <div class="flow" aria-label="本章學習流程">
+            <div>
+              <strong>內積與正交</strong>
+              定義兩個向量是否互相垂直，也定義長度。
+            </div>
+            <div>
+              <strong>Gram-Schmidt</strong>
+              從一組獨立向量做出正交或正交規範基底。
+            </div>
+            <div>
+              <strong>Hermitian 性質</strong>
+              保證特徵值是實數，而且可找到正交特徵向量。
+            </div>
+            <div>
+              <strong>二次型應用</strong>
+              判斷正定性、找極值、把交叉項轉成主軸形式。
+            </div>
+          </div>
+          <p>
+            直覺上，二次型 \(Q(X)=X^TAX\) 可能有很多交叉項，例如 \(4xy+4xz+4yz\)。交叉項表示目前的座標軸不是這個形狀最自然的方向。正交化和對稱矩陣的特徵向量，正是為了找出新的座標軸，讓二次型變成沒有交叉項的標準形式。
+          </p>
+          <div class="tag-list">
+            <span class="tag">PDF pages 3-6: Gram-Schmidt</span>
+            <span class="tag">PDF pages 7-8: Hermitian matrices</span>
+            <span class="tag">PDF pages 9-15: Quadratic forms</span>
+            <span class="tag">PDF page 16: Principal Axis Theorem</span>
+            <span class="tag">PDF pages 17-34: Exercises</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="inner-product">
+        <div class="section-title">
+          <span class="num">1</span>
+          <h2>6.1.1 內積、長度與正交</h2>
+        </div>
+
+        <div class="origin">
+          <h3>由來：為什麼需要內積？</h3>
+          <p>
+            在平面幾何中，我們很容易說兩條線互相垂直，也很容易量長度。但線性代數處理的是 \(n\) 維向量，甚至可能是複數向量。要把「角度、垂直、長度」帶到高維空間，就需要一個代數運算，這就是內積。
+          </p>
+          <p>
+            內積的基本任務是把兩個向量變成一個數。這個數會告訴我們：兩個向量方向是否相近，是否垂直，以及一個向量在另一個方向上的投影大小。
+          </p>
+        </div>
+
+        <div class="purpose">
+          <h3>目的：用數字判斷幾何關係</h3>
+          <ul class="compact-list">
+            <li>若內積為 0，兩個向量正交，也就是高維空間中的垂直。</li>
+            <li>向量和自己做內積，可以得到長度平方。</li>
+            <li>投影公式、Gram-Schmidt、Rayleigh quotient 都建立在內積上。</li>
+          </ul>
+        </div>
+
+        <div class="process">
+          <h3>定義與計算流程</h3>
+          <p>
+            PDF page 3 用複數向量定義內積。令
+            \(X=[x_1,x_2,\ldots,x_n]^T\)、\(Y=[y_1,y_2,\ldots,y_n]^T\)，則
+          </p>
+          <div class="formula">
+            \[
+              X\cdot Y=Y^*X=\overline{y_1}x_1+\overline{y_2}x_2+\cdots+\overline{y_n}x_n.
+            \]
+          </div>
+          <p>
+            這裡的 \(Y^*\) 是 conjugate transpose，也就是先取共軛再轉置。若全部都是實數，\(\overline{y_i}=y_i\)，內積就退化成熟悉的 dot product：
+          </p>
+          <div class="formula">
+            \[
+              X\cdot Y=Y^TX=y_1x_1+y_2x_2+\cdots+y_nx_n.
+            \]
+          </div>
+          <p>
+            長度由自己和自己做內積得到：
+          </p>
+          <div class="formula">
+            \[
+              \|X\|=\sqrt{X\cdot X}=\sqrt{X^*X}.
+            \]
+          </div>
+          <p>
+            若 \(X\ne 0\)，把 \(X\) 除以自己的長度，就得到單位向量：
+          </p>
+          <div class="formula">
+            \[
+              \frac{X}{\|X\|}.
+            \]
+          </div>
+          <p>
+            這個動作稱為 normalization。它不改變方向，只把長度縮放成 1。
+          </p>
+        </div>
+
+        <div class="block-grid">
+          <div class="note">
+            <h3>加權內積</h3>
+            <p>
+              PDF page 4 接著加入 positive definite matrix \(A\)。若 \(A\) 是正定矩陣，可以定義相對於 \(A\) 的內積：
+            </p>
+            <div class="formula">
+              \[
+                X\cdot_A Y=Y^*AX.
+              \]
+            </div>
+            <p>
+              這表示我們不是用標準座標量距離，而是用矩陣 \(A\) 改變量測規則。後面的二次型 \(X^TAX\) 其實就是這種「由矩陣決定的長度平方」。
+            </p>
+          </div>
+          <div class="summary">
+            <h3>正交與正交規範</h3>
+            <p>
+              若 \(X\cdot Y=0\)，則 \(X\) 和 \(Y\) 正交。對一組向量 \(\{V_1,\ldots,V_n\}\)，若
+            </p>
+            <div class="formula">
+              \[
+                V_i\cdot V_j=
+                \begin{cases}
+                  0, &amp; i\ne j,\\
+                  \|V_i\|^2, &amp; i=j,
+                \end{cases}
+              \]
+            </div>
+            <p>
+              就是 orthogonal set。若進一步每個向量長度都等於 1，也就是
+            </p>
+            <div class="formula">
+              \[
+                V_i\cdot V_j=
+                \begin{cases}
+                  0, &amp; i\ne j,\\
+                  1, &amp; i=j,
+                \end{cases}
+              \]
+            </div>
+            <p>
+              則是 orthonormal set。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="gram-schmidt">
+        <div class="section-title">
+          <span class="num">2</span>
+          <h2>Gram-Schmidt 正交化</h2>
+        </div>
+
+        <div class="origin">
+          <h3>由來：為什麼要把向量變正交？</h3>
+          <p>
+            一組線性獨立向量可以張成一個空間，但如果它們彼此不垂直，計算投影、座標、距離和二次型會變得麻煩。正交向量的好處是每個方向彼此不干擾，所以可以把一個問題拆成互相獨立的方向來算。
+          </p>
+          <p>
+            Gram-Schmidt 的想法很直接：保留原本張成的空間，但逐步把新向量中「已經被舊方向解釋掉的部分」扣掉，只留下新的垂直成分。
+          </p>
+        </div>
+
+        <div class="purpose">
+          <h3>目的：從任意獨立基底做出正交基底</h3>
+          <p>
+            給定線性獨立向量 \(\{X_1,X_2,\ldots,X_n\}\)，Gram-Schmidt 會做出一組正交向量 \(\{V_1,V_2,\ldots,V_n\}\)，而且兩組向量張成同一個空間：
+          </p>
+          <div class="formula">
+            \[
+              \operatorname{span}\{X_1,\ldots,X_n\}
+              =
+              \operatorname{span}\{V_1,\ldots,V_n\}.
+            \]
+          </div>
+        </div>
+
+        <div class="process">
+          <h3>過程：每一步都扣掉舊方向的投影</h3>
+          <p>
+            第一步不需要處理，直接設
+          </p>
+          <div class="formula">
+            \[
+              V_1=X_1.
+            \]
+          </div>
+          <p>
+            第二步，\(X_2\) 通常含有 \(V_1\) 方向的成分，所以先算 \(X_2\) 在 \(V_1\) 上的投影係數：
+          </p>
+          <div class="formula">
+            \[
+              \alpha=\frac{X_2\cdot V_1}{V_1\cdot V_1}.
+            \]
+          </div>
+          <p>
+            然後扣掉這個方向：
+          </p>
+          <div class="formula">
+            \[
+              V_2=X_2-\alpha V_1.
+            \]
+          </div>
+          <p>
+            第三步，\(X_3\) 可能同時含有 \(V_1\) 與 \(V_2\) 方向，所以要扣兩次：
+          </p>
+          <div class="formula">
+            \[
+              V_3=X_3-\alpha_1V_1-\alpha_2V_2,
+              \qquad
+              \alpha_1=\frac{X_3\cdot V_1}{V_1\cdot V_1},
+              \quad
+              \alpha_2=\frac{X_3\cdot V_2}{V_2\cdot V_2}.
+            \]
+          </div>
+          <p>
+            一般化後，對 \(k=2,3,\ldots,n\)，定義
+          </p>
+          <div class="formula">
+            \[
+              V_k=X_k-\sum_{j=1}^{k-1}\alpha_jV_j,
+              \qquad
+              \alpha_j=\frac{X_k\cdot V_j}{V_j\cdot V_j}.
+            \]
+          </div>
+          <p>
+            若最後需要 orthonormal set，再把每個 \(V_k\) 正規化：
+          </p>
+          <div class="formula">
+            \[
+              U_k=\frac{V_k}{\|V_k\|}.
+            \]
+          </div>
+        </div>
+
+        <div class="warning">
+          <h3>常見錯誤</h3>
+          <ul>
+            <li>不要用原始的 \(X_1,X_2,\ldots\) 當作要扣掉的方向。第二步以後要扣的是已經正交化完成的 \(V_j\)。</li>
+            <li>投影係數分母是 \(V_j\cdot V_j\)，不是 \(\|V_j\|\)。</li>
+            <li>Gram-Schmidt 產生的是未正規化的正交向量。若題目要 orthonormal，還要多做 normalization。</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="hermitian">
+        <div class="section-title">
+          <span class="num">3</span>
+          <h2>6.1.2 Hermitian 矩陣的性質</h2>
+        </div>
+
+        <div class="origin">
+          <h3>由來：為什麼二次型需要 Hermitian 或 symmetric？</h3>
+          <p>
+            二次型要拿來描述長度、能量、形狀或曲面時，輸出最好是實數，而且方向分解最好彼此正交。Hermitian 矩陣在複數空間中扮演「對稱矩陣」的角色，real symmetric matrix 則是實數版本。
+          </p>
+          <p>
+            這類矩陣最重要的好處是：特徵值是實數，且可以找到正交特徵向量。因此它們非常適合拿來做二次型的座標轉換。
+          </p>
+        </div>
+
+        <div class="purpose">
+          <h3>目的：保證特徵分解有幾何意義</h3>
+          <ul>
+            <li>特徵值是實數，所以可以判斷正負。</li>
+            <li>不同特徵值的特徵向量正交，所以可以當作新的垂直座標軸。</li>
+            <li>real symmetric matrix 可以用 orthogonal matrix 對角化。</li>
+          </ul>
+        </div>
+
+        <div class="process">
+          <h3>定理 6.1.1：Hermitian 矩陣的特徵值是實數</h3>
+          <p>
+            令 \(A=A^*\)，且 \(AX=\lambda X\)、\(X\ne0\)。左乘 \(X^*\) 得到
+          </p>
+          <div class="formula">
+            \[
+              X^*AX=\lambda X^*X.
+            \]
+          </div>
+          <p>
+            對 \(AX=\lambda X\) 做 conjugate transpose，得到
+          </p>
+          <div class="formula">
+            \[
+              X^*A^*=\overline{\lambda}X^*.
+            \]
+          </div>
+          <p>
+            因為 \(A^*=A\)，所以右乘 \(X\) 後有
+          </p>
+          <div class="formula">
+            \[
+              X^*AX=\overline{\lambda}X^*X.
+            \]
+          </div>
+          <p>
+            比較兩式：
+          </p>
+          <div class="formula">
+            \[
+              (\overline{\lambda}-\lambda)X^*X=0.
+            \]
+          </div>
+          <p>
+            因為 \(X\ne0\)，所以 \(X^*X\ne0\)，因此 \(\overline{\lambda}=\lambda\)，也就是 \(\lambda\) 是實數。
+          </p>
+        </div>
+
+        <div class="process">
+          <h3>定理 6.1.2 與 6.1.3：不同特徵值對應的特徵向量正交</h3>
+          <p>
+            設
+          </p>
+          <div class="formula">
+            \[
+              AX_i=\lambda_iX_i,\qquad AX_j=\lambda_jX_j,
+              \qquad \lambda_i\ne\lambda_j.
+            \]
+          </div>
+          <p>
+            因 \(A\) 是 Hermitian，且特徵值為實數，可以得到
+          </p>
+          <div class="formula">
+            \[
+              X_i^*AX_j=\lambda_iX_i^*X_j
+              \quad\text{and}\quad
+              X_i^*AX_j=\lambda_jX_i^*X_j.
+            \]
+          </div>
+          <p>
+            相減後：
+          </p>
+          <div class="formula">
+            \[
+              (\lambda_j-\lambda_i)X_i^*X_j=0.
+            \]
+          </div>
+          <p>
+            因 \(\lambda_i\ne\lambda_j\)，所以 \(X_i^*X_j=0\)。這正是正交。進一步地，Hermitian matrix 或 real symmetric matrix 可以有 \(n\) 個正交特徵向量。
+          </p>
+        </div>
+
+        <div class="summary">
+          <h3>推論</h3>
+          <ul class="compact-list">
+            <li>所有 real symmetric matrices 的特徵值都是實數。</li>
+            <li>所有 skew-Hermitian matrices 的特徵值都是純虛數或 0。</li>
+            <li>對稱矩陣在二次型中尤其重要，因為 \(X^TAX\) 的正負可以直接由特徵值判斷。</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="quadratic">
+        <div class="section-title">
+          <span class="num">4</span>
+          <h2>6.1.3 實二次型</h2>
+        </div>
+
+        <div class="origin">
+          <h3>由來：為什麼要研究二次型？</h3>
+          <p>
+            二次型是多變數二次式的矩陣寫法。例如 \(x^2+y^2\) 表示到原點的平方距離，\(-x^2-y^2\) 表示倒過來的曲面，\(x^2-y^2\) 則會同時往正負方向延伸。
+          </p>
+          <p>
+            當二次式有交叉項，例如 \(2xy\)、\(4xz\)、\(4yz\)，直接看形狀不容易。把它寫成 \(X^TAX\)，就可以用矩陣的特徵值與特徵向量來分析。
+          </p>
+        </div>
+
+        <div class="purpose">
+          <h3>目的：把多變數二次式交給矩陣處理</h3>
+          <ul>
+            <li>用矩陣 \(A\) 收集所有平方項與交叉項係數。</li>
+            <li>用 \(X^TAX\) 統一表示二次式。</li>
+            <li>用 \(A\) 的特徵值判斷二次型的正負與極值。</li>
+          </ul>
+        </div>
+
+        <div class="process">
+          <h3>從展開式到矩陣式</h3>
+          <p>
+            PDF page 9 定義 \(n\) 個變數的實二次型：
+          </p>
+          <div class="formula">
+            \[
+            \begin{aligned}
+              Q(X)
+              &amp;=a_{11}x_1^2+2a_{12}x_1x_2+2a_{13}x_1x_3+\cdots+2a_{1n}x_1x_n\\
+              &amp;\quad+a_{22}x_2^2+2a_{23}x_2x_3+\cdots+2a_{2n}x_2x_n+\cdots+a_{nn}x_n^2.
+            \end{aligned}
+            \]
+          </div>
+          <p>
+            為什麼交叉項前面常常寫 \(2a_{ij}\)？因為對稱矩陣 \(A\) 中，\(a_{ij}x_ix_j\) 和 \(a_{ji}x_jx_i\) 會各出現一次，而 \(a_{ij}=a_{ji}\)，所以合起來是 \(2a_{ij}x_ix_j\)。
+          </p>
+          <div class="formula">
+            \[
+              Q(X)=\sum_{j=1}^n\sum_{k=1}^n a_{jk}x_jx_k=X^TAX.
+            \]
+          </div>
+          <p>
+            這裡 \(X=[x_1,\ldots,x_n]^T\)，而 \(A\) 是 real symmetric matrix：
+          </p>
+          <div class="formula">
+            \[
+              A=
+              \begin{bmatrix}
+                a_{11}&amp;a_{12}&amp;\cdots&amp;a_{1n}\\
+                a_{12}&amp;a_{22}&amp;\cdots&amp;a_{2n}\\
+                \vdots&amp;\vdots&amp;\ddots&amp;\vdots\\
+                a_{1n}&amp;a_{2n}&amp;\cdots&amp;a_{nn}
+              \end{bmatrix}.
+            \]
+          </div>
+        </div>
+
+        <div class="example">
+          <h3>快速轉換範例</h3>
+          <p>
+            若
+          </p>
+          <div class="formula">
+            \[
+              Q(x,y,z)=5x^2+4y^2+4z^2+2zx+2xy,
+            \]
+          </div>
+          <p>
+            則平方項直接放對角線：\(a_{11}=5\)、\(a_{22}=4\)、\(a_{33}=4\)。交叉項 \(2xy\) 表示 \(a_{12}=a_{21}=1\)，交叉項 \(2zx\) 表示 \(a_{13}=a_{31}=1\)，沒有 \(yz\) 項表示 \(a_{23}=a_{32}=0\)。所以
+          </p>
+          <div class="formula">
+            \[
+              Q=
+              \begin{bmatrix}x&amp;y&amp;z\end{bmatrix}
+              \begin{bmatrix}
+                5&amp;1&amp;1\\
+                1&amp;4&amp;0\\
+                1&amp;0&amp;4
+              \end{bmatrix}
+              \begin{bmatrix}x\\y\\z\end{bmatrix}.
+            \]
+          </div>
+        </div>
+      </section>
+
+      <section id="definiteness">
+        <div class="section-title">
+          <span class="num">5</span>
+          <h2>二次型的正定、負定與不定</h2>
+        </div>
+
+        <div class="origin">
+          <h3>由來：為什麼要分類正負？</h3>
+          <p>
+            二次型常被用來描述能量、距離平方、誤差平方或多變數函數的局部形狀。若 \(Q(X)\) 對所有非零 \(X\) 都大於 0，它就像距離平方或能量一樣，不會變成負數。若有些方向為正、有些方向為負，形狀就像 saddle，不能單純說有最小值。
+          </p>
+        </div>
+
+        <div class="purpose">
+          <h3>目的：判斷二次型在所有方向上的符號</h3>
+          <table class="mini-table">
+            <thead>
+              <tr>
+                <th>類型</th>
+                <th>定義</th>
+                <th>直覺</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Positive definite</td>
+                <td>\(X^TAX&gt;0\) for all \(X\ne0\)</td>
+                <td>所有非零方向都往上。</td>
+              </tr>
+              <tr>
+                <td>Positive semi-definite</td>
+                <td>\(X^TAX\ge0\) for all \(X\)</td>
+                <td>不會負，但可能有平坦方向。</td>
+              </tr>
+              <tr>
+                <td>Negative definite</td>
+                <td>\(X^TAX&lt;0\) for all \(X\ne0\)</td>
+                <td>所有非零方向都往下。</td>
+              </tr>
+              <tr>
+                <td>Negative semi-definite</td>
+                <td>\(X^TAX\le0\) for all \(X\)</td>
+                <td>不會正，但可能有平坦方向。</td>
+              </tr>
+              <tr>
+                <td>Indefinite</td>
+                <td>有些方向正，有些方向負</td>
+                <td>像 saddle，正負方向並存。</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="process">
+          <h3>判斷法一：Leading Principal Minors</h3>
+          <p>
+            PDF page 13 給出 Sylvester criterion 的正定與負定版本。Leading principal minors 指的是從左上角開始一路擴大的行列式：
+          </p>
+          <div class="formula">
+            \[
+              \Delta_1=a_{11},\quad
+              \Delta_2=
+              \det\begin{bmatrix}
+                a_{11}&amp;a_{12}\\
+                a_{12}&amp;a_{22}
+              \end{bmatrix},\quad
+              \ldots,\quad
+              \Delta_n=\det(A).
+            \]
+          </div>
+          <table class="check-table">
+            <thead>
+              <tr>
+                <th>要判斷</th>
+                <th>條件</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Positive definite</td>
+                <td>所有 leading principal minors 都大於 0：\(\Delta_1,\Delta_2,\ldots,\Delta_n&gt;0\)。</td>
+              </tr>
+              <tr>
+                <td>Negative definite</td>
+                <td>奇數階 minors 小於 0，偶數階 minors 大於 0：\(\Delta_1&lt;0,\Delta_2&gt;0,\Delta_3&lt;0,\ldots\)。</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            這個方法的優點是不用先解特徵值，對 \(2\times2\)、\(3\times3\) 的矩陣特別快。
+          </p>
+        </div>
+
+        <div class="process">
+          <h3>判斷法二：看特徵值</h3>
+          <p>
+            PDF page 14 給出特徵值版本。若 \(A\) 是 real symmetric matrix，特徵值都是實數，且二次型可沿特徵向量方向拆開。所以符號完全由 \(\lambda_i\) 決定：
+          </p>
+          <table class="check-table">
+            <thead>
+              <tr>
+                <th>特徵值狀況</th>
+                <th>二次型類型</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>所有 \(\lambda_i&gt;0\)</td>
+                <td>Positive definite</td>
+              </tr>
+              <tr>
+                <td>所有 \(\lambda_i\ge0\)</td>
+                <td>Positive semi-definite</td>
+              </tr>
+              <tr>
+                <td>所有 \(\lambda_i&lt;0\)</td>
+                <td>Negative definite</td>
+              </tr>
+              <tr>
+                <td>所有 \(\lambda_i\le0\)</td>
+                <td>Negative semi-definite</td>
+              </tr>
+              <tr>
+                <td>同時有正特徵值與負特徵值</td>
+                <td>Indefinite</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="warning">
+          <h3>選哪個方法？</h3>
+          <p>
+            如果矩陣很小，先試 leading principal minors。若題目已經涉及 eigenvalues、orthogonal diagonalization、Rayleigh quotient 或 principal axes，就直接用特徵值法，因為後續計算也會用到特徵向量。
+          </p>
+          <p>
+            注意：以上兩個判斷法的標準敘述都假設 \(A\) 是 real symmetric matrix。若題目給的是非對稱矩陣，但要判斷的是二次型 \(X^TAX\)，應先改用對稱部分
+          </p>
+          <div class="formula">
+            \[
+              S=\frac{A+A^T}{2},
+              \qquad
+              X^TAX=X^TSX.
+            \]
+          </div>
+          <p>
+            這是因為 \(A-S\) 是 skew-symmetric，而 \(X^T(A-S)X=0\)。所以二次型的正負真正由 \(S\) 決定。
+          </p>
+        </div>
+      </section>
+
+      <section id="rayleigh">
+        <div class="section-title">
+          <span class="num">6</span>
+          <h2>Rayleigh Quotient Theorem</h2>
+        </div>
+
+        <div class="origin">
+          <h3>由來：二次型在單位球上的最大最小值</h3>
+          <p>
+            若不限制 \(X\) 的長度，二次型 \(X^TAX\) 通常可以因為把 \(X\) 放大而無限變大或變小。為了問「方向」本身造成的最大最小值，就要固定長度，最常見的是單位球 \(X^TX=1\)。
+          </p>
+        </div>
+
+        <div class="purpose">
+          <h3>目的：用特徵值直接讀出極值</h3>
+          <p>
+            Rayleigh quotient 定義為
+          </p>
+          <div class="formula">
+            \[
+              R(X)=\frac{X^TAX}{X^TX},\qquad X\ne0.
+            \]
+          </div>
+          <p>
+            PDF page 15 的定理說：
+          </p>
+          <div class="formula">
+            \[
+              \lambda_{\min}\le \frac{X^TAX}{X^TX}\le \lambda_{\max}.
+            \]
+          </div>
+          <p>
+            若 \(X\) 是最大特徵值 \(\lambda_{\max}\) 對應的特徵向量，則
+          </p>
+          <div class="formula">
+            \[
+              \frac{X^TAX}{X^TX}
+              =
+              \frac{X^T\lambda_{\max}X}{X^TX}
+              =
+              \lambda_{\max}.
+            \]
+          </div>
+        </div>
+
+        <div class="process">
+          <h3>過程：解極值題的標準步驟</h3>
+          <ol>
+            <li>把二次型寫成 \(Q=X^TAX\)。</li>
+            <li>確認限制是否為 \(X^TX=1\)。若是單位球，則 \(Q=R(X)\)。</li>
+            <li>求 \(A\) 的特徵值，最小特徵值就是最小值，最大特徵值就是最大值。</li>
+            <li>求對應的單位特徵向量。最大值與最小值出現在這些特徵向量方向上，且因為單位球包含正反方向，所以通常寫 \(\pm V\)。</li>
+          </ol>
+        </div>
+      </section>
+
+      <section id="principal-axis">
+        <div class="section-title">
+          <span class="num">7</span>
+          <h2>6.1.4 Principal Axis Theorem</h2>
+        </div>
+
+        <div class="origin">
+          <h3>由來：交叉項代表座標軸沒有對準形狀</h3>
+          <p>
+            二次型中的交叉項 \(xy,xz,yz\) 表示目前座標軸不是最自然的方向。若能找到新的正交座標軸，二次型就可以變成只有平方項，沒有交叉項。這個新座標軸就是 principal axes。
+          </p>
+        </div>
+
+        <div class="purpose">
+          <h3>目的：把 \(X^TAX\) 轉成標準形式</h3>
+          <p>
+            若 \(A\) 是 real symmetric matrix，存在 orthogonal matrix \(S\) 使得
+          </p>
+          <div class="formula">
+            \[
+              S^TAS=D=
+              \operatorname{diag}(\lambda_1,\lambda_2,\ldots,\lambda_n).
+            \]
+          </div>
+          <p>
+            令座標轉換
+          </p>
+          <div class="formula">
+            \[
+              X=SY,\qquad Y=[y_1,y_2,\ldots,y_n]^T.
+            \]
+          </div>
+          <p>
+            代回二次型：
+          </p>
+          <div class="formula">
+            \[
+              Q(X)=X^TAX=(SY)^TA(SY)=Y^TS^TASY=Y^TDY.
+            \]
+          </div>
+          <p>
+            因為 \(D\) 是對角矩陣，所以
+          </p>
+          <div class="formula">
+            \[
+              Q(X)=\lambda_1y_1^2+\lambda_2y_2^2+\cdots+\lambda_ny_n^2.
+            \]
+          </div>
+          <p>
+            這就是 quadratic form 的 standard form。
+          </p>
+        </div>
+
+        <div class="process">
+          <h3>過程：轉 principal axes 的標準步驟</h3>
+          <ol>
+            <li>把二次型寫成 \(X^TAX\)，注意交叉項係數要平均放到對稱位置。</li>
+            <li>求 \(A\) 的特徵值 \(\lambda_i\)。</li>
+            <li>求每個特徵值對應的特徵向量。</li>
+            <li>把特徵向量正交化並正規化，組成 orthogonal matrix \(S\)。</li>
+            <li>令 \(X=SY\)，將 \(S^TAS=D\) 代入 \(Y^TDY\)。</li>
+            <li>寫出沒有交叉項的 standard form。</li>
+          </ol>
+        </div>
+      </section>
+
+      <section id="examples">
+        <div class="section-title">
+          <span class="num">8</span>
+          <h2>PDF 例題詳解</h2>
+        </div>
+
+        <div class="example">
+          <h3>例題 A：判斷矩陣正定、負定或不定</h3>
+          <p>
+            PDF pages 21-22 的題目：
+          </p>
+          <div class="formula">
+            \[
+              A_1=
+              \begin{bmatrix}
+                5&amp;\sqrt3\\
+                \sqrt3&amp;3
+              \end{bmatrix},
+              \quad
+              A_2=
+              \begin{bmatrix}
+                -2&amp;1&amp;0\\
+                0&amp;-2&amp;0\\
+                0&amp;0&amp;-2
+              \end{bmatrix},
+              \quad
+              A_3=
+              \begin{bmatrix}
+                2&amp;0&amp;0\\
+                -1&amp;1&amp;0\\
+                5&amp;3&amp;-3
+              \end{bmatrix}.
+            \]
+          </div>
+          <p>
+            \(A_1\) 是 \(2\times2\) 對稱矩陣。看 leading principal minors：
+          </p>
+          <div class="formula">
+            \[
+              \Delta_1=5&gt;0,\qquad
+              \Delta_2=
+              \det\begin{bmatrix}
+                5&amp;\sqrt3\\
+                \sqrt3&amp;3
+              \end{bmatrix}
+              =15-3=12&gt;0.
+            \]
+          </div>
+          <p>
+            所以 \(A_1\) positive definite。
+          </p>
+          <p>
+            \(A_2\) 在投影片解答中直接指出特徵值都是 \(-2\)，因此判斷為 negative definite。更嚴謹地說，若把它視為二次型 \(X^TA_2X\)，應看對稱部分
+          </p>
+          <div class="formula">
+            \[
+              S_2=\frac{A_2+A_2^T}{2}
+              =
+              \begin{bmatrix}
+                -2&amp;1/2&amp;0\\
+                1/2&amp;-2&amp;0\\
+                0&amp;0&amp;-2
+              \end{bmatrix}.
+            \]
+          </div>
+          <p>
+            \(S_2\) 的特徵值為 \(-\frac32,-\frac52,-2\)，全部小於 0，所以 \(X^TA_2X\) negative definite。
+          </p>
+          <p>
+            \(A_3\) 的投影片解答用 determinant signs 判斷為 indefinite。從二次型角度，也可以直接找兩個方向：取 \(X=e_1=[1,0,0]^T\)，有 \(X^TA_3X=2&gt;0\)；取 \(X=e_3=[0,0,1]^T\)，有 \(X^TA_3X=-3&lt;0\)。同一個二次型在不同方向可正可負，所以是 indefinite。
+          </p>
+        </div>
+
+        <div class="example">
+          <h3>例題 B：Gram-Schmidt 完整演算</h3>
+          <p>
+            PDF pages 23-25 給定
+          </p>
+          <div class="formula">
+            \[
+              v_1=
+              \begin{bmatrix}1\\1\\0\end{bmatrix},
+              \qquad
+              v_2=
+              \begin{bmatrix}1\\0\\1\end{bmatrix},
+              \qquad
+              v_3=
+              \begin{bmatrix}0\\1\\1\end{bmatrix}.
+            \]
+          </div>
+          <p>
+            第一步：
+          </p>
+          <div class="formula">
+            \[
+              u_1=v_1=
+              \begin{bmatrix}1\\1\\0\end{bmatrix}.
+            \]
+          </div>
+          <p>
+            第二步，先算 \(v_2\) 在 \(u_1\) 上的投影：
+          </p>
+          <div class="formula">
+            \[
+              v_2\cdot u_1=1,\qquad u_1\cdot u_1=2,
+              \qquad
+              \operatorname{proj}_{u_1}(v_2)
+              =
+              \frac{1}{2}
+              \begin{bmatrix}1\\1\\0\end{bmatrix}
+              =
+              \begin{bmatrix}0.5\\0.5\\0\end{bmatrix}.
+            \]
+          </div>
+          <div class="formula">
+            \[
+              u_2=v_2-\operatorname{proj}_{u_1}(v_2)
+              =
+              \begin{bmatrix}1\\0\\1\end{bmatrix}
+              -
+              \begin{bmatrix}0.5\\0.5\\0\end{bmatrix}
+              =
+              \begin{bmatrix}0.5\\-0.5\\1\end{bmatrix}.
+            \]
+          </div>
+          <p>
+            第三步，要同時扣掉 \(u_1\) 與 \(u_2\) 的方向。先算在 \(u_1\) 上的投影：
+          </p>
+          <div class="formula">
+            \[
+              \operatorname{proj}_{u_1}(v_3)
+              =
+              \frac{v_3\cdot u_1}{u_1\cdot u_1}u_1
+              =
+              \frac{1}{2}
+              \begin{bmatrix}1\\1\\0\end{bmatrix}
+              =
+              \begin{bmatrix}0.5\\0.5\\0\end{bmatrix}.
+            \]
+          </div>
+          <p>
+            再算在 \(u_2\) 上的投影：
+          </p>
+          <div class="formula">
+            \[
+              v_3\cdot u_2=0.5,\qquad u_2\cdot u_2=1.5,
+            \]
+            \[
+              \operatorname{proj}_{u_2}(v_3)
+              =
+              \frac{0.5}{1.5}u_2
+              =
+              \frac{1}{3}
+              \begin{bmatrix}0.5\\-0.5\\1\end{bmatrix}
+              =
+              \begin{bmatrix}
+                1/6\\-1/6\\1/3
+              \end{bmatrix}.
+            \]
+          </div>
+          <p>
+            扣掉兩個投影：
+          </p>
+          <div class="formula">
+            \[
+              u_3=v_3-\operatorname{proj}_{u_1}(v_3)-\operatorname{proj}_{u_2}(v_3)
+              =
+              \begin{bmatrix}0\\1\\1\end{bmatrix}
+              -
+              \begin{bmatrix}0.5\\0.5\\0\end{bmatrix}
+              -
+              \begin{bmatrix}1/6\\-1/6\\1/3\end{bmatrix}
+              =
+              \begin{bmatrix}-2/3\\2/3\\2/3\end{bmatrix}.
+            \]
+          </div>
+          <p>
+            因此未正規化的正交組為
+          </p>
+          <div class="formula">
+            \[
+              u_1=\begin{bmatrix}1\\1\\0\end{bmatrix},
+              \qquad
+              u_2=\begin{bmatrix}0.5\\-0.5\\1\end{bmatrix},
+              \qquad
+              u_3=\begin{bmatrix}-2/3\\2/3\\2/3\end{bmatrix}.
+            \]
+          </div>
+        </div>
+
+        <div class="example">
+          <h3>例題 C：單位球上的最大最小值</h3>
+          <p>
+            PDF pages 26-29 題目：
+          </p>
+          <div class="formula">
+            \[
+              Q=5x^2+4y^2+4z^2+2zx+2xy,
+              \qquad x^2+y^2+z^2=1.
+            \]
+          </div>
+          <p>
+            先寫成矩陣式：
+          </p>
+          <div class="formula">
+            \[
+              Q=
+              \begin{bmatrix}x&amp;y&amp;z\end{bmatrix}
+              \begin{bmatrix}
+                5&amp;1&amp;1\\
+                1&amp;4&amp;0\\
+                1&amp;0&amp;4
+              \end{bmatrix}
+              \begin{bmatrix}x\\y\\z\end{bmatrix}.
+            \]
+          </div>
+          <p>
+            此矩陣的特徵值為
+          </p>
+          <div class="formula">
+            \[
+              \lambda=3,\ 4,\ 6.
+            \]
+          </div>
+          <p>
+            因為限制是單位球 \(X^TX=1\)，Rayleigh quotient 直接給出：
+          </p>
+          <div class="formula">
+            \[
+              3\le Q\le6.
+            \]
+          </div>
+          <p>
+            最小值 \(3\) 出現在 \(\lambda=3\) 的單位特徵向量方向：
+          </p>
+          <div class="formula">
+            \[
+              (x,y,z)=\pm
+              \left(
+                -\frac{1}{\sqrt3},
+                \frac{1}{\sqrt3},
+                \frac{1}{\sqrt3}
+              \right).
+            \]
+          </div>
+          <p>
+            最大值 \(6\) 出現在 \(\lambda=6\) 的單位特徵向量方向：
+          </p>
+          <div class="formula">
+            \[
+              (x,y,z)=\pm
+              \left(
+                \frac{2}{\sqrt6},
+                \frac{1}{\sqrt6},
+                \frac{1}{\sqrt6}
+              \right).
+            \]
+          </div>
+        </div>
+
+        <div class="example">
+          <h3>例題 D：把二次型轉成 principal axes</h3>
+          <p>
+            PDF pages 30-34 題目：
+          </p>
+          <div class="formula">
+            \[
+              f(x,y,z)=4xy+4xz+4yz.
+            \]
+          </div>
+          <p>
+            寫成矩陣：
+          </p>
+          <div class="formula">
+            \[
+              f(x,y,z)=X^TAX,\qquad
+              A=
+              \begin{bmatrix}
+                0&amp;2&amp;2\\
+                2&amp;0&amp;2\\
+                2&amp;2&amp;0
+              \end{bmatrix}.
+            \]
+          </div>
+          <p>
+            特徵值為
+          </p>
+          <div class="formula">
+            \[
+              \lambda=-2,\ -2,\ 4.
+            \]
+          </div>
+          <p>
+            對 \(\lambda=-2\)，解得特徵空間條件
+          </p>
+          <div class="formula">
+            \[
+              v_1+v_2+v_3=0.
+            \]
+          </div>
+          <p>
+            可先取兩個基底
+          </p>
+          <div class="formula">
+            \[
+              V_1=
+              \begin{bmatrix}1\\0\\-1\end{bmatrix},
+              \qquad
+              V_2=
+              \begin{bmatrix}0\\1\\-1\end{bmatrix}.
+            \]
+          </div>
+          <p>
+            但它們還不正交，所以用 Gram-Schmidt。令 \(U_1=V_1\)，再令
+          </p>
+          <div class="formula">
+            \[
+              U_2=V_2-\alpha U_1,\qquad
+              \alpha=\frac{V_2\cdot U_1}{U_1\cdot U_1}=\frac12,
+            \]
+            \[
+              U_2=
+              \begin{bmatrix}0\\1\\-1\end{bmatrix}
+              -
+              \frac12
+              \begin{bmatrix}1\\0\\-1\end{bmatrix}
+              =
+              \begin{bmatrix}-1/2\\1\\-1/2\end{bmatrix}.
+            \]
+          </div>
+          <p>
+            對 \(\lambda=4\)，可取
+          </p>
+          <div class="formula">
+            \[
+              U_3=
+              \begin{bmatrix}1\\1\\1\end{bmatrix}.
+            \]
+          </div>
+          <p>
+            正規化後組成 orthonormal matrix：
+          </p>
+          <div class="formula">
+            \[
+              S=
+              \begin{bmatrix}
+                \frac{1}{\sqrt2}&amp;-\frac{1}{\sqrt6}&amp;\frac{1}{\sqrt3}\\
+                0&amp;\frac{2}{\sqrt6}&amp;\frac{1}{\sqrt3}\\
+                -\frac{1}{\sqrt2}&amp;-\frac{1}{\sqrt6}&amp;\frac{1}{\sqrt3}
+              \end{bmatrix}.
+            \]
+          </div>
+          <p>
+            令
+          </p>
+          <div class="formula">
+            \[
+              X=SY,\qquad Y=[\xi,\eta,\zeta]^T.
+            \]
+          </div>
+          <p>
+            則
+          </p>
+          <div class="formula">
+            \[
+              f(x,y,z)=Y^T
+              \begin{bmatrix}
+                -2&amp;0&amp;0\\
+                0&amp;-2&amp;0\\
+                0&amp;0&amp;4
+              \end{bmatrix}
+              Y
+              =
+              -2\xi^2-2\eta^2+4\zeta^2.
+            \]
+          </div>
+          <p>
+            這個答案的意義是：原本的 \(x,y,z\) 座標有三個交叉項，但換到 principal axes 座標 \((\xi,\eta,\zeta)\) 後，只剩三個平方項。
+          </p>
+        </div>
+      </section>
+
+      <section id="review">
+        <div class="section-title">
+          <span class="num">9</span>
+          <h2>自學檢核</h2>
+        </div>
+
+        <div class="summary">
+          <h3>讀完本章後要能做到</h3>
+          <ul>
+            <li>能解釋內積為什麼能代表高維空間中的垂直。</li>
+            <li>能從一組線性獨立向量，用 Gram-Schmidt 算出正交組，並在需要時正規化。</li>
+            <li>能證明 Hermitian matrix 的特徵值是實數。</li>
+            <li>能說明為什麼 real symmetric matrix 的特徵向量可以形成正交座標軸。</li>
+            <li>能把多變數二次式寫成 \(X^TAX\)。</li>
+            <li>能用 leading principal minors 或 eigenvalues 判斷 positive definite、negative definite、semi-definite、indefinite。</li>
+            <li>能用 Rayleigh quotient 找單位球上的最大值與最小值。</li>
+            <li>能用 principal axis theorem 把含交叉項的二次型轉成 standard form。</li>
+          </ul>
+        </div>
+
+        <div class="process">
+          <h3>建議複習順序</h3>
+          <ol>
+            <li>先熟練內積與投影，因為 Gram-Schmidt 完全靠這兩個動作。</li>
+            <li>再看 Hermitian 的兩個證明：特徵值為實數、不同特徵值的特徵向量正交。</li>
+            <li>接著練習把二次式轉成矩陣 \(A\)。</li>
+            <li>最後做三類題：正定性分類、Rayleigh quotient 極值、principal axes 轉換。</li>
+          </ol>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <p>依據 `ch6/ch6_0516.pdf` 第 6 章投影片整理。公式使用 KaTeX 顯示，若列印前公式尚未渲染，請等頁面載入完成後再列印。</p>
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "\\[", right: "\\]", display: true },
+          { left: "\\(", right: "\\)", display: false }
+        ],
+        throwOnError: false
+      });
+    });
+  </script>
+</body>
+</html>

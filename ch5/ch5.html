@@ -1,0 +1,2371 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Linear Algebra Chapter 5 矩陣函數與 Cayley-Hamilton 講義</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <style>
+    :root {
+      --bg: #f5f7fa;
+      --paper: #ffffff;
+      --ink: #1d2733;
+      --muted: #5d6876;
+      --line: #d8dee8;
+      --navy: #173a5f;
+      --navy-soft: #e6eef7;
+      --gold: #a66f14;
+      --gold-soft: #fff4df;
+      --green: #247153;
+      --green-soft: #e6f3ed;
+      --red: #9d3b3b;
+      --red-soft: #f9eaea;
+      --violet: #5d4ca0;
+      --violet-soft: #efedfb;
+      --shadow: 0 12px 28px rgba(26, 42, 61, 0.08);
+      --max: 1180px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Avenir Next", "PingFang TC", "Noto Sans TC", system-ui, sans-serif;
+      line-height: 1.82;
+      font-size: 16px;
+      overflow-x: hidden;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      border-bottom: 1px solid var(--line);
+      background: rgba(245, 247, 250, 0.95);
+      backdrop-filter: blur(14px);
+    }
+
+    .topbar-inner {
+      width: min(var(--max), calc(100% - 32px));
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 12px 0;
+    }
+
+    .brand {
+      color: var(--navy);
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 34px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--paper);
+      color: var(--ink);
+      padding: 6px 12px;
+      font: inherit;
+      font-size: 0.9rem;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(26, 42, 61, 0.05);
+    }
+
+    .button:hover {
+      color: var(--navy);
+      border-color: var(--navy);
+    }
+
+    header {
+      background:
+        linear-gradient(135deg, rgba(23, 58, 95, 0.96), rgba(36, 113, 83, 0.9)),
+        #173a5f;
+      color: #ffffff;
+      border-bottom: 6px solid #d8a64e;
+    }
+
+    .hero {
+      width: min(var(--max), calc(100% - 32px));
+      margin: 0 auto;
+      padding: 54px 0 46px;
+    }
+
+    .kicker {
+      display: inline-block;
+      margin-bottom: 14px;
+      padding: 4px 10px;
+      border: 1px solid rgba(255, 255, 255, 0.38);
+      border-radius: 8px;
+      color: #e9f2ff;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      margin: 0;
+      line-height: 1.22;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      max-width: 900px;
+      font-size: clamp(2.15rem, 5vw, 4.1rem);
+      font-weight: 900;
+    }
+
+    .subtitle {
+      max-width: 840px;
+      margin: 18px 0 0;
+      color: #e1edf8;
+      font-size: 1.08rem;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 26px;
+    }
+
+    .hero-step {
+      min-height: 96px;
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      border-radius: 8px;
+      padding: 14px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .hero-step strong {
+      display: block;
+      margin-bottom: 4px;
+      color: #ffffff;
+    }
+
+    .hero-step span {
+      color: #dcebf7;
+      font-size: 0.94rem;
+    }
+
+    main {
+      width: min(var(--max), calc(100% - 32px));
+      margin: 28px auto 76px;
+      display: grid;
+      grid-template-columns: 270px minmax(0, 1fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    nav {
+      position: sticky;
+      top: 66px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    nav h2 {
+      color: var(--navy);
+      font-size: 1rem;
+      margin-bottom: 10px;
+    }
+
+    nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    nav li + li {
+      margin-top: 6px;
+    }
+
+    nav a {
+      display: block;
+      border-radius: 8px;
+      color: var(--muted);
+      text-decoration: none;
+      padding: 8px 10px;
+      font-size: 0.94rem;
+    }
+
+    nav a:hover {
+      background: var(--navy-soft);
+      color: var(--navy);
+    }
+
+    .content {
+      min-width: 0;
+    }
+
+    section {
+      margin-bottom: 30px;
+      scroll-margin-top: 86px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .section-title .num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 8px;
+      background: var(--navy);
+      color: #ffffff;
+      font-weight: 900;
+      flex: 0 0 auto;
+    }
+
+    .section-title h2 {
+      color: var(--navy);
+      font-size: clamp(1.45rem, 2.7vw, 2.2rem);
+    }
+
+    .panel,
+    .block,
+    .example,
+    .summary,
+    .proof,
+    .plain {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+    }
+
+    .panel {
+      padding: 22px;
+    }
+
+    .block-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .block,
+    .summary,
+    .proof,
+    .plain {
+      padding: 18px;
+    }
+
+    .block h3,
+    .summary h3,
+    .proof h3,
+    .plain h3,
+    .example h3 {
+      margin-bottom: 10px;
+      color: var(--navy);
+      font-size: 1.12rem;
+    }
+
+    .plain {
+      border-left: 6px solid var(--gold);
+      background: var(--gold-soft);
+    }
+
+    .proof {
+      border-left: 6px solid var(--green);
+      background: var(--green-soft);
+    }
+
+    .summary {
+      border-left: 6px solid var(--violet);
+      background: var(--violet-soft);
+    }
+
+    .example {
+      margin-top: 14px;
+      padding: 18px;
+      border-left: 6px solid var(--red);
+      background: var(--red-soft);
+    }
+
+    p {
+      margin: 0 0 12px;
+    }
+
+    p:last-child {
+      margin-bottom: 0;
+    }
+
+    ul,
+    ol {
+      margin: 0;
+      padding-left: 22px;
+    }
+
+    li + li {
+      margin-top: 7px;
+    }
+
+    .formula {
+      margin: 14px 0;
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcfe;
+      overflow-x: auto;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin: 14px 0;
+    }
+
+    .flow div {
+      min-height: 82px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcfe;
+      padding: 12px;
+    }
+
+    .flow strong {
+      display: block;
+      color: var(--navy);
+      margin-bottom: 4px;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #ffffff;
+      color: var(--muted);
+      padding: 3px 9px;
+      font-size: 0.9rem;
+    }
+
+    .warn {
+      margin-top: 12px;
+      border: 1px solid #e6c6c5;
+      border-radius: 8px;
+      background: #fff7f7;
+      padding: 12px 14px;
+      color: #6f2b2b;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 14px;
+    }
+
+    .compact-list li {
+      margin-top: 4px;
+    }
+
+    .check-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      overflow: hidden;
+      border-radius: 8px;
+    }
+
+    .check-table th,
+    .check-table td {
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .check-table th {
+      background: var(--navy-soft);
+      color: var(--navy);
+    }
+
+    footer {
+      width: min(var(--max), calc(100% - 32px));
+      margin: 0 auto 40px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    @media print {
+      .topbar,
+      nav {
+        display: none;
+      }
+
+      body {
+        background: #ffffff;
+      }
+
+      header {
+        color: #000000;
+        background: #ffffff;
+        border-bottom: 2px solid #000000;
+      }
+
+      main {
+        display: block;
+        width: 100%;
+        margin: 20px 0;
+      }
+
+      .panel,
+      .block,
+      .summary,
+      .proof,
+      .plain,
+      .example {
+        box-shadow: none;
+        break-inside: avoid;
+      }
+    }
+
+    @media (max-width: 900px) {
+      main {
+        display: block;
+      }
+
+      nav {
+        position: static;
+        margin-bottom: 20px;
+      }
+
+      .hero-grid,
+      .block-grid,
+      .flow,
+      .two-col {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .topbar-inner {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .hero {
+        padding: 40px 0 34px;
+      }
+
+      .panel,
+      .block,
+      .summary,
+      .proof,
+      .plain,
+      .example {
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+<nav aria-label="講義導覽" style="position:relative;z-index:10;padding:10px 20px;border-bottom:1px solid #dce0d7;background:#f7f6f2;text-align:left;font:13px/1.6 -apple-system,BlinkMacSystemFont,'Microsoft JhengHei',sans-serif"><a href="../index.html" style="color:#315f4b;text-decoration:none;font-weight:600">← 線性代數講義目錄</a></nav>
+
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">Linear Algebra CH5</div>
+      <div class="top-actions">
+        <button class="button" type="button" onclick="window.print()">列印</button>
+        <a class="button" href="#top">回到頂端</a>
+      </div>
+    </div>
+  </div>
+
+  <header id="top">
+    <div class="hero">
+      <div class="kicker">Chapter 5 Function of Matrix</div>
+      <h1>矩陣函數、線性系統與 Cayley-Hamilton</h1>
+      <p class="subtitle">
+        這章的核心是把「對純量函數做計算」搬到矩陣上：先理解矩陣如何被特徵值或 Jordan block 拆開，再用 Cayley-Hamilton 和 minimal polynomial 把高次方或函數壓回低次多項式。
+      </p>
+      <div class="hero-grid">
+        <div class="hero-step">
+          <strong>1. 一句話白話理解</strong>
+          <span>先抓住每個主題到底在解決什麼問題。</span>
+        </div>
+        <div class="hero-step">
+          <strong>2. 細節與證明脈絡</strong>
+          <span>把公式從哪裡來、為什麼能用說清楚。</span>
+        </div>
+        <div class="hero-step">
+          <strong>3. 重點整理</strong>
+          <span>整理成考題與解題時可直接套用的判斷。</span>
+        </div>
+        <div class="hero-step">
+          <strong>4. 例題解題說明</strong>
+          <span>用投影片題型示範完整思路。</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <nav aria-label="章節導覽">
+      <h2>導覽</h2>
+      <ul>
+        <li><a href="#map">本章地圖</a></li>
+        <li><a href="#matrix-function">5.1 矩陣函數</a></li>
+        <li><a href="#jordan">Jordan 形式</a></li>
+        <li><a href="#ode">線性 ODE 系統</a></li>
+        <li><a href="#cayley">5.2 Cayley-Hamilton</a></li>
+        <li><a href="#minimal">Minimal Polynomial</a></li>
+        <li><a href="#examples">綜合例題</a></li>
+        <li><a href="#final-review">總整理</a></li>
+      </ul>
+    </nav>
+
+    <div class="content">
+      <section id="map">
+        <div class="section-title">
+          <span class="num">0</span>
+          <h2>本章地圖</h2>
+        </div>
+        <div class="panel">
+          <p>
+            Chapter 5 其實是在回答同一個問題：如果 \(f(x)\) 是一個平常作用在數字上的函數，例如 \(x^m\)、\(\sqrt{x}\)、\(\sin x\)、\(e^x\)，那 \(f(A)\) 要怎麼定義與計算？
+          </p>
+          <div class="flow" aria-label="本章學習流程">
+            <div>
+              <strong>矩陣函數</strong>
+              用多項式、分式、冪級數定義 \(f(A)\)。
+            </div>
+            <div>
+              <strong>特徵分解</strong>
+              若 \(A=SDS^{-1}\)，就把 \(f\) 作用到對角線。
+            </div>
+            <div>
+              <strong>Jordan block</strong>
+              若不能對角化，就用導數修正重根。
+            </div>
+            <div>
+              <strong>C-H 與最小多項式</strong>
+              把高次方或函數化成低次多項式。
+            </div>
+          </div>
+          <p>
+            對自學來說，請把這章想成兩條路：第一條路是「能拆就拆」，用 \(A=SDS^{-1}\) 或 \(A=SJS^{-1}\)；第二條路是「不能或不想拆時，用多項式關係把它降階」，這就是 Cayley-Hamilton 和 minimal polynomial 的用途。
+          </p>
+        </div>
+      </section>
+
+      <section id="matrix-function">
+        <div class="section-title">
+          <span class="num">1</span>
+          <h2>5.1 矩陣函數</h2>
+        </div>
+
+        <div class="plain">
+          <h3>一句話白話理解</h3>
+          <p>
+            矩陣函數就是把 \(f(x)\) 裡面的數字 \(x\) 換成矩陣 \(A\)，但真正好算的原因是：特徵向量方向不變，只是每個特徵值被 \(f\) 重新加工。
+          </p>
+        </div>
+
+        <div class="proof">
+          <h3>細節說明與推導</h3>
+          <p>
+            先從最安全的定義開始。若 \(A\) 是 \(n \times n\) 方陣，矩陣次方定義為
+            \(A^2=A A\)、\(A^3=A A A\)、\(A^kA^m=A^{k+m}\)。若 \(A\) 可逆，也可以定義
+            \(A^{-k}=(A^{-1})^k\)。
+          </p>
+          <div class="formula">
+            \[
+              p(A)=a_mA^m+a_{m-1}A^{m-1}+\cdots+a_1A+a_0I
+            \]
+          </div>
+          <p>
+            上式是矩陣的多項式函數。分式函數也可以定義：
+          </p>
+          <div class="formula">
+            \[
+              f(A)=\frac{P(A)}{Q(A)}=P(A)\,[Q(A)]^{-1}, \qquad \det(Q(A))\ne 0.
+            \]
+          </div>
+          <p>
+            現在假設 \(A\) 有 \(n\) 個線性獨立特徵向量 \(x_1,\ldots,x_n\)，令
+            \(S=[x_1\ x_2\ \cdots\ x_n]\)，且
+            \(D=\operatorname{diag}(\lambda_1,\ldots,\lambda_n)\)。此時
+            \(A=SDS^{-1}\)。接著：
+          </p>
+          <div class="formula">
+            \[
+              A^m=(SDS^{-1})^m=SD^mS^{-1}.
+            \]
+          </div>
+          <p>
+            代回多項式：
+          </p>
+          <div class="formula">
+            \[
+            \begin{aligned}
+              p(A)
+              &amp;=a_mSD^mS^{-1}+a_{m-1}SD^{m-1}S^{-1}+\cdots+a_0SIS^{-1}\\
+              &amp;=S\bigl(a_mD^m+a_{m-1}D^{m-1}+\cdots+a_0I\bigr)S^{-1}\\
+              &amp;=S\,p(D)\,S^{-1}.
+            \end{aligned}
+            \]
+          </div>
+          <p>
+            因為 \(D\) 是對角矩陣，所以 \(p(D)\) 只是把 \(p\) 作用到每個對角線特徵值：
+          </p>
+          <div class="formula">
+            \[
+              p(D)=
+              \begin{bmatrix}
+                p(\lambda_1)&amp;0&amp;\cdots&amp;0\\
+                0&amp;p(\lambda_2)&amp;\cdots&amp;0\\
+                \vdots&amp;\vdots&amp;\ddots&amp;\vdots\\
+                0&amp;0&amp;\cdots&amp;p(\lambda_n)
+              \end{bmatrix}.
+            \]
+          </div>
+          <p>
+            所以投影片的 Theorem 5.1.1 可以理解成：如果 \(Ax_i=\lambda_i x_i\)，那
+            \(p(A)x_i=p(\lambda_i)x_i\)。同一個特徵向量方向仍然是特徵向量，只是特徵值從
+            \(\lambda_i\) 變成 \(p(\lambda_i)\)。
+          </p>
+          <p>
+            若 \(f(x)\) 是解析函數，有 Maclaurin series：
+          </p>
+          <div class="formula">
+            \[
+              f(x)=\sum_{m=0}^{\infty}a_mx^m,
+            \]
+          </div>
+          <p>
+            且所有特徵值都在收斂半徑內，就可定義
+            \(f(A)=\sum_{m=0}^{\infty}a_mA^m\)，並得到同樣結論：
+          </p>
+          <div class="formula">
+            \[
+              f(A)=S
+              \begin{bmatrix}
+                f(\lambda_1)&amp;0&amp;\cdots&amp;0\\
+                0&amp;f(\lambda_2)&amp;\cdots&amp;0\\
+                \vdots&amp;\vdots&amp;\ddots&amp;\vdots\\
+                0&amp;0&amp;\cdots&amp;f(\lambda_n)
+              \end{bmatrix}
+              S^{-1}.
+            \]
+          </div>
+          <div class="block" style="margin-top: 14px;">
+            <h3>Page 8-9 慢速版：解析函數與 Maclaurin series 是什麼？</h3>
+            <p>
+              先不要急著看矩陣。投影片這裡其實先用到一個微積分概念：有些函數雖然看起來不是多項式，例如
+              \(e^x\)、\(\sin x\)、\(\cos x\)，但它們可以被「無限長的多項式」表示。這種以 \(x=0\)
+              為中心展開的無限多項式，就叫 Maclaurin series。
+            </p>
+            <div class="formula">
+              \[
+                f(x)=a_0+a_1x+a_2x^2+a_3x^3+\cdots
+                =\sum_{m=0}^{\infty}a_mx^m.
+              \]
+            </div>
+            <p>
+              白話說，Maclaurin series 就是「用 \(1,x,x^2,x^3,\ldots\) 這些基本積木，把一個函數拼出來」。
+              如果這個無限多項式真的能在某個範圍內拼回原本的函數，我們就說這個函數在那個範圍內是 analytic
+              function，中文通常翻成「解析函數」。
+            </p>
+            <div class="formula">
+              \[
+              \begin{aligned}
+                e^x &amp;= 1+x+\frac{x^2}{2!}+\frac{x^3}{3!}+\cdots,\\
+                \sin x &amp;= x-\frac{x^3}{3!}+\frac{x^5}{5!}-\cdots,\\
+                \cos x &amp;= 1-\frac{x^2}{2!}+\frac{x^4}{4!}-\cdots.
+              \end{aligned}
+              \]
+            </div>
+            <p>
+              你可以先把「解析函數」理解成：這個函數很乖，可以用無限多項式完整描述。這章不需要你深入複變函數的嚴格定義，
+              只要知道 \(e^x,\sin x,\cos x\) 可以用以 0 為中心的 Maclaurin series 展開；像 \(\sqrt{x}\)
+              這種函數則通常要在正的中心點附近用 Taylor series 處理，而不是直接在 \(x=0\) 展開。
+            </p>
+            <p>
+              接著投影片把純量 \(x\) 換成矩陣 \(A\)。因為多項式裡只會出現加法、常數乘法和次方，這些對方陣都能定義，
+              所以可以寫成：
+            </p>
+            <div class="formula">
+              \[
+                f(A)=a_0I+a_1A+a_2A^2+a_3A^3+\cdots
+                =\sum_{m=0}^{\infty}a_mA^m.
+              \]
+            </div>
+            <p>
+              例如 \(e^A\) 的意思不是「把每個元素拿去做 \(e^x\)」，而是：
+            </p>
+            <div class="formula">
+              \[
+                e^A=I+A+\frac{A^2}{2!}+\frac{A^3}{3!}+\cdots.
+              \]
+            </div>
+            <p>
+              為什麼 page 8-9 最後會變成只要算 \(f(\lambda_i)\)？因為如果 \(A\) 可對角化，
+              \(A=SDS^{-1}\)，那每一個次方都會變成：
+            </p>
+            <div class="formula">
+              \[
+                A^m=SD^mS^{-1}.
+              \]
+            </div>
+            <p>
+              所以把整個無限和代入：
+            </p>
+            <div class="formula">
+              \[
+              \begin{aligned}
+                f(A)
+                &amp;=\sum_{m=0}^{\infty}a_mA^m\\
+                &amp;=\sum_{m=0}^{\infty}a_mSD^mS^{-1}\\
+                &amp;=S\left(\sum_{m=0}^{\infty}a_mD^m\right)S^{-1}.
+              \end{aligned}
+              \]
+            </div>
+            <p>
+              而 \(D\) 是對角矩陣，所以 \(D^m\) 只是每個對角線元素各自做 \(m\) 次方：
+            </p>
+            <div class="formula">
+              \[
+                D^m=
+                \begin{bmatrix}
+                  \lambda_1^m&amp;0&amp;\cdots&amp;0\\
+                  0&amp;\lambda_2^m&amp;\cdots&amp;0\\
+                  \vdots&amp;\vdots&amp;\ddots&amp;\vdots\\
+                  0&amp;0&amp;\cdots&amp;\lambda_n^m
+                \end{bmatrix}.
+              \]
+            </div>
+            <p>
+              因此
+              \(\sum a_mD^m\) 的每個對角線位置，就是把同一串 Maclaurin series 套到各自的特徵值：
+            </p>
+            <div class="formula">
+              \[
+                \sum_{m=0}^{\infty}a_mD^m
+                =
+                \begin{bmatrix}
+                  \sum a_m\lambda_1^m&amp;0&amp;\cdots&amp;0\\
+                  0&amp;\sum a_m\lambda_2^m&amp;\cdots&amp;0\\
+                  \vdots&amp;\vdots&amp;\ddots&amp;\vdots\\
+                  0&amp;0&amp;\cdots&amp;\sum a_m\lambda_n^m
+                \end{bmatrix}
+                =
+                \begin{bmatrix}
+                  f(\lambda_1)&amp;0&amp;\cdots&amp;0\\
+                  0&amp;f(\lambda_2)&amp;\cdots&amp;0\\
+                  \vdots&amp;\vdots&amp;\ddots&amp;\vdots\\
+                  0&amp;0&amp;\cdots&amp;f(\lambda_n)
+                \end{bmatrix}.
+              \]
+            </div>
+            <p>
+              所以 page 8-9 的整句話可以翻成：只要 \(f(x)\) 可以用 Maclaurin series 表示，而且 \(A\)
+              的特徵值都落在這個 series 會收斂的範圍內，那我們就可以用
+              \(f(A)=Sf(D)S^{-1}\) 來算矩陣函數。
+            </p>
+            <div class="warn">
+              收斂半徑的意思是：這個無限多項式不是對所有 \(x\) 都一定有效。它通常只在距離 0 某個範圍內會收斂。
+              投影片說「特徵值要在收斂半徑內」，就是要求每個 \(f(\lambda_i)\) 都真的能被那串無限多項式算出來。
+            </div>
+          </div>
+        </div>
+
+        <div class="summary">
+          <h3>重點整理</h3>
+          <ul class="compact-list">
+            <li>矩陣函數一定要 \(A\) 是方陣，因為要能做 \(A^2,A^3,\ldots\)。</li>
+            <li>若 \(A\) 可對角化，計算 \(f(A)\) 的核心公式是 \(f(A)=Sf(D)S^{-1}\)。</li>
+            <li>特徵值會被 \(f\) 改成 \(f(\lambda)\)，特徵向量方向不變。</li>
+            <li>分式函數 \(\frac{P(A)}{Q(A)}\) 需要 \(Q(A)\) 可逆。</li>
+            <li>解析函數例如 \(e^x,\sin x,\cos x\) 可以透過冪級數定義矩陣函數。</li>
+          </ul>
+        </div>
+
+        <div class="example">
+          <h3>例題解題說明：用特徵值找 \(A^{-1}\) 與 \(A^4\) 的特徵值</h3>
+          <p>
+            投影片例題給出某矩陣 \(A\) 的特徵值為 \(1,0.4,0.2\)。題目問 \(A^{-1}\) 和 \(A^4\) 的特徵值。
+          </p>
+          <p>
+            這題不需要真的算 \(A^{-1}\) 或 \(A^4\)。因為若 \(Ax=\lambda x\)，且 \(\lambda\ne0\)，則
+            \(A^{-1}x=\lambda^{-1}x\)；同理 \(A^4x=\lambda^4x\)。
+          </p>
+          <div class="formula">
+            \[
+              \operatorname{eig}(A^{-1})=\left\{1,\frac{1}{0.4},\frac{1}{0.2}\right\}
+              =\{1,2.5,5\}
+            \]
+            \[
+              \operatorname{eig}(A^4)=\{1^4,(0.4)^4,(0.2)^4\}.
+            \]
+          </div>
+          <p>
+            解題關鍵是先判斷題目要的是「矩陣本身」還是「特徵值」。如果只問特徵值，通常可以直接在 \(\lambda\) 上做函數。
+          </p>
+        </div>
+      </section>
+
+      <section id="jordan">
+        <div class="section-title">
+          <span class="num">2</span>
+          <h2>Jordan 形式下的矩陣函數</h2>
+        </div>
+
+        <div class="plain">
+          <h3>一句話白話理解</h3>
+          <p>
+            如果矩陣不能完整對角化，重複特徵值造成的「斜對角 1」會讓 \(f(A)\) 多出導數項。
+          </p>
+        </div>
+
+        <div class="proof">
+          <h3>細節說明與推導</h3>
+          <p>
+            可對角化時，\(D\) 的每個方向彼此獨立，所以 \(f(D)\) 只要對角線代入 \(f(\lambda)\)。不可對角化時，會出現 Jordan block。例如二階 Jordan block：
+          </p>
+          <div class="formula">
+            \[
+              J=
+              \begin{bmatrix}
+                \lambda&amp;1\\
+                0&amp;\lambda
+              \end{bmatrix}
+              =\lambda I+N,\qquad
+              N=
+              \begin{bmatrix}
+                0&amp;1\\
+                0&amp;0
+              \end{bmatrix},\qquad
+              N^2=0.
+            \]
+          </div>
+          <p>
+            由於 \(N^2=0\)，把 \(f\) 在 \(\lambda\) 附近做 Taylor 展開：
+          </p>
+          <div class="formula">
+            \[
+              f(\lambda I+N)
+              =f(\lambda)I+f'(\lambda)N+\frac{f''(\lambda)}{2!}N^2+\cdots
+              =f(\lambda)I+f'(\lambda)N.
+            \]
+          </div>
+          <h3>Page 10-12 慢速版：如果還沒學 Taylor，先用多項式理解</h3>
+            <p>
+              你可以先不要把 Taylor 當成新公式背。先假設 \(f(x)\) 是一個普通多項式，例如
+              \(f(x)=a_0+a_1x+a_2x^2+\cdots+a_mx^m\)。矩陣函數的意思就是把 \(x\) 換成矩陣：
+            </p>
+            <div class="formula">
+              \[
+                f(J)=a_0I+a_1J+a_2J^2+\cdots+a_mJ^m.
+              \]
+            </div>
+            <p>
+              因為 \(J=\lambda I+N\)，而且 \(N^2=0\)，所以每個 \(J^m\) 都可以快速化簡。用二項式展開：
+            </p>
+            <div class="formula">
+              \[
+                J^m=(\lambda I+N)^m
+                =(\lambda I)^m
+                +m(\lambda I)^{m-1}N
+                +\text{含有 }N^2,N^3,\ldots\text{ 的項}.
+              \]
+            </div>
+            <p>
+              但 \(N^2=0\)，所以所有含 \(N^2,N^3,\ldots\) 的項都會變成 0：
+            </p>
+            <div class="formula">
+              \[
+                J^m=\lambda^mI+m\lambda^{m-1}N.
+              \]
+            </div>
+            <p>
+              把這個代回 \(f(J)\)：
+            </p>
+            <div class="formula">
+              \[
+                \begin{aligned}
+                f(J)
+                &amp;=a_0I+a_1(\lambda I+N)+a_2(\lambda^2I+2\lambda N)+\cdots+a_m(\lambda^mI+m\lambda^{m-1}N)\\
+                &amp;=(a_0+a_1\lambda+a_2\lambda^2+\cdots+a_m\lambda^m)I\\
+                &amp;\quad +(a_1+2a_2\lambda+\cdots+ma_m\lambda^{m-1})N.
+                \end{aligned}
+              \]
+            </div>
+            <p>
+              第一個括號就是 \(f(\lambda)\)。第二個括號就是 \(f'(x)\) 在 \(x=\lambda\) 的值：
+            </p>
+            <div class="formula">
+              \[
+                f'(\lambda)=a_1+2a_2\lambda+3a_3\lambda^2+\cdots+ma_m\lambda^{m-1}.
+              \]
+            </div>
+            <p>
+              所以即使你還沒學 Taylor，也可以先接受這個結論：
+            </p>
+            <div class="formula">
+              \[
+                f(J)=f(\lambda)I+f'(\lambda)N.
+              \]
+            </div>
+            <p>
+              Taylor 展開只是把「多項式可以這樣做」推廣到 \(e^x,\sin x,\cos x\) 這種可以用無限多項式表示的函數。這裡會很好算，是因為 \(N^2=0\)，所以無限項其實只剩前兩項。
+            </p>
+            <p>
+              最後一個不跳步的矩陣加法如下：
+            </p>
+            <div class="formula">
+              \[
+                f(\lambda)I=
+                \begin{bmatrix}
+                  f(\lambda)&amp;0\\
+                  0&amp;f(\lambda)
+                \end{bmatrix},
+                \qquad
+                f'(\lambda)N=
+                \begin{bmatrix}
+                  0&amp;f'(\lambda)\\
+                  0&amp;0
+                \end{bmatrix}.
+              \]
+            </div>
+          <div class="formula">
+            \[
+              f(\lambda)I+f'(\lambda)N
+              =
+              \begin{bmatrix}
+                f(\lambda)&amp;f'(\lambda)\\
+                0&amp;f(\lambda)
+              \end{bmatrix}.
+            \]
+          </div>
+          <p>
+            因此：
+          </p>
+          <div class="formula">
+            \[
+              f(J)=
+              \begin{bmatrix}
+                f(\lambda)&amp;f'(\lambda)\\
+                0&amp;f(\lambda)
+              \end{bmatrix}.
+            \]
+          </div>
+          <p>
+            三階 Jordan block 也是同樣邏輯，只是 \(N^3=0\)，所以會保留到二階導數：
+          </p>
+          <div class="formula">
+            \[
+              J=\lambda I+N,\qquad
+              f(J)=
+              \begin{bmatrix}
+                f(\lambda)&amp;f'(\lambda)&amp;\frac{f''(\lambda)}{2!}\\
+                0&amp;f(\lambda)&amp;f'(\lambda)\\
+                0&amp;0&amp;f(\lambda)
+              \end{bmatrix}.
+            \]
+          </div>
+          <p>
+            若 \(A=SJS^{-1}\)，最後再做相似變換：
+          </p>
+          <div class="formula">
+            \[
+              f(A)=Sf(J)S^{-1}.
+            \]
+          </div>
+          <p>
+            這裡的導數不是硬背來的，而是因為 Jordan block 可以寫成「特徵值 \(\lambda\) 加上一個 nilpotent 微小位移 \(N\)」。Taylor 展開遇到 \(N\) 時，高次項會因為 \(N^k=0\) 而自動截斷。
+          </p>
+        </div>
+
+        <div class="summary">
+          <h3>重點整理</h3>
+          <table class="check-table">
+            <thead>
+              <tr>
+                <th>矩陣型態</th>
+                <th>計算方式</th>
+                <th>要注意的地方</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>\(A=SDS^{-1}\)</td>
+                <td>\(f(A)=Sf(D)S^{-1}\)</td>
+                <td>只需代入 \(f(\lambda_i)\)。</td>
+              </tr>
+              <tr>
+                <td>\(A=SJS^{-1}\)</td>
+                <td>\(f(A)=Sf(J)S^{-1}\)</td>
+                <td>Jordan block 需要 \(f'(\lambda), f''(\lambda),\ldots\)。</td>
+              </tr>
+              <tr>
+                <td>二階 Jordan block</td>
+                <td>\(\begin{bmatrix}f(\lambda)&amp;f'(\lambda)\\0&amp;f(\lambda)\end{bmatrix}\)</td>
+                <td>只需要一階導數。</td>
+              </tr>
+              <tr>
+                <td>三階 Jordan block</td>
+                <td>對角、上斜對角、第二上斜對角依序放 \(f,f',f''/2!\)</td>
+                <td>導數階數比 block 大小少 1。</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="example">
+          <h3>例題解題說明：不可對角化矩陣的 \(\sqrt A\)、\(\sin A\)、\(e^{A^2}\)</h3>
+          <p>
+            題目：
+          </p>
+          <div class="formula">
+            \[
+              A=
+              \begin{bmatrix}
+                4&amp;1\\
+                -1&amp;2
+              \end{bmatrix},
+              \qquad
+              \text{求 }A^{1/2},\ \sin A,\ e^{A^2}.
+            \]
+          </div>
+          <p>
+            第一步先算特徵值：
+          </p>
+          <div class="formula">
+            \[
+              \det(A-\lambda I)=0
+              \quad\Rightarrow\quad
+              \lambda=3,3.
+            \]
+          </div>
+          <p>
+            只有一個普通特徵向量 \(X_1=\begin{bmatrix}1\\-1\end{bmatrix}\)，所以要找廣義特徵向量：
+          </p>
+          <div class="formula">
+            \[
+              (A-3I)X_2=X_1,
+              \qquad
+              X_2=
+              \begin{bmatrix}
+                1\\0
+              \end{bmatrix}.
+            \]
+          </div>
+          <p>
+            因此
+          </p>
+          <div class="formula">
+            \[
+              S=[X_1\ X_2]=
+              \begin{bmatrix}
+                1&amp;1\\
+                -1&amp;0
+              \end{bmatrix},
+              \qquad
+              S^{-1}=
+              \begin{bmatrix}
+                0&amp;-1\\
+                1&amp;1
+              \end{bmatrix},
+              \qquad
+              J=
+              \begin{bmatrix}
+                3&amp;1\\
+                0&amp;3
+              \end{bmatrix}.
+            \]
+          </div>
+          <p>
+            對二階 Jordan block，公式是
+            \(f(A)=S\begin{bmatrix}f(3)&amp;f'(3)\\0&amp;f(3)\end{bmatrix}S^{-1}\)。
+          </p>
+          <div class="formula">
+            \[
+              A^{1/2}
+              =
+              \begin{bmatrix}
+                \sqrt3+\frac{1}{2\sqrt3}&amp;\frac{1}{2\sqrt3}\\
+                -\frac{1}{2\sqrt3}&amp;\sqrt3-\frac{1}{2\sqrt3}
+              \end{bmatrix}
+            \]
+            \[
+              \sin A
+              =
+              \begin{bmatrix}
+                \sin3+\cos3&amp;\cos3\\
+                -\cos3&amp;\sin3-\cos3
+              \end{bmatrix}
+            \]
+            \[
+              e^{A^2}
+              =
+              \begin{bmatrix}
+                7e^9&amp;6e^9\\
+                -6e^9&amp;-5e^9
+              \end{bmatrix}.
+            \]
+          </div>
+          <p>
+            最容易犯錯的地方是 \(e^{A^2}\)：這裡的純量函數是 \(h(x)=e^{x^2}\)，不是 \(e^x\)。所以在 Jordan 公式中要放 \(h(3)=e^9\)、\(h'(3)=2\cdot3e^9=6e^9\)。
+          </p>
+        </div>
+      </section>
+
+      <section id="ode">
+        <div class="section-title">
+          <span class="num">3</span>
+          <h2>線性 ODE 系統與矩陣指數</h2>
+        </div>
+
+        <div class="plain">
+          <h3>一句話白話理解</h3>
+          <p>
+            \(X'=AX\) 的解就是把每個特徵向量方向各自乘上 \(e^{\lambda t}\)，所以矩陣指數 \(e^{At}\) 是線性系統的時間演化器。
+          </p>
+        </div>
+
+        <div class="proof">
+          <h3>細節說明與推導</h3>
+          <p>
+            對純量微分方程 \(x'=\lambda x\)，解是 \(x(t)=ce^{\lambda t}\)。矩陣版本是：
+          </p>
+          <div class="formula">
+            \[
+              \frac{dX}{dt}=AX,\qquad X(t)=e^{At}C.
+            \]
+          </div>
+          <p>
+            若 \(A=SDS^{-1}\)，則
+          </p>
+          <div class="formula">
+            \[
+              e^{At}=S e^{Dt}S^{-1}
+              =
+              S
+              \begin{bmatrix}
+                e^{\lambda_1t}&amp;0&amp;\cdots&amp;0\\
+                0&amp;e^{\lambda_2t}&amp;\cdots&amp;0\\
+                \vdots&amp;\vdots&amp;\ddots&amp;\vdots\\
+                0&amp;0&amp;\cdots&amp;e^{\lambda_nt}
+              \end{bmatrix}
+              S^{-1}.
+            \]
+          </div>
+          <p>
+            寫成特徵向量形式就是：
+          </p>
+          <div class="formula">
+            \[
+              X(t)=c_1v_1e^{\lambda_1t}+c_2v_2e^{\lambda_2t}+\cdots+c_nv_ne^{\lambda_nt}.
+            \]
+          </div>
+          <p>
+            若特徵值是複數共軛 \(a\pm i\beta\)，且複數特徵向量是 \(U\pm iV\)，實數解可以整理成：
+          </p>
+          <div class="formula">
+            \[
+              X(t)=e^{at}\{c_1(U\cos\beta t-V\sin\beta t)
+              +c_2(U\sin\beta t+V\cos\beta t)\}.
+            \]
+          </div>
+          <p>
+            若有重複特徵值但特徵向量不足，就要用廣義特徵向量。直覺上，Jordan block 的
+            \(e^{Jt}=e^{\lambda t}e^{Nt}\)，而 \(N\) 是 nilpotent，所以 \(e^{Nt}=I+tN+\frac{t^2}{2!}N^2+\cdots\) 會截斷。這就是解裡出現 \(t e^{\lambda t}\)、\(t^2e^{\lambda t}\) 的原因。
+          </p>
+          <p>
+            對非齊次系統
+          </p>
+          <div class="formula">
+            \[
+              X'=AX+B(t),
+            \]
+          </div>
+          <p>
+            可令 \(X=SY\)，使 \(S^{-1}AS=D\) 或 \(J\)。代入後：
+          </p>
+          <div class="formula">
+            \[
+              SY'=ASY+B(t)
+              \quad\Rightarrow\quad
+              Y'=S^{-1}ASY+S^{-1}B(t).
+            \]
+          </div>
+          <p>
+            若右邊變成對角系統，每個 \(y_i\) 都是單一一階微分方程：
+          </p>
+          <div class="formula">
+            \[
+              y_i'=\lambda_i y_i+\beta_i(t),
+            \]
+          </div>
+          <p>
+            解完 \(Y(t)\) 後，再用 \(X(t)=SY(t)\) 轉回原變數。
+          </p>
+        </div>
+
+        <div class="summary">
+          <h3>重點整理</h3>
+          <ul class="compact-list">
+            <li>\(X'=AX\) 的標準答案是 \(X=e^{At}C\)。</li>
+            <li>若可對角化，答案可寫成特徵向量線性組合：\(c_iv_ie^{\lambda_i t}\)。</li>
+            <li>複數特徵值要整理成實數的 \(\cos\) 與 \(\sin\) 型態。</li>
+            <li>Jordan block 會讓解多出 \(t,t^2,\ldots\) 這類多項式因子。</li>
+            <li>非齊次系統可以用 \(X=SY\) 解耦成較簡單的一階 ODE。</li>
+          </ul>
+        </div>
+
+        <div class="example">
+          <h3>例題解題說明：齊次系統 \(X'=AX\)</h3>
+          <p>
+            題目：
+          </p>
+          <div class="formula">
+            \[
+              X'=
+              \begin{bmatrix}
+                0&amp;2&amp;2\\
+                2&amp;0&amp;2\\
+                2&amp;2&amp;0
+              \end{bmatrix}X.
+            \]
+          </div>
+          <p>
+            先找特徵值。投影片算得：
+          </p>
+          <div class="formula">
+            \[
+              \lambda=-2,-2,4.
+            \]
+          </div>
+          <p>
+            對 \(\lambda=-2\)，可取兩個線性獨立特徵向量：
+          </p>
+          <div class="formula">
+            \[
+              v_1=
+              \begin{bmatrix}
+                1\\0\\-1
+              \end{bmatrix},
+              \qquad
+              v_2=
+              \begin{bmatrix}
+                0\\1\\-1
+              \end{bmatrix}.
+            \]
+          </div>
+          <p>
+            對 \(\lambda=4\)，可取：
+          </p>
+          <div class="formula">
+            \[
+              v_3=
+              \begin{bmatrix}
+                1\\1\\1
+              \end{bmatrix}.
+            \]
+          </div>
+          <p>
+            所以通解是：
+          </p>
+          <div class="formula">
+            \[
+              X(t)=
+              c_1
+              \begin{bmatrix}
+                1\\0\\-1
+              \end{bmatrix}e^{-2t}
+              +
+              c_2
+              \begin{bmatrix}
+                0\\1\\-1
+              \end{bmatrix}e^{-2t}
+              +
+              c_3
+              \begin{bmatrix}
+                1\\1\\1
+              \end{bmatrix}e^{4t}.
+            \]
+          </div>
+          <p>
+            解題重點不是背答案，而是把「每個特徵方向各自照自己的 \(\lambda\) 指數成長或衰退」這件事看出來。
+          </p>
+        </div>
+
+        <div class="example">
+          <h3>例題解題說明：非齊次系統用相似變換解耦</h3>
+          <p>
+            題目：
+          </p>
+          <div class="formula">
+            \[
+              \begin{cases}
+                \frac{dx}{dt}=6x+y+6t,\\
+                \frac{dy}{dt}=4x+3y-10t+4.
+              \end{cases}
+            \]
+          </div>
+          <p>
+            寫成 \(X'=AX+B(t)\)：
+          </p>
+          <div class="formula">
+            \[
+              A=
+              \begin{bmatrix}
+                6&amp;1\\
+                4&amp;3
+              \end{bmatrix},
+              \qquad
+              B(t)=
+              \begin{bmatrix}
+                6t\\-10t+4
+              \end{bmatrix}.
+            \]
+          </div>
+          <p>
+            特徵值為 \(2,7\)，可取特徵向量：
+          </p>
+          <div class="formula">
+            \[
+              v_1=
+              \begin{bmatrix}
+                1\\-4
+              \end{bmatrix},
+              \qquad
+              v_2=
+              \begin{bmatrix}
+                1\\1
+              \end{bmatrix},
+              \qquad
+              S=
+              \begin{bmatrix}
+                1&amp;1\\
+                -4&amp;1
+              \end{bmatrix}.
+            \]
+          </div>
+          <p>
+            令 \(X=SZ\)。代入後得到解耦系統：
+          </p>
+          <div class="formula">
+            \[
+              \begin{bmatrix}
+                \dot z_1\\\dot z_2
+              \end{bmatrix}
+              =
+              \begin{bmatrix}
+                2&amp;0\\0&amp;7
+              \end{bmatrix}
+              \begin{bmatrix}
+                z_1\\z_2
+              \end{bmatrix}
+              +
+              \begin{bmatrix}
+                \frac{16}{5}t-\frac45\\
+                \frac{14}{5}t+\frac45
+              \end{bmatrix}.
+            \]
+          </div>
+          <p>
+            因此：
+          </p>
+          <div class="formula">
+            \[
+              z_1=c_1e^{2t}-\left(\frac85t+\frac25\right),
+              \qquad
+              z_2=c_2e^{7t}-\left(\frac75t+\frac{2}{35}\right).
+            \]
+          </div>
+          <p>
+            轉回 \(X=SZ\)：
+          </p>
+          <div class="formula">
+            \[
+              \begin{bmatrix}
+                x\\y
+              \end{bmatrix}
+              =
+              c_1
+              \begin{bmatrix}
+                1\\-4
+              \end{bmatrix}e^{2t}
+              +
+              c_2
+              \begin{bmatrix}
+                1\\1
+              \end{bmatrix}e^{7t}
+              +
+              \begin{bmatrix}
+                -2t-\frac47\\
+                6t+\frac{10}{7}
+              \end{bmatrix}.
+            \]
+          </div>
+          <p>
+            這題的主軸是：先用特徵向量換座標，把互相耦合的 \(x,y\) 系統改成兩條獨立的一階 ODE，再各自解。
+          </p>
+        </div>
+      </section>
+
+      <section id="cayley">
+        <div class="section-title">
+          <span class="num">4</span>
+          <h2>5.2 Cayley-Hamilton Theorem</h2>
+        </div>
+
+        <div class="plain">
+          <h3>一句話白話理解</h3>
+          <p>
+            Cayley-Hamilton 定理說：矩陣 \(A\) 會滿足自己的特徵多項式，所以高次方 \(A^m\) 可以被壓回較低次的 \(I,A,\ldots,A^{n-1}\)。
+          </p>
+        </div>
+
+        <div class="proof">
+          <h3>細節說明與證明脈絡</h3>
+          <p>
+            投影片使用的特徵多項式寫法是：
+          </p>
+          <div class="formula">
+            \[
+              \Phi(\lambda)=\det(A-\lambda I)
+              =(-1)^n\{\lambda^n-b_1\lambda^{n-1}+b_2\lambda^{n-2}+\cdots+(-1)^nb_n\}.
+            \]
+          </div>
+          <p>
+            Cayley-Hamilton 定理主張：
+          </p>
+          <div class="formula">
+            \[
+              \Phi(A)=0,
+              \quad\text{也就是}\quad
+              A^n-b_1A^{n-1}+b_2A^{n-2}+\cdots+(-1)^nb_nI=0.
+            \]
+          </div>
+          <p>
+            先給直覺版。若 \(A\) 可對角化，\(A=SDS^{-1}\)。特徵多項式 \(\Phi(\lambda)\) 的根就是所有特徵值，所以 \(\Phi(\lambda_i)=0\)。因此
+            \(\Phi(D)=0\)，再用相似變換得到 \(\Phi(A)=S\Phi(D)S^{-1}=0\)。這能幫你理解定理為什麼合理。
+          </p>
+          <p>
+            更一般的證明可用 adjugate。對任何 \(\lambda\)，都有：
+          </p>
+          <div class="formula">
+            \[
+              (A-\lambda I)\operatorname{adj}(A-\lambda I)
+              =\det(A-\lambda I)I
+              =\Phi(\lambda)I.
+            \]
+          </div>
+          <p>
+            因為 \(\operatorname{adj}(A-\lambda I)\) 的每個元素都是 \(\lambda\) 的多項式，所以可寫成：
+          </p>
+          <div class="formula">
+            \[
+              \operatorname{adj}(A-\lambda I)
+              =B_{n-1}\lambda^{n-1}+B_{n-2}\lambda^{n-2}+\cdots+B_1\lambda+B_0.
+            \]
+          </div>
+          <p>
+            將它代回並比較 \(\lambda\) 的係數，就會得到一串矩陣係數關係。再把這些等式分別乘上合適的 \(A^k\) 後相加，中間項會望遠鏡式抵消，最後留下：
+          </p>
+          <div class="formula">
+            \[
+              \Phi(A)=0.
+            \]
+          </div>
+          <p>
+            這個證明重要的觀念是：不是把 \(\lambda=A\) 隨便代進去，而是先建立一個對所有 \(\lambda\) 成立的多項式恆等式，再透過係數比較得到矩陣等式。
+          </p>
+        </div>
+
+        <div class="proof">
+          <h3>Page 46-51 應用慢速版：Cayley-Hamilton 怎麼拿來算東西？</h3>
+          <p>
+            這幾頁的重點不是再證明 Cayley-Hamilton，而是使用它。Cayley-Hamilton 已經告訴我們：
+          </p>
+          <div class="formula">
+            \[
+              \Phi(A)=0.
+            \]
+          </div>
+          <p>
+            所以只要某個式子裡出現很高次的 \(A^m\)，就可以用 \(\Phi(A)=0\) 把它壓回
+            \(I,A,\ldots,A^{n-1}\) 的線性組合。白話說：特徵多項式提供一條「高次方降階規則」。
+          </p>
+
+          <h4>1. Polynomial Long Division：把 \(A^m\) 降成低次多項式</h4>
+          <p>
+            假設 \(A\) 是 \(n\times n\)，特徵多項式是 \(\Phi(x)\)。如果要算 \(A^m\)，先不要直接硬乘矩陣。
+            先在純量多項式世界做除法：
+          </p>
+          <div class="formula">
+            \[
+              x^m=Q(x)\Phi(x)+R(x),
+              \qquad \deg R&lt;n.
+            \]
+          </div>
+          <p>
+            其中 \(R(x)\) 是餘式，所以最多只到 \(x^{n-1}\)：
+          </p>
+          <div class="formula">
+            \[
+              R(x)=c_{n-1}x^{n-1}+c_{n-2}x^{n-2}+\cdots+c_1x+c_0.
+            \]
+          </div>
+          <p>
+            接著把 \(x\) 換成 \(A\)：
+          </p>
+          <div class="formula">
+            \[
+              A^m=Q(A)\Phi(A)+R(A).
+            \]
+          </div>
+          <p>
+            因為 \(\Phi(A)=0\)，所以：
+          </p>
+          <div class="formula">
+            \[
+              A^m=R(A)
+              =
+              c_{n-1}A^{n-1}+c_{n-2}A^{n-2}+\cdots+c_1A+c_0I.
+            \]
+          </div>
+          <p>
+            這就是 page 46-47 的核心。它不是說 \(A^m\) 真的「等於」一個比較短的數字多項式，而是說在矩陣 \(A\)
+            這個特定對象上，所有超過 \(n-1\) 次的部分都可以用 Cayley-Hamilton 的關係降掉。
+          </p>
+
+          <div class="note">
+            小例子：若 \(\Phi(x)=x^2-5x+6\)，則 \(\Phi(A)=0\) 表示
+            \(A^2-5A+6I=0\)，也就是 \(A^2=5A-6I\)。所以
+            \(A^3=A(5A-6I)=5A^2-6A=19A-30I\)，
+            \(A^4=A(19A-30I)=19A^2-30A=65A-114I\)。
+            這就是「用特徵多項式把高次方一直壓低」。
+          </div>
+
+          <h4>2. Substitution Method：不用長除法，改用特徵值解係數</h4>
+          <p>
+            page 48 的方法是先假設答案餘式長這樣：
+          </p>
+          <div class="formula">
+            \[
+              A^m=c_{n-1}A^{n-1}+c_{n-2}A^{n-2}+\cdots+c_1A+c_0I.
+            \]
+          </div>
+          <p>
+            先把矩陣 \(A\) 暫時換回純量 \(x\)，對應的餘式條件是：
+          </p>
+          <div class="formula">
+            \[
+              x^m\approx c_{n-1}x^{n-1}+c_{n-2}x^{n-2}+\cdots+c_1x+c_0.
+            \]
+          </div>
+          <p>
+            這個「\(\approx\)」不是對所有 \(x\) 都相等，而是要求它在 \(A\) 的特徵值上相等。若特徵值
+            \(\lambda_1,\ldots,\lambda_n\) 都不同，就代入每個特徵值：
+          </p>
+          <div class="formula">
+            \[
+              \begin{cases}
+                \lambda_1^m=c_{n-1}\lambda_1^{n-1}+c_{n-2}\lambda_1^{n-2}+\cdots+c_1\lambda_1+c_0,\\
+                \lambda_2^m=c_{n-1}\lambda_2^{n-1}+c_{n-2}\lambda_2^{n-2}+\cdots+c_1\lambda_2+c_0,\\
+                \vdots\\
+                \lambda_n^m=c_{n-1}\lambda_n^{n-1}+c_{n-2}\lambda_n^{n-2}+\cdots+c_1\lambda_n+c_0.
+              \end{cases}
+            \]
+          </div>
+          <p>
+            這樣會得到 \(n\) 條方程式，剛好可以解出 \(c_{n-1},\ldots,c_0\)。這就是 page 48 的 substitution method。
+          </p>
+
+          <div class="note">
+            例如 \(2\times2\) 且特徵值是 \(2,7\)，要把 \(A^m\) 寫成 \(aA+bI\)。先寫
+            \(x^m=ax+b\)，再代入特徵值：
+            \[
+              \begin{cases}
+                2^m=2a+b,\\
+                7^m=7a+b.
+              \end{cases}
+            \]
+            解出 \(a,b\) 後，就得到 \(A^m=aA+bI\)。
+          </div>
+
+          <h4>3. 重複特徵值：為什麼要補導數條件？</h4>
+          <p>
+            如果特徵值重複，單純代入特徵值會得到重複方程式，不夠解所有係數。假設 \(\lambda_1\)
+            是三重根，page 49 說要補：
+          </p>
+          <div class="formula">
+            \[
+              \begin{cases}
+                g(\lambda_1)=r(\lambda_1),\\
+                g'(\lambda_1)=r'(\lambda_1),\\
+                g''(\lambda_1)=r''(\lambda_1),
+              \end{cases}
+            \]
+          </div>
+          <p>
+            其中 \(g(x)\) 是你想算的函數，例如 \(g(x)=x^m\)；\(r(x)\) 是你要找的低次餘式。
+            這樣做的原因是：若 \(\Phi(x)\) 有因子 \((x-\lambda_1)^3\)，那 \(g(x)-r(x)\)
+            必須被 \((x-\lambda_1)^3\) 整除。這等價於 \(g-r\) 在 \(\lambda_1\) 的值、一階導數、二階導數都為 0。
+          </p>
+          <div class="formula">
+            \[
+              (x-\lambda)^s\mid(g(x)-r(x))
+              \quad\Longleftrightarrow\quad
+              g^{(j)}(\lambda)=r^{(j)}(\lambda),\quad j=0,1,\ldots,s-1.
+            \]
+          </div>
+          <p>
+            考試記法：重根幾次，就補到幾階前的導數。二重根補 \(f'\)，三重根補到 \(f''\)。
+          </p>
+
+          <h4>4. Page 50-51：從 \(A^m\) 推廣到 \(f(A)\)</h4>
+          <p>
+            如果函數有 Maclaurin series：
+          </p>
+          <div class="formula">
+            \[
+              f(x)=\sum_{m=0}^{\infty}a_mx^m,
+            \]
+          </div>
+          <p>
+            那矩陣函數定義為：
+          </p>
+          <div class="formula">
+            \[
+              f(A)=\sum_{m=0}^{\infty}a_mA^m.
+            \]
+          </div>
+          <p>
+            但每個高次方 \(A^m\) 都可以用 Cayley-Hamilton 降階，所以最後 \(f(A)\) 也可以寫成低次多項式：
+          </p>
+          <div class="formula">
+            \[
+              f(A)=c_{n-1}A^{n-1}+c_{n-2}A^{n-2}+\cdots+c_1A+c_0I.
+            \]
+          </div>
+          <p>
+            係數一樣用特徵值決定：
+          </p>
+          <div class="formula">
+            \[
+              f(\lambda_i)=c_{n-1}\lambda_i^{n-1}+c_{n-2}\lambda_i^{n-2}+\cdots+c_1\lambda_i+c_0.
+            \]
+          </div>
+          <p>
+            如果特徵值重複，就照 page 51 的提醒加入導數條件。這就是前面例題用
+            \(e^A=\alpha A+\beta I\) 並且補 \(f'(2)=\alpha\) 的原因。
+          </p>
+
+          <div class="warn">
+            最後整理：page 46-51 的邏輯是「先承認 \(\Phi(A)=0\)，所以高次方可以降階」；
+            接著用長除法或特徵值代入法找降階後的係數。它不是 adjugate 證明本身，而是 Cayley-Hamilton 的計算應用。
+          </div>
+        </div>
+
+        <div class="summary">
+          <h3>重點整理</h3>
+          <ul class="compact-list">
+            <li>若 \(A\) 是 \(n\times n\)，則 \(A^n\) 可以用 \(I,A,\ldots,A^{n-1}\) 表示。</li>
+            <li>要算 \(A^m\)，可以把 \(x^m\) 除以特徵多項式，取餘式 \(R(x)\)，則 \(A^m=R(A)\)。</li>
+            <li>要算 \(f(A)\)，也可以找一個低次多項式 \(r(x)\)，使 \(r(\lambda_i)=f(\lambda_i)\)。</li>
+            <li>若特徵值重複，除了 \(r(\lambda)=f(\lambda)\)，還要加入導數條件，例如 \(r'(\lambda)=f'(\lambda)\)。</li>
+            <li>Cayley-Hamilton 提供「降階工具」，minimal polynomial 則提供更精簡的降階工具。</li>
+          </ul>
+        </div>
+
+        <div class="example">
+          <h3>例題解題說明：用 Cayley-Hamilton 算 \(e^A\)</h3>
+          <p>
+            題目：
+          </p>
+          <div class="formula">
+            \[
+              A=
+              \begin{bmatrix}
+                1&amp;-1\\
+                1&amp;3
+              \end{bmatrix},
+              \qquad
+              \text{求 }e^A.
+            \]
+          </div>
+          <p>
+            特徵多項式：
+          </p>
+          <div class="formula">
+            \[
+              \det(A-\lambda I)=\lambda^2-4\lambda+4=(\lambda-2)^2.
+            \]
+          </div>
+          <p>
+            因為是 \(2\times2\)，可把 \(e^A\) 寫成一次多項式：
+          </p>
+          <div class="formula">
+            \[
+              e^A=\alpha A+\beta I.
+            \]
+          </div>
+          <p>
+            但 \(\lambda=2\) 是重根，所以除了代入 \(f(2)=e^2\)，還要代入導數條件 \(f'(2)=e^2\)：
+          </p>
+          <div class="formula">
+            \[
+              \begin{cases}
+                f(2)=e^2=2\alpha+\beta,\\
+                f'(2)=e^2=\alpha.
+              \end{cases}
+            \]
+          </div>
+          <p>
+            解得 \(\alpha=e^2\)、\(\beta=-e^2\)。因此：
+          </p>
+          <div class="formula">
+            \[
+              e^A=e^2A-e^2I=e^2(A-I).
+            \]
+          </div>
+          <p>
+            這題最重要的地方是「重根要補導數條件」。如果只代入 \(\lambda=2\)，會只有一條方程式，無法決定 \(\alpha,\beta\)。
+          </p>
+        </div>
+      </section>
+
+      <section id="minimal">
+        <div class="section-title">
+          <span class="num">5</span>
+          <h2>Minimal Polynomial</h2>
+        </div>
+
+        <div class="plain">
+          <h3>一句話白話理解</h3>
+          <p>
+            minimal polynomial 是讓 \(p(A)=0\) 的最短 monic polynomial，它比特徵多項式更精準地描述「矩陣真正需要幾階關係就會歸零」。
+          </p>
+        </div>
+
+        <div class="proof">
+          <h3>細節說明與脈絡</h3>
+          <p>
+            先從幾個名詞開始。若一個多項式 \(p(x)\) 代入矩陣 \(A\) 後會變成零矩陣：
+          </p>
+          <div class="formula">
+            \[
+              p(A)=0,
+            \]
+          </div>
+          <p>
+            那 \(p(x)\) 就叫做 \(A\) 的 annihilating polynomial，意思是「可以消掉 \(A\) 的多項式」。
+            Cayley-Hamilton 告訴我們：特徵多項式 \(\Phi(x)\) 一定可以消掉 \(A\)，所以
+            \(\Phi(x)\) 一定是一個 annihilating polynomial。
+          </p>
+          <p>
+            但能消掉 \(A\) 的多項式通常不只一個。例如如果 \(p(A)=0\)，那 \(x p(x)\)、\((x+5)p(x)\)
+            代入 \(A\) 也都會是零矩陣。minimal polynomial 要找的是其中「最短、最精準」的那一個。
+          </p>
+
+          <h4>1. monic 是什麼？</h4>
+          <p>
+            monic polynomial 指的是最高次項係數為 1 的多項式。例如：
+          </p>
+          <div class="formula">
+            \[
+              x^3-2x+1
+              \quad\text{是 monic，因為最高次項 }x^3\text{ 的係數是 }1.
+            \]
+          </div>
+          <div class="formula">
+            \[
+              5x^3-2x+1
+              \quad\text{不是 monic，因為最高次項係數是 }5.
+            \]
+          </div>
+          <p>
+            為什麼定義 minimal polynomial 時要要求 monic？因為如果不要求 monic，同一個多項式可以任意乘上非零常數。
+            例如 \(x^2-1\) 和 \(7x^2-7\) 代入矩陣後同樣會歸零，但它們只是差一個倍數。要求 monic
+            可以把這種倍數差異排除，讓 minimal polynomial 變成唯一。
+          </p>
+
+          <h4>2. minimal polynomial 的正式定義</h4>
+          <p>
+            minimal polynomial \(m_A(x)\) 是滿足下面兩個條件的多項式：
+          </p>
+          <div class="formula">
+            \[
+              m_A(A)=0,
+              \qquad
+              m_A(x)\text{ 是 monic 且 degree 最小。}
+            \]
+          </div>
+          <p>
+            白話說：它是「所有能讓 \(A\) 歸零的 monic 多項式裡，次數最低的那個」。
+          </p>
+
+          <h4>3. 它跟 characteristic polynomial 差在哪？</h4>
+          <p>
+            characteristic polynomial 是從 determinant 來的：
+          </p>
+          <div class="formula">
+            \[
+              \Phi(x)=\det(xI-A).
+            \]
+          </div>
+          <p>
+            它的次數一定是 \(n\)，因為 \(A\) 是 \(n\times n\)。Cayley-Hamilton 說：
+          </p>
+          <div class="formula">
+            \[
+              \Phi(A)=0.
+            \]
+          </div>
+          <p>
+            所以 characteristic polynomial 一定可以消掉 \(A\)。但是它不一定是最短的。
+          </p>
+          <div class="note">
+            例子：如果 \(A=I\)，那 \(A-I=0\)，所以 \(m_A(x)=x-1\) 就夠了。
+            但若 \(A\) 是 \(3\times3\) 單位矩陣，characteristic polynomial 是 \((x-1)^3\)。
+            因此 characteristic polynomial 可能有多餘的重數，而 minimal polynomial 只保留真正需要的重數。
+          </div>
+          <p>
+            更精準地說：minimal polynomial 會整除 characteristic polynomial。
+          </p>
+          <div class="formula">
+            \[
+              m_A(x)\mid \Phi(x).
+            \]
+          </div>
+          <p>
+            因為 \(\Phi(A)=0\)，而 \(m_A(x)\) 是最小的 annihilating polynomial，所以 \(\Phi(x)\)
+            必須包含 \(m_A(x)\) 需要的那些因子。
+          </p>
+
+          <h4>4. 為什麼 Jordan block 可以看出 minimal polynomial？</h4>
+          <p>
+            最穩的理解方式是看 Jordan block。對一個 \(s\times s\) Jordan block：
+          </p>
+          <div class="formula">
+            \[
+              J=\lambda I+N,
+              \qquad
+              N^s=0,\quad N^{s-1}\neq0.
+            \]
+          </div>
+          <p>
+            因為：
+          </p>
+          <div class="formula">
+            \[
+              J-\lambda I=N.
+            \]
+          </div>
+          <p>
+            所以：
+          </p>
+          <div class="formula">
+            \[
+              (J-\lambda I)^s=N^s=0,
+              \qquad
+              (J-\lambda I)^{s-1}=N^{s-1}\neq0.
+            \]
+          </div>
+          <p>
+            這代表若有一個大小為 \(s\) 的 Jordan block，要消掉這個 block，至少需要因子：
+          </p>
+          <div class="formula">
+            \[
+              (x-\lambda)^s.
+            \]
+          </div>
+          <p>
+            因此若 \(A\) 的 distinct eigenvalues 是 \(\lambda_1,\ldots,\lambda_r\)，則
+          </p>
+          <div class="formula">
+            \[
+              m_A(x)=\prod_{j=1}^r(x-\lambda_j)^{s_j},
+            \]
+          </div>
+          <p>
+            其中 \(s_j\) 是 \(\lambda_j\) 對應的最大 Jordan block 大小。注意是最大 Jordan block 大小，不是全部重數相加。
+          </p>
+
+          <h4>5. 可對角化時為什麼沒有重根？</h4>
+          <p>
+            可對角化代表所有 Jordan block 都是 \(1\times1\)。所以每個特徵值只需要一次因子就能被消掉：
+          </p>
+          <div class="formula">
+            \[
+              A\text{ 可對角化}
+              \quad\Longleftrightarrow\quad
+              m_A(x)=\prod_{j=1}^r(x-\lambda_j).
+            \]
+          </div>
+          <p>
+            投影片也提到：當矩陣有 \(n\) 個相異特徵值時，它一定可對角化，此時 minimal polynomial 和 characteristic polynomial 都是
+            \((x-\lambda_1)\cdots(x-\lambda_n)\)。
+          </p>
+          <p>
+            但是如果有重複特徵值，也不一定代表 minimal polynomial 一定有重根。要看特徵向量夠不夠。
+          </p>
+          <div class="note">
+            例子：\(A=\begin{bmatrix}2&amp;0\\0&amp;2\end{bmatrix}=2I\)。
+            characteristic polynomial 是 \((x-2)^2\)，但 \(A-2I=0\)，所以
+            \(m_A(x)=x-2\)。這是重複特徵值，但矩陣仍然可對角化，因此 minimal polynomial 沒有重根。
+          </div>
+          <div class="note">
+            例子：\(J=\begin{bmatrix}2&amp;1\\0&amp;2\end{bmatrix}\)。
+            這時 \(J-2I=\begin{bmatrix}0&amp;1\\0&amp;0\end{bmatrix}\neq0\)，但
+            \((J-2I)^2=0\)。所以 \(x-2\) 不夠，必須用
+            \(m_J(x)=(x-2)^2\)。
+          </div>
+
+          <h4>6. 考試上怎麼判斷？</h4>
+          <p>
+            實作上可以照這個順序想：
+          </p>
+          <ol class="compact-list">
+            <li>先找 characteristic polynomial，知道可能的因子有哪些。</li>
+            <li>minimal polynomial 一定只使用這些因子，而且每個因子的次方不會超過 characteristic polynomial 裡的次方。</li>
+            <li>如果所有特徵值都相異，直接得到 \(m_A(x)=\Phi(x)\)。</li>
+            <li>如果可對角化，minimal polynomial 是每個 distinct eigenvalue 各出現一次。</li>
+            <li>如果不可對角化，就看最大 Jordan block 大小，或檢查 \((A-\lambda I)^k\) 何時把對應部分消掉。</li>
+            <li>若題目給 nilpotent matrix，找最小的 \(s\) 使 \(A^s=0\)，則 \(m_A(x)=x^s\)。</li>
+          </ol>
+          <div class="warn">
+            自學提醒：一般情況下，minimal polynomial 的重數最好用「最大 Jordan block 大小」理解；若只用 algebraic multiplicity 和 geometric multiplicity 的差距，要確認是否符合課堂題型條件。
+          </div>
+        </div>
+
+        <div class="summary">
+          <h3>重點整理</h3>
+          <ul class="compact-list">
+            <li>characteristic polynomial 一定會 annihilate \(A\)，但可能不是最小的。</li>
+            <li>minimal polynomial 是做降階計算時更省力的工具。</li>
+            <li>若 \(m_A(x)\) 次數是 \(d\)，則任何 \(A^k\) 或 \(f(A)\) 都可以降成 \(I,A,\ldots,A^{d-1}\) 的組合。</li>
+            <li>可對角化 \(\Longleftrightarrow\) minimal polynomial 沒有重根。</li>
+            <li>nilpotent matrix 的 minimal polynomial 是 \(x^m\)，其中 \(m\) 是最小使 \(A^m=0\) 的指數。</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="examples">
+        <div class="section-title">
+          <span class="num">6</span>
+          <h2>綜合例題</h2>
+        </div>
+
+        <div class="example">
+          <h3>例題 A：用 minimal polynomial 算 \(A^{100}\)</h3>
+          <p>
+            題目：
+          </p>
+          <div class="formula">
+            \[
+              A=
+              \begin{bmatrix}
+                -3&amp;0&amp;1\\
+                -8&amp;1&amp;2\\
+                -16&amp;0&amp;5
+              \end{bmatrix},
+              \qquad
+              \text{求 }A^{100}.
+            \]
+          </div>
+          <p>
+            先算特徵多項式：
+          </p>
+          <div class="formula">
+            \[
+              \det(A-\lambda I)
+              =-(\lambda^3-3\lambda^2+3\lambda-1)
+              =-(\lambda-1)^3.
+            \]
+          </div>
+          <p>
+            由 Cayley-Hamilton：
+          </p>
+          <div class="formula">
+            \[
+              (A-I)^3=0.
+            \]
+          </div>
+          <p>
+            投影片指出此題已知 \((A-I)^2=0\)，因此 minimal polynomial 是：
+          </p>
+          <div class="formula">
+            \[
+              m_A(x)=(x-1)^2.
+            \]
+          </div>
+          <p>
+            所以任何高次方都可以降成一次式：
+          </p>
+          <div class="formula">
+            \[
+              x^{100}=Q(x)(x-1)^2+ax+b.
+            \]
+          </div>
+          <p>
+            因為 \((x-1)^2\) 是重根，要代入 \(x=1\) 與導數：
+          </p>
+          <div class="formula">
+            \[
+              \begin{cases}
+                1=a+b,\\
+                100=a.
+              \end{cases}
+              \quad\Rightarrow\quad
+              a=100,\ b=-99.
+            \]
+          </div>
+          <p>
+            因此：
+          </p>
+          <div class="formula">
+            \[
+              A^{100}=100A-99I
+              =
+              \begin{bmatrix}
+                -399&amp;0&amp;100\\
+                -800&amp;1&amp;200\\
+                -1600&amp;0&amp;401
+              \end{bmatrix}.
+            \]
+          </div>
+          <p>
+            這題是本章的典型題：先找「讓矩陣歸零的低次關係」，再把高次方用餘式表示。重根的餘式匹配要補導數條件。
+          </p>
+        </div>
+
+        <div class="example">
+          <h3>例題 B：全 1 矩陣的 \(A^m\)</h3>
+          <p>
+            題目：令 \(A\) 是 \(n\times n\) 全部元素都是 1 的矩陣，求 \(A^m\)。
+          </p>
+          <p>
+            先理解這個矩陣在做什麼。若
+            \(v=\begin{bmatrix}v_1&amp;v_2&amp;\cdots&amp;v_n\end{bmatrix}^T\)，因為 \(A\) 的每一列都是
+            \(\begin{bmatrix}1&amp;1&amp;\cdots&amp;1\end{bmatrix}\)，所以 \(Av\) 的每一個分量都等於
+            \(v_1+v_2+\cdots+v_n\)：
+          </p>
+          <div class="formula">
+            \[
+              Av=
+              \begin{bmatrix}
+                v_1+\cdots+v_n\\
+                v_1+\cdots+v_n\\
+                \vdots\\
+                v_1+\cdots+v_n
+              \end{bmatrix}.
+            \]
+          </div>
+          <p>
+            所以全 1 矩陣只看一件事：輸入向量的「元素總和」。接著令
+            \(u=\begin{bmatrix}1&amp;1&amp;\cdots&amp;1\end{bmatrix}^T\)。因為 \(u\) 的元素總和是 \(n\)，所以
+          </p>
+          <div class="formula">
+            \[
+              Au=nu.
+            \]
+          </div>
+          <p>
+            因此 \(u\) 是特徵值 \(n\) 的特徵向量。
+          </p>
+          <p>
+            另一方面，若 \(v\) 的元素總和為 0，也就是
+          </p>
+          <div class="formula">
+            \[
+              u^Tv=v_1+v_2+\cdots+v_n=0,
+            \]
+          </div>
+          <p>
+            則由剛剛的公式可知：
+          </p>
+          <div class="formula">
+            \[
+              Av=
+              \begin{bmatrix}
+                0\\0\\ \vdots\\0
+              \end{bmatrix}.
+            \]
+          </div>
+          <p>
+            所以所有「元素總和為 0」的向量都是特徵值 0 的特徵向量。這就是 PDF 裡那句
+            \(u^Tv=0\Rightarrow Av=0\) 的意思。
+          </p>
+          <p>
+            這種向量有幾個自由度？條件 \(v_1+\cdots+v_n=0\) 只有一條限制，所以原本 \(n\)
+            個變數剩下 \(n-1\) 個自由度。因此特徵值 0 的 geometric multiplicity 是 \(n-1\)。
+            例如可以取：
+          </p>
+          <div class="formula">
+            \[
+              e_1-e_n,\ e_2-e_n,\ \ldots,\ e_{n-1}-e_n
+            \]
+          </div>
+          <p>
+            作為 \(n-1\) 個線性獨立的特徵向量。再加上 \(u\)，總共有 \(n\) 個線性獨立特徵向量，
+            所以 \(A\) 可對角化。特徵值整理為：
+          </p>
+          <div class="formula">
+            \[
+              \operatorname{eig}(A)=\{n,0,\ldots,0\}.
+            \]
+          </div>
+          <p>
+            因為 \(A\) 可對角化，minimal polynomial 只需要每個不同特徵值各出現一次。所以 minimal polynomial 是：
+          </p>
+          <div class="formula">
+            \[
+              m_A(x)=x(x-n).
+            \]
+          </div>
+          <p>
+            這裡不是 characteristic polynomial。characteristic polynomial 是：
+          </p>
+          <div class="formula">
+            \[
+              \Phi(x)=x^{n-1}(x-n),
+            \]
+          </div>
+          <p>
+            但因為 \(A\) 可對角化，0 這個特徵值雖然重複 \(n-1\) 次，minimal polynomial 裡仍然只需要一個 \(x\)。
+          </p>
+          <p>
+            接著把 minimal polynomial 代入矩陣：
+          </p>
+          <div class="formula">
+            \[
+              m_A(A)=A(A-nI)=0.
+            \]
+          </div>
+          <p>
+            展開：
+          </p>
+          <div class="formula">
+            \[
+              A^2-nA=0
+              \quad\Rightarrow\quad
+              A^2=nA.
+            \]
+          </div>
+          <p>
+            這一步就是整題的降階關係。從 \(A^2=nA\) 開始，所有高次方都可以往回壓成 \(A\) 的倍數：
+          </p>
+          <div class="formula">
+            \[
+              A^3=A\cdot A^2=A(nA)=nA^2=n(nA)=n^2A.
+            \]
+          </div>
+          <div class="formula">
+            \[
+              A^4=A\cdot A^3=A(n^2A)=n^2A^2=n^3A.
+            \]
+          </div>
+          <p>
+            因此可以看出規律：
+          </p>
+          <div class="formula">
+            \[
+              A^m=n^{m-1}A,\qquad m\ge1.
+            \]
+          </div>
+          <p>
+            用歸納法寫就是：假設 \(A^k=n^{k-1}A\)，則
+          </p>
+          <div class="formula">
+            \[
+              A^{k+1}=AA^k=A(n^{k-1}A)=n^{k-1}A^2=n^{k-1}(nA)=n^kA.
+            \]
+          </div>
+          <p>
+            所以 \(A^m=n^{m-1}A\)。因為 \(A\) 本來每個元素都是 1，所以 \(A^m\) 的每個元素都會變成
+            \(n^{m-1}\)。這題的技巧是看出全 1 矩陣只保留「總和方向」 \(u\)，並把所有總和為 0 的方向壓成 0。
+          </p>
+        </div>
+
+        <div class="example">
+          <h3>例題 C：證明可逆矩陣的反矩陣可寫成 \(A\) 的多項式</h3>
+          <p>
+            題目：若 \(A\) 是 nonsingular \(n\times n\) 矩陣，證明 \(A^{-1}\) 可以寫成
+            \(I,A,\ldots,A^{n-1}\) 的線性組合。
+          </p>
+          <p>
+            由 Cayley-Hamilton：
+          </p>
+          <div class="formula">
+            \[
+              A^n-b_1A^{n-1}+b_2A^{n-2}-\cdots+(-1)^nb_nI=0.
+            \]
+          </div>
+          <p>
+            因為 \(A\) nonsingular，所以 \(A^{-1}\) 存在。兩邊右乘或左乘 \(A^{-1}\)：
+          </p>
+          <div class="formula">
+            \[
+              A^{n-1}-b_1A^{n-2}+b_2A^{n-3}-\cdots+(-1)^{n-1}b_{n-1}I
+              +(-1)^nb_nA^{-1}=0.
+            \]
+          </div>
+          <p>
+            將 \(A^{-1}\) 移到一邊，即可得到：
+          </p>
+          <div class="formula">
+            \[
+              A^{-1}=c_0I+c_1A+\cdots+c_{n-1}A^{n-1}.
+            \]
+          </div>
+          <p>
+            核心想法是：只要 \(A\) 可逆，Cayley-Hamilton 裡的常數項不會讓我們卡住，因此可以把 \(A^{-1}\) 解出來。
+          </p>
+        </div>
+      </section>
+
+      <section id="final-review">
+        <div class="section-title">
+          <span class="num">7</span>
+          <h2>總整理</h2>
+        </div>
+
+        <div class="panel">
+          <div class="two-col">
+            <div class="block">
+              <h3>解題時先判斷</h3>
+              <ol>
+                <li>題目要算 \(f(A)\)、\(A^m\)、\(e^{At}\)，還是微分方程解？</li>
+                <li>\(A\) 可對角化嗎？若可，用 \(SDS^{-1}\)。</li>
+                <li>若不可對角化，有 Jordan block 嗎？若有，補導數項。</li>
+                <li>若只想降階，用 characteristic polynomial 或 minimal polynomial。</li>
+                <li>若重根出現，記得補導數條件。</li>
+              </ol>
+            </div>
+            <div class="block">
+              <h3>公式總表</h3>
+              <ul class="compact-list">
+                <li>\(f(A)=Sf(D)S^{-1}\)</li>
+                <li>\(f(J_2)=\begin{bmatrix}f(\lambda)&amp;f'(\lambda)\\0&amp;f(\lambda)\end{bmatrix}\)</li>
+                <li>\(X'=AX\Rightarrow X=e^{At}C\)</li>
+                <li>\(\Phi(A)=0\)</li>
+                <li>\(m_A(A)=0\)</li>
+                <li>\(A^m=R(A)\)，其中 \(R\) 是除以 annihilating polynomial 的餘式</li>
+              </ul>
+            </div>
+          </div>
+
+          <table class="check-table">
+            <thead>
+              <tr>
+                <th>題型</th>
+                <th>最推薦的工具</th>
+                <th>關鍵提醒</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>求 \(\sqrt A,\sin A,e^A\)</td>
+                <td>先嘗試 diagonalization 或 Jordan form</td>
+                <td>Jordan block 需要導數。</td>
+              </tr>
+              <tr>
+                <td>求 \(A^{100},A^{300}\)</td>
+                <td>Cayley-Hamilton 或 minimal polynomial</td>
+                <td>不要真的連乘高次方。</td>
+              </tr>
+              <tr>
+                <td>求 \(X'=AX\)</td>
+                <td>\(e^{At}\) 或特徵向量展開</td>
+                <td>每個特徵方向乘 \(e^{\lambda t}\)。</td>
+              </tr>
+              <tr>
+                <td>求 \(X'=AX+B(t)\)</td>
+                <td>相似變換 \(X=SY\)</td>
+                <td>先解耦，再解 scalar ODE。</td>
+              </tr>
+              <tr>
+                <td>判斷 minimal polynomial</td>
+                <td>Jordan block / 是否可對角化 / nilpotent 指數</td>
+                <td>可對角化時沒有重根。</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="tag-list" aria-label="關鍵字">
+            <span class="tag">matrix function</span>
+            <span class="tag">Jordan block</span>
+            <span class="tag">matrix exponential</span>
+            <span class="tag">linear ODE system</span>
+            <span class="tag">Cayley-Hamilton</span>
+            <span class="tag">minimal polynomial</span>
+            <span class="tag">remainder method</span>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    Source material: <code>ch5/ch5_20260521.pdf</code>. 這份講義重寫為自學版，補上公式來源、解題流程與常見判斷點。
+  </footer>
+
+  <script>
+    window.addEventListener("DOMContentLoaded", function () {
+      if (window.renderMathInElement) {
+        window.renderMathInElement(document.body, {
+          delimiters: [
+            { left: "$$", right: "$$", display: true },
+            { left: "\\[", right: "\\]", display: true },
+            { left: "\\(", right: "\\)", display: false }
+          ],
+          throwOnError: false
+        });
+      }
+    });
+  </script>
+</body>
+</html>

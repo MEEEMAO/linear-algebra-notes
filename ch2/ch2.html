@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 2 行列式 學習講義</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #faf8f5;
+  --bg-card: #ffffff;
+  --bg-highlight: #f0ece4;
+  --bg-theorem: #eef4fb;
+  --bg-example: #fef9ef;
+  --bg-proof: #f4f8f4;
+  --bg-warning: #fef0f0;
+  --bg-tip: #f0f7fe;
+  --border-theorem: #3a7bd5;
+  --border-example: #e6a817;
+  --border-proof: #4caf50;
+  --border-warning: #e74c3c;
+  --border-tip: #2196f3;
+  --text: #2c2c2c;
+  --text-light: #666;
+  --text-heading: #1a1a2e;
+  --accent: #3a7bd5;
+  --accent-warm: #e6a817;
+  --accent-green: #4caf50;
+  --shadow: 0 2px 12px rgba(0,0,0,0.06);
+  --shadow-hover: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Noto Sans TC', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.9;
+  font-size: 16px;
+}
+
+/* === HEADER === */
+.hero {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  color: white;
+  padding: 60px 40px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 30% 70%, rgba(58,123,213,0.15) 0%, transparent 50%),
+              radial-gradient(circle at 70% 30%, rgba(230,168,23,0.1) 0%, transparent 50%);
+  animation: float 20s ease-in-out infinite;
+}
+@keyframes float {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  50% { transform: translate(-20px, 20px) rotate(5deg); }
+}
+.hero h1 {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 2.8em;
+  font-weight: 900;
+  position: relative;
+  margin-bottom: 8px;
+  letter-spacing: 4px;
+}
+.hero .subtitle {
+  font-size: 1.2em;
+  opacity: 0.8;
+  position: relative;
+  font-weight: 300;
+}
+.hero .chapter-tag {
+  display: inline-block;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 30px;
+  padding: 6px 24px;
+  font-size: 0.9em;
+  margin-bottom: 16px;
+  position: relative;
+  backdrop-filter: blur(10px);
+}
+
+/* === NAV / TOC === */
+.toc {
+  max-width: 900px;
+  margin: -30px auto 40px;
+  background: var(--bg-card);
+  border-radius: 16px;
+  box-shadow: var(--shadow-hover);
+  padding: 30px 40px;
+  position: relative;
+  z-index: 2;
+}
+.toc h2 {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 1.4em;
+  color: var(--text-heading);
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--bg-highlight);
+}
+.toc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+.toc-item {
+  display: block;
+  padding: 12px 16px;
+  background: var(--bg-highlight);
+  border-radius: 10px;
+  text-decoration: none;
+  color: var(--text);
+  font-weight: 500;
+  font-size: 0.95em;
+  transition: all 0.2s;
+  border-left: 3px solid transparent;
+}
+.toc-item:hover {
+  background: var(--bg-theorem);
+  border-left-color: var(--accent);
+  transform: translateX(4px);
+}
+.toc-item .num {
+  display: block;
+  font-size: 0.75em;
+  color: var(--accent);
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+/* === MAIN CONTENT === */
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 20px 60px;
+}
+
+/* Section */
+.section {
+  margin-bottom: 50px;
+}
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 30px;
+  padding-bottom: 12px;
+  border-bottom: 3px solid var(--accent);
+}
+.section-number {
+  background: var(--accent);
+  color: white;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Noto Serif TC', serif;
+  font-size: 1.3em;
+  font-weight: 900;
+  flex-shrink: 0;
+}
+.section-header h2 {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 1.8em;
+  color: var(--text-heading);
+  font-weight: 900;
+}
+
+/* Sub-section */
+h3 {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 1.3em;
+  color: var(--text-heading);
+  margin: 30px 0 16px;
+  padding-left: 14px;
+  border-left: 4px solid var(--accent-warm);
+}
+
+h4 {
+  font-size: 1.05em;
+  color: var(--text-heading);
+  margin: 20px 0 10px;
+  font-weight: 700;
+}
+
+/* Cards */
+.card {
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 24px 28px;
+  margin: 16px 0;
+  box-shadow: var(--shadow);
+  border-left: 4px solid #ccc;
+}
+.card.theorem {
+  background: var(--bg-theorem);
+  border-left-color: var(--border-theorem);
+}
+.card.example {
+  background: var(--bg-example);
+  border-left-color: var(--border-example);
+}
+.card.proof {
+  background: var(--bg-proof);
+  border-left-color: var(--border-proof);
+}
+.card.warning {
+  background: var(--bg-warning);
+  border-left-color: var(--border-warning);
+}
+.card.tip {
+  background: var(--bg-tip);
+  border-left-color: var(--border-tip);
+}
+.card-label {
+  display: inline-block;
+  font-size: 0.8em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 10px;
+  padding: 3px 10px;
+  border-radius: 4px;
+}
+.card.theorem .card-label { background: rgba(58,123,213,0.15); color: var(--border-theorem); }
+.card.example .card-label { background: rgba(230,168,23,0.15); color: #b8860b; }
+.card.proof .card-label { background: rgba(76,175,80,0.15); color: var(--border-proof); }
+.card.warning .card-label { background: rgba(231,76,60,0.15); color: var(--border-warning); }
+.card.tip .card-label { background: rgba(33,150,243,0.15); color: var(--border-tip); }
+
+/* Math display */
+.math-block {
+  text-align: center;
+  margin: 20px 0;
+  padding: 16px;
+  background: rgba(0,0,0,0.02);
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+/* Steps */
+.step {
+  display: flex;
+  gap: 16px;
+  margin: 12px 0;
+  align-items: flex-start;
+}
+.step-num {
+  background: var(--accent);
+  color: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85em;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.step-content { flex: 1; }
+
+/* Checkerboard pattern */
+.checkerboard {
+  display: inline-grid;
+  grid-template-columns: repeat(4, 36px);
+  gap: 0;
+  margin: 12px auto;
+  font-size: 1.1em;
+  font-weight: 600;
+}
+.checkerboard span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid #ddd;
+}
+.cb-plus { color: var(--accent); background: rgba(58,123,213,0.08); }
+.cb-minus { color: var(--border-warning); background: rgba(231,76,60,0.08); }
+
+/* Summary table */
+.summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 0.95em;
+}
+.summary-table th {
+  background: var(--accent);
+  color: white;
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+}
+.summary-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #eee;
+}
+.summary-table tr:nth-child(even) td {
+  background: var(--bg-highlight);
+}
+
+/* Key formula highlight */
+.key-formula {
+  background: linear-gradient(135deg, #fff9e6 0%, #fff3cc 100%);
+  border: 2px solid var(--accent-warm);
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin: 20px 0;
+  text-align: center;
+}
+.key-formula .label {
+  font-size: 0.8em;
+  font-weight: 700;
+  color: #b8860b;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+/* Responsive */
+@media (max-width: 700px) {
+  .hero h1 { font-size: 2em; }
+  .toc-grid { grid-template-columns: 1fr; }
+  .container { padding: 0 16px 40px; }
+  .card { padding: 18px 20px; }
+  .section-header h2 { font-size: 1.4em; }
+}
+
+/* Print */
+@media print {
+  .hero { padding: 30px; }
+  .card { break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+<nav aria-label="講義導覽" style="position:relative;z-index:10;padding:10px 20px;border-bottom:1px solid #dce0d7;background:#f7f6f2;text-align:left;font:13px/1.6 -apple-system,BlinkMacSystemFont,'Microsoft JhengHei',sans-serif"><a href="../index.html" style="color:#315f4b;text-decoration:none;font-weight:600">← 線性代數講義目錄</a></nav>
+
+
+<!-- ===== HERO ===== -->
+<div class="hero">
+  <div class="chapter-tag">Linear Algebra — NSYSU</div>
+  <h1>Chapter 2　行列式</h1>
+  <div class="subtitle">Determinants — 完整學習講義</div>
+</div>
+
+<!-- ===== TOC ===== -->
+<div class="toc">
+  <h2>目錄</h2>
+  <div class="toc-grid">
+    <a class="toc-item" href="#sec-prereq">
+      <span class="num">預備知識</span>排列與逆序數
+    </a>
+    <a class="toc-item" href="#sec2-1">
+      <span class="num">§2.1</span>餘因子展開
+    </a>
+    <a class="toc-item" href="#sec2-2">
+      <span class="num">§2.2</span>列運算求行列式
+    </a>
+    <a class="toc-item" href="#sec2-3-prop">
+      <span class="num">§2.3 前半</span>行列式的性質
+    </a>
+    <a class="toc-item" href="#sec2-3-adj">
+      <span class="num">§2.3 後半</span>伴隨矩陣與 Cramer
+    </a>
+    <a class="toc-item" href="#sec-summary">
+      <span class="num">總整理</span>公式速查表
+    </a>
+  </div>
+</div>
+
+<!-- ===== MAIN ===== -->
+<div class="container">
+
+<!-- =============== 預備知識 =============== -->
+<div class="section" id="sec-prereq">
+  <div class="section-header">
+    <div class="section-number">0</div>
+    <h2>預備知識：排列與逆序數</h2>
+  </div>
+
+  <div class="card theorem">
+    <div class="card-label">定義 — 排列 Permutation</div>
+    <p>集合 \(\{1, 2, \ldots, n\}\) 的一個<strong>排列</strong>是這些數字的一種有序排列，不重複、不遺漏，記作</p>
+    <div class="math-block">$$(j_1, j_2, \ldots, j_n)$$</div>
+    <p>集合 \(\{1,2,\ldots,n\}\) 共有 \(n!\) 種不同的排列。</p>
+  </div>
+
+  <div class="card theorem">
+    <div class="card-label">定義 — 逆序 Inversion</div>
+    <p>在排列 \((j_1, j_2, \ldots, j_n)\) 中，若較大的整數出現在較小整數之前，就形成一個<strong>逆序</strong>。</p>
+    <p>總逆序數的計算方式：對每個位置上的 \(j_k\)，數出在它<strong>後方</strong>比它小的元素個數，再把所有位置的結果加總。</p>
+  </div>
+
+  <div class="card example">
+    <div class="card-label">範例</div>
+    <p>排列 \((3, 1, 4, 2)\) 的逆序數：</p>
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">\(j_1 = 3\)：後方比 3 小的有 1、2 → 貢獻 <strong>2</strong></div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">\(j_2 = 1\)：後方沒有比 1 小的 → 貢獻 <strong>0</strong></div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">\(j_3 = 4\)：後方比 4 小的有 2 → 貢獻 <strong>1</strong></div>
+    </div>
+    <p style="margin-top:10px;">總逆序數 = 2 + 0 + 1 = <strong>3</strong>（奇數 → 奇排列）</p>
+  </div>
+
+  <div class="card theorem">
+    <div class="card-label">定義 — 偶排列 / 奇排列</div>
+    <p>逆序數為偶數 → <strong>偶排列</strong>（even permutation），\(\text{sgn} = +1\)</p>
+    <p>逆序數為奇數 → <strong>奇排列</strong>（odd permutation），\(\text{sgn} = -1\)</p>
+    <div class="math-block">$$\text{sgn}(j_1, j_2, \ldots, j_n) = \prod_{\substack{l=1 \\ l < k}}^{n} \frac{j_k - j_l}{k - l} = \begin{cases} +1 & \text{偶排列} \\ -1 & \text{奇排列} \end{cases}$$</div>
+  </div>
+
+  <div class="card theorem">
+    <div class="card-label">行列式的排列定義</div>
+    <p>對 \(n \times n\) 方陣 \(A = [a_{ij}]\)，其行列式定義為</p>
+    <div class="math-block">$$\det(A) = \sum_{\text{all perm}} \text{sgn}(j_1, j_2, \ldots, j_n)\; a_{1j_1} a_{2j_2} \cdots a_{nj_n}$$</div>
+    <p>求和是對 \(\{1,2,\ldots,n\}\) 的所有 \(n!\) 種排列進行的。</p>
+  </div>
+
+  <div class="card example">
+    <div class="card-label">2×2 行列式推導</div>
+    <p>排列只有 \((1,2)\) 與 \((2,1)\) 兩種：</p>
+    <div class="math-block">
+      $$\det(A) = \text{sgn}(1,2)\,a_{11}a_{22} + \text{sgn}(2,1)\,a_{12}a_{21} = a_{11}a_{22} - a_{12}a_{21}$$
+    </div>
+  </div>
+</div>
+
+<!-- =============== §2.1 =============== -->
+<div class="section" id="sec2-1">
+  <div class="section-header">
+    <div class="section-number">1</div>
+    <h2>§2.1 餘因子展開 Cofactor Expansion</h2>
+  </div>
+
+  <h3>子行列式（Minor）與餘因子（Cofactor）</h3>
+
+  <div class="card theorem">
+    <div class="card-label">定義</div>
+    <p>設 \(A\) 為方陣，元素 \(a_{ij}\) 的：</p>
+    <p><strong>子行列式</strong> \(M_{ij}\)：刪掉第 \(i\) 列、第 \(j\) 行後，剩餘子矩陣的行列式。</p>
+    <p><strong>餘因子</strong> \(C_{ij}\)：</p>
+    <div class="math-block">$$C_{ij} = (-1)^{i+j} M_{ij}$$</div>
+  </div>
+
+  <div class="card tip">
+    <div class="card-label">技巧 — 棋盤格符號規則</div>
+    <p>\((-1)^{i+j}\) 的正負號呈棋盤格分佈，不需要每次計算冪次，直接看位置即可：</p>
+    <div style="text-align:center; margin: 16px 0;">
+      <div class="checkerboard">
+        <span class="cb-plus">+</span><span class="cb-minus">−</span><span class="cb-plus">+</span><span class="cb-minus">−</span>
+        <span class="cb-minus">−</span><span class="cb-plus">+</span><span class="cb-minus">−</span><span class="cb-plus">+</span>
+        <span class="cb-plus">+</span><span class="cb-minus">−</span><span class="cb-plus">+</span><span class="cb-minus">−</span>
+        <span class="cb-minus">−</span><span class="cb-plus">+</span><span class="cb-minus">−</span><span class="cb-plus">+</span>
+      </div>
+    </div>
+    <p>例如：\(C_{11} = +M_{11}\)，\(C_{12} = -M_{12}\)，\(C_{21} = -M_{21}\)，\(C_{22} = +M_{22}\)</p>
+  </div>
+
+  <div class="card example">
+    <div class="card-label">範例 — 求子行列式與餘因子</div>
+    <p>設 \(A = \begin{bmatrix} 3 & 1 & -4 \\ 2 & 5 & 6 \\ 1 & 4 & 8 \end{bmatrix}\)</p>
+    <h4>求 \(M_{11}\) 和 \(C_{11}\)：</h4>
+    <p>刪掉第 1 列、第 1 行：</p>
+    <div class="math-block">$$M_{11} = \begin{vmatrix} 5 & 6 \\ 4 & 8 \end{vmatrix} = (5)(8) - (6)(4) = 40 - 24 = 16$$</div>
+    <div class="math-block">$$C_{11} = (-1)^{1+1} M_{11} = (+1)(16) = 16$$</div>
+    <h4>求 \(M_{32}\) 和 \(C_{32}\)：</h4>
+    <p>刪掉第 3 列、第 2 行：</p>
+    <div class="math-block">$$M_{32} = \begin{vmatrix} 3 & -4 \\ 2 & 6 \end{vmatrix} = (3)(6) - (-4)(2) = 18 + 8 = 26$$</div>
+    <div class="math-block">$$C_{32} = (-1)^{3+2} M_{32} = (-1)(26) = -26$$</div>
+  </div>
+
+  <h3>餘因子展開定理</h3>
+
+  <div class="card theorem">
+    <div class="card-label">定理 2.1.1 — 餘因子展開</div>
+    <p>對 \(n \times n\) 矩陣 \(A\)，<strong>不論選哪一列或哪一行</strong>，餘因子展開的結果都相同：</p>
+    <div class="math-block">$$\det(A) = a_{i1}C_{i1} + a_{i2}C_{i2} + \cdots + a_{in}C_{in} \quad \text{（沿第 \(i\) 列展開）}$$</div>
+    <div class="math-block">$$\det(A) = a_{1j}C_{1j} + a_{2j}C_{2j} + \cdots + a_{nj}C_{nj} \quad \text{（沿第 \(j\) 行展開）}$$</div>
+  </div>
+
+  <div class="card tip">
+    <div class="card-label">策略 — 聰明選列或行</div>
+    <p>選擇含有<strong>最多零</strong>的列或行來展開，可以大幅減少計算量！因為 \(a_{ij} = 0\) 的項直接消掉。</p>
+  </div>
+
+  <div class="card example">
+    <div class="card-label">範例 — 沿第一列展開</div>
+    <p>求 \(A = \begin{bmatrix} 3 & 1 & 0 \\ -2 & -4 & 3 \\ 5 & 4 & -2 \end{bmatrix}\) 的行列式：</p>
+    <div class="math-block">
+      $$\det(A) = 3 \begin{vmatrix} -4 & 3 \\ 4 & -2 \end{vmatrix} - 1 \begin{vmatrix} -2 & 3 \\ 5 & -2 \end{vmatrix} + 0 \begin{vmatrix} -2 & -4 \\ 5 & 4 \end{vmatrix}$$
+    </div>
+    <div class="math-block">$$= 3(-4) - 1(-11) + 0 = -12 + 11 = -1$$</div>
+    <p>注意：\(a_{13} = 0\) 讓第三項直接消掉了。</p>
+  </div>
+
+  <div class="card example">
+    <div class="card-label">範例 — 聰明選行（4×4 矩陣）</div>
+    <p>若 \(A = \begin{bmatrix} 1 & 0 & 0 & -1 \\ 3 & 1 & 2 & 2 \\ 1 & 0 & -2 & 1 \\ 2 & 0 & 0 & 1 \end{bmatrix}\)，第 2 行有三個零，沿第 2 行展開：</p>
+    <div class="math-block">$$\det(A) = 1 \cdot \begin{vmatrix} 1 & 0 & -1 \\ 1 & -2 & 1 \\ 2 & 0 & 1 \end{vmatrix}$$</div>
+    <p>繼續對 3×3 行列式沿第 2 行展開（又有兩個零）：</p>
+    <div class="math-block">$$= 1 \cdot (-2) \cdot \begin{vmatrix} 1 & -1 \\ 2 & 1 \end{vmatrix} = (-2)(1+2) = -6$$</div>
+  </div>
+
+  <h3>三角矩陣的行列式</h3>
+
+  <div class="card theorem">
+    <div class="card-label">定理 2.1.2</div>
+    <p>若 \(A\) 是 \(n \times n\) 的<strong>三角矩陣</strong>（上三角、下三角或對角矩陣），則</p>
+    <div class="key-formula">
+      <div class="label">關鍵公式</div>
+      $$\det(A) = a_{11} \cdot a_{22} \cdots a_{nn}$$
+    </div>
+    <p>即行列式等於<strong>主對角線元素的乘積</strong>。</p>
+  </div>
+
+  <h3>2×2 與 3×3 的快速計算</h3>
+
+  <div class="key-formula">
+    <div class="label">2×2 行列式</div>
+    $$\begin{vmatrix} a_{11} & a_{12} \\ a_{21} & a_{22} \end{vmatrix} = a_{11}a_{22} - a_{12}a_{21}$$
+  </div>
+
+  <div class="card tip">
+    <div class="card-label">技巧 — Sarrus 法（箭頭法，僅限 3×3）</div>
+    <p>3×3 行列式可用對角線法快速計算：</p>
+    <div class="math-block">
+      $$\begin{vmatrix} a_{11} & a_{12} & a_{13} \\ a_{21} & a_{22} & a_{23} \\ a_{31} & a_{32} & a_{33} \end{vmatrix}$$
+    </div>
+    <div class="math-block">
+      $$= \underbrace{a_{11}a_{22}a_{33} + a_{12}a_{23}a_{31} + a_{13}a_{21}a_{32}}_{\text{正對角線（↘ 方向）}} - \underbrace{a_{13}a_{22}a_{31} - a_{11}a_{23}a_{32} - a_{12}a_{21}a_{33}}_{\text{負對角線（↗ 方向）}}$$
+    </div>
+    <p style="margin-top:10px;"><strong>注意：</strong>此法<strong>只適用於 3×3</strong>，4×4 以上不能用！</p>
+  </div>
+
+  <div class="card example">
+    <div class="card-label">範例 — Sarrus 法</div>
+    <div class="math-block">
+      $$\begin{vmatrix} 1 & 2 & 3 \\ -4 & 5 & 6 \\ 7 & -8 & 9 \end{vmatrix}$$
+    </div>
+    <p>正對角線：\(1 \cdot 5 \cdot 9 + 2 \cdot 6 \cdot 7 + 3 \cdot (-4) \cdot (-8) = 45 + 84 + 96 = 225\)</p>
+    <p>負對角線：\(3 \cdot 5 \cdot 7 + 1 \cdot 6 \cdot (-8) + 2 \cdot (-4) \cdot 9 = 105 - 48 - 72 = -15\)</p>
+    <p>行列式 = \(225 - (-15) = 240\)</p>
+  </div>
+</div>
+
+<!-- =============== §2.2 =============== -->
+<div class="section" id="sec2-2">
+  <div class="section-header">
+    <div class="section-number">2</div>
+    <h2>§2.2 用列運算求行列式</h2>
+  </div>
+
+  <div class="card theorem">
+    <div class="card-label">定理 2.2.1 — 零列/零行</div>
+    <p>若 \(A\) 有一整列全為零，或一整行全為零，則 \(\det(A) = 0\)。</p>
+  </div>
+
+  <div class="card theorem">
+    <div class="card-label">定理 2.2.2 — 轉置不改變行列式</div>
+    <div class="key-formula">
+      <div class="label">重要性質</div>
+      $$\det(A) = \det(A^T)$$
+    </div>
+    <p>因此，所有對「列」成立的行列式性質，對「行」也同樣成立。</p>
+  </div>
+
+  <h3>基本列運算對行列式的影響</h3>
+
+  <div class="card theorem">
+    <div class="card-label">定理 2.2.3 — 三大列運算規則（核心！）</div>
+    <p>設 \(A\) 是 \(n \times n\) 矩陣，\(B\) 是對 \(A\) 做一次基本列運算後的結果：</p>
+    
+    <table class="summary-table">
+      <thead>
+        <tr><th>列運算類型</th><th>對行列式的影響</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>(a) 某一列乘以純量 \(k\)</strong></td>
+          <td>\(\det(B) = k \cdot \det(A)\)</td>
+        </tr>
+        <tr>
+          <td><strong>(b) 交換兩列</strong></td>
+          <td>\(\det(B) = -\det(A)\)</td>
+        </tr>
+        <tr>
+          <td><strong>(c) 某列的 \(k\) 倍加到另一列</strong></td>
+          <td>\(\det(B) = \det(A)\)（不變！）</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="margin-top:10px;">同樣的規則也適用於行運算（因為 \(\det(A) = \det(A^T)\)）。</p>
+  </div>
+
+  <div class="card warning">
+    <div class="card-label">常見錯誤</div>
+    <p><strong>「某列乘 \(k\)」不等於「整個矩陣乘 \(k\)」！</strong></p>
+    <p>如果把整個 \(n \times n\) 矩陣乘以 \(k\)，每一列都乘了 \(k\)，所以：</p>
+    <div class="math-block">$$\det(kA) = k^n \det(A)$$</div>
+    <p>不是 \(k \cdot \det(A)\)！</p>
+  </div>
+
+  <h3>基本矩陣的行列式</h3>
+
+  <div class="card theorem">
+    <div class="card-label">定理 2.2.4</div>
+    <p>設 \(E\) 是 \(n \times n\) 基本矩陣：</p>
+    <p>(a) \(E\) 由「某列乘 \(k\)」得到 → \(\det(E) = k\)</p>
+    <p>(b) \(E\) 由「交換兩列」得到 → \(\det(E) = -1\)</p>
+    <p>(c) \(E\) 由「某列的倍數加到另一列」得到 → \(\det(E) = 1\)</p>
+  </div>
+
+  <div class="card theorem">
+    <div class="card-label">定理 2.2.5 — 比例列/行</div>
+    <p>若方陣 \(A\) 有<strong>兩列成比例</strong>（或兩行成比例），則 \(\det(A) = 0\)。</p>
+    <p>特殊情形：兩列相同 → 也是比例關係（比例常數為 1）。</p>
+  </div>
+
+  <h3>列運算法求行列式的步驟</h3>
+
+  <div class="card tip">
+    <div class="card-label">核心策略</div>
+    <p>把矩陣化為<strong>上三角</strong>（列梯形形式），然後主對角線元素相乘，再乘上過程中產生的係數。</p>
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">用列運算 (c)（某列倍數加到另一列）消去下三角元素 → <strong>行列式不變</strong></div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">如需交換列 → 乘以 \((-1)\)</div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">如提出公因子 \(k\) → 乘以 \(k\)</div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-content">化為上三角後，行列式 = 累積係數 × 主對角線乘積</div>
+    </div>
+  </div>
+
+  <div class="card example">
+    <div class="card-label">範例 — 列運算法</div>
+    <p>求 \(A = \begin{bmatrix} 0 & 1 & 5 \\ 3 & -6 & 9 \\ 2 & 6 & 1 \end{bmatrix}\) 的行列式：</p>
+    
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        交換 \(R_1 \leftrightarrow R_2\)（因為 \(a_{11}=0\)）：乘以 \((-1)\)
+        <div class="math-block">$$= -\begin{vmatrix} 3 & -6 & 9 \\ 0 & 1 & 5 \\ 2 & 6 & 1 \end{vmatrix}$$</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        提出第 1 列公因子 3：
+        <div class="math-block">$$= -3\begin{vmatrix} 1 & -2 & 3 \\ 0 & 1 & 5 \\ 2 & 6 & 1 \end{vmatrix}$$</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        \(R_3 \leftarrow R_3 - 2R_1\)：
+        <div class="math-block">$$= -3\begin{vmatrix} 1 & -2 & 3 \\ 0 & 1 & 5 \\ 0 & 10 & -5 \end{vmatrix}$$</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        \(R_3 \leftarrow R_3 - 10R_2\)：
+        <div class="math-block">$$= -3\begin{vmatrix} 1 & -2 & 3 \\ 0 & 1 & 5 \\ 0 & 0 & -55 \end{vmatrix}$$</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-content">
+        上三角行列式 = 主對角線乘積：
+        <div class="math-block">$$= (-3)(1)(1)(-55) = 165$$</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =============== §2.3 前半 =============== -->
+<div class="section" id="sec2-3-prop">
+  <div class="section-header">
+    <div class="section-number">3</div>
+    <h2>§2.3 行列式的性質</h2>
+  </div>
+
+  <h3>det(kA) 的公式</h3>
+  <div class="key-formula">
+    <div class="label">純量乘法</div>
+    $$\det(kA) = k^n \det(A) \quad \text{（\(A\) 為 \(n \times n\)）}$$
+  </div>
+
+  <h3>行列式的加法性質</h3>
+  <div class="card theorem">
+    <div class="card-label">定理 2.3.1 — 行列式的列加法</div>
+    <p>若 \(A\)、\(B\)、\(C\) 是 \(n \times n\) 矩陣，<strong>只有第 \(r\) 列不同</strong>，且 \(C\) 的第 \(r\) 列等於 \(A\) 與 \(B\) 的第 \(r\) 列對應相加，則</p>
+    <div class="math-block">$$\det(C) = \det(A) + \det(B)$$</div>
+    <p><strong>注意：</strong>一般情況下 \(\det(A+B) \neq \det(A) + \det(B)\)！</p>
+  </div>
+
+  <div class="card warning">
+    <div class="card-label">常見錯誤</div>
+    <p>行列式<strong>不是</strong>線性函數！</p>
+    <div class="math-block">$$\det(A + B) \neq \det(A) + \det(B) \quad \text{（一般不成立）}$$</div>
+    <p>例：\(A = \begin{bmatrix}1&2\\2&5\end{bmatrix}\)，\(B = \begin{bmatrix}3&1\\1&3\end{bmatrix}\)，\(\det(A)=1\)，\(\det(B)=8\)，但 \(\det(A+B)=23 \neq 9\)。</p>
+  </div>
+
+  <h3>矩陣乘積的行列式</h3>
+
+  <div class="card theorem">
+    <div class="card-label">引理 2.3.2</div>
+    <p>若 \(E\) 是基本矩陣，\(B\) 是任意 \(n \times n\) 矩陣，則</p>
+    <div class="math-block">$$\det(EB) = \det(E) \cdot \det(B)$$</div>
+  </div>
+
+  <div class="card theorem">
+    <div class="card-label">定理 2.3.3 — 行列式判斷可逆性</div>
+    <div class="key-formula">
+      <div class="label">核心定理</div>
+      $$A \text{ 可逆} \iff \det(A) \neq 0$$
+    </div>
+    <p>這是判斷矩陣是否可逆的另一個等價條件，可加入 Theorem 1.6.4 的等價命題清單中。</p>
+  </div>
+
+  <div class="card theorem">
+    <div class="card-label">定理 2.3.4 — 乘積行列式</div>
+    <div class="key-formula">
+      <div class="label">超重要公式</div>
+      $$\det(AB) = \det(A) \cdot \det(B)$$
+    </div>
+    <p>對任意兩個同尺寸的方陣 \(A\)、\(B\) 成立。</p>
+    <p>推廣：\(\det(A_1 A_2 \cdots A_k) = \det(A_1) \det(A_2) \cdots \det(A_k)\)</p>
+  </div>
+
+  <div class="card theorem">
+    <div class="card-label">定理 2.3.5 — 逆矩陣的行列式</div>
+    <p>若 \(A\) 可逆，則</p>
+    <div class="math-block">$$\det(A^{-1}) = \frac{1}{\det(A)}$$</div>
+    <p><strong>證明：</strong>由 \(A^{-1}A = I\)，取行列式得 \(\det(A^{-1})\det(A) = 1\)。</p>
+  </div>
+</div>
+
+<!-- =============== §2.3 後半 =============== -->
+<div class="section" id="sec2-3-adj">
+  <div class="section-header">
+    <div class="section-number">4</div>
+    <h2>§2.3 伴隨矩陣與反矩陣公式</h2>
+  </div>
+
+  <h3>不同列的元素與餘因子</h3>
+  <div class="card theorem">
+    <div class="card-label">重要性質</div>
+    <p>用第 \(i\) 列的元素搭配第 \(j\) 列的餘因子（\(i \neq j\)），所得的和為零：</p>
+    <div class="math-block">$$a_{i1}C_{j1} + a_{i2}C_{j2} + \cdots + a_{in}C_{jn} = 0 \quad (i \neq j)$$</div>
+    <p>而用同一列的元素搭配同列的餘因子則等於 \(\det(A)\)：</p>
+    <div class="math-block">$$a_{i1}C_{i1} + a_{i2}C_{i2} + \cdots + a_{in}C_{in} = \det(A)$$</div>
+  </div>
+
+  <h3>伴隨矩陣 Adjoint</h3>
+  <div class="card theorem">
+    <div class="card-label">定義</div>
+    <p><strong>餘因子矩陣：</strong>將 \(A\) 每個元素替換為其餘因子 \(C_{ij}\) 得到的矩陣。</p>
+    <p><strong>伴隨矩陣</strong> \(\text{adj}(A)\)：餘因子矩陣的<strong>轉置</strong>。</p>
+    <div class="math-block">$$\text{adj}(A) = \begin{bmatrix} C_{11} & C_{21} & \cdots & C_{n1} \\ C_{12} & C_{22} & \cdots & C_{n2} \\ \vdots & \vdots & \ddots & \vdots \\ C_{1n} & C_{2n} & \cdots & C_{nn} \end{bmatrix}$$</div>
+    <p>注意下標：\(\text{adj}(A)\) 的第 \((i,j)\) 元素是 \(C_{ji}\)（轉置了！）。</p>
+  </div>
+
+  <div class="card theorem">
+    <div class="card-label">定理 2.3.6 — 伴隨矩陣求反矩陣</div>
+    <p>若 \(A\) 可逆，則</p>
+    <div class="key-formula">
+      <div class="label">反矩陣公式</div>
+      $$A^{-1} = \frac{1}{\det(A)} \text{adj}(A)$$
+    </div>
+    <p><strong>證明核心：</strong>\(A \cdot \text{adj}(A) = \det(A) \cdot I\)，因為對角線上的元素正好是同列餘因子展開（等於 \(\det A\)），非對角線元素是不同列的混合（等於 0）。</p>
+  </div>
+
+  <div class="card example">
+    <div class="card-label">範例 — 用伴隨矩陣求反矩陣</div>
+    <p>設 \(A = \begin{bmatrix} 3 & 2 & -1 \\ 1 & 6 & 3 \\ 2 & -4 & 0 \end{bmatrix}\)</p>
+    <p>先算出所有餘因子：</p>
+    <div class="math-block">
+      $$C_{11}=12,\; C_{12}=6,\; C_{13}=-16$$
+      $$C_{21}=4,\; C_{22}=2,\; C_{23}=16$$
+      $$C_{31}=12,\; C_{32}=-10,\; C_{33}=16$$
+    </div>
+    <p>\(\det(A) = 3(12) + 2(6) + (-1)(-16) = 36+12+16 = 64\)</p>
+    <div class="math-block">
+      $$A^{-1} = \frac{1}{64}\begin{bmatrix} 12 & 4 & 12 \\ 6 & 2 & -10 \\ -16 & 16 & 16 \end{bmatrix}$$
+    </div>
+  </div>
+</div>
+
+<!-- =============== 總整理 =============== -->
+<div class="section" id="sec-summary">
+  <div class="section-header">
+    <div class="section-number">★</div>
+    <h2>總整理：公式與定理速查表</h2>
+  </div>
+
+  <table class="summary-table">
+    <thead>
+      <tr><th>項目</th><th>公式 / 結論</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>2×2 行列式</td><td>\(\det\begin{bmatrix}a&b\\c&d\end{bmatrix} = ad - bc\)</td></tr>
+      <tr><td>餘因子</td><td>\(C_{ij} = (-1)^{i+j}M_{ij}\)</td></tr>
+      <tr><td>餘因子展開</td><td>沿任意列或行：\(\det(A) = \sum_k a_{ik}C_{ik}\)</td></tr>
+      <tr><td>三角矩陣</td><td>\(\det(A) = a_{11}a_{22}\cdots a_{nn}\)</td></tr>
+      <tr><td>轉置</td><td>\(\det(A^T) = \det(A)\)</td></tr>
+      <tr><td>某列乘 \(k\)</td><td>行列式乘以 \(k\)</td></tr>
+      <tr><td>交換兩列</td><td>行列式乘以 \(-1\)</td></tr>
+      <tr><td>某列倍數加到另一列</td><td>行列式不變</td></tr>
+      <tr><td>整個矩陣乘 \(k\)</td><td>\(\det(kA) = k^n\det(A)\)</td></tr>
+      <tr><td>乘積</td><td>\(\det(AB) = \det(A)\det(B)\)</td></tr>
+      <tr><td>可逆性判斷</td><td>\(A\) 可逆 \(\iff \det(A) \neq 0\)</td></tr>
+      <tr><td>逆矩陣行列式</td><td>\(\det(A^{-1}) = 1/\det(A)\)</td></tr>
+      <tr><td>伴隨矩陣求逆</td><td>\(A^{-1} = \frac{1}{\det(A)}\text{adj}(A)\)</td></tr>
+      <tr><td>比例列/行</td><td>行列式 = 0</td></tr>
+      <tr><td>零列/行</td><td>行列式 = 0</td></tr>
+      <tr><td>不同列混合</td><td>\(\sum_k a_{ik}C_{jk} = 0\;(i\neq j)\)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="card tip">
+    <div class="card-label">學習建議</div>
+    <p><strong>計算行列式的策略優先順序：</strong></p>
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">先觀察是否為三角矩陣 → 直接乘對角線</div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">觀察是否有比例列/行或零列/行 → 直接判定為 0</div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">2×2 或 3×3 → 直接用公式或 Sarrus 法</div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-content">4×4 以上 → 用列運算化為三角形式，或先製造零再餘因子展開</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- container -->
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  renderMathInElement(document.body, {
+    delimiters: [
+      {left: '$$', right: '$$', display: true},
+      {left: '\\(', right: '\\)', display: false}
+    ],
+    throwOnError: false
+  });
+});
+</script>
+</body>
+</html>

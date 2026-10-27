@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Linear Algebra CH3-3 &amp; 3-4 學習講義</title>
+  <style>
+    :root {
+      --bg: #f7f8fb;
+      --paper: #ffffff;
+      --ink: #172033;
+      --muted: #5e6b7c;
+      --line: #d8dee8;
+      --blue: #2563a9;
+      --blue-soft: #e9f2fc;
+      --gold: #a56b18;
+      --gold-soft: #fff5df;
+      --green: #2e7d5b;
+      --green-soft: #e9f7f1;
+      --red: #b64834;
+      --red-soft: #fff0ed;
+      --shadow: 0 14px 34px rgba(23, 32, 51, 0.09);
+      --radius: 18px;
+      --max: 1180px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgba(37, 99, 169, 0.06) 1px, transparent 1px),
+        linear-gradient(180deg, #f7f8fb 0%, #eef3f8 42%, #fbfaf7 100%);
+      background-size: 32px 32px, auto;
+      font-family: "Avenir Next", "PingFang TC", "Noto Sans TC", system-ui, sans-serif;
+      line-height: 1.75;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .shell {
+      width: min(var(--max), calc(100% - 32px));
+      margin: 24px auto 72px;
+    }
+
+    .hero {
+      padding: 40px;
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(245, 249, 253, 0.96));
+      box-shadow: var(--shadow);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      margin-bottom: 12px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: var(--blue-soft);
+      color: var(--blue);
+      font-size: 0.88rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      margin: 0 0 12px;
+      font-family: "Iowan Old Style", "Palatino Linotype", "Noto Serif TC", Georgia, serif;
+      line-height: 1.18;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      max-width: 12ch;
+      font-size: clamp(2.4rem, 5vw, 4.8rem);
+    }
+
+    h2 {
+      font-size: clamp(1.8rem, 2.8vw, 2.55rem);
+    }
+
+    h3 {
+      font-size: 1.42rem;
+    }
+
+    h4 {
+      font-size: 1.12rem;
+    }
+
+    p {
+      margin: 0 0 12px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
+      gap: 28px;
+      align-items: end;
+    }
+
+    .hero p {
+      max-width: 66ch;
+      color: var(--muted);
+      font-size: 1.05rem;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 22px;
+    }
+
+    .chip {
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      color: #2f4056;
+      font-size: 0.93rem;
+    }
+
+    .hero-card {
+      padding: 20px;
+      border-radius: 18px;
+      background: #15243a;
+      color: #f6fbff;
+    }
+
+    .hero-card ol {
+      margin: 10px 0 0;
+      padding-left: 22px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: 22px;
+      margin-top: 22px;
+      align-items: start;
+    }
+
+    nav {
+      position: sticky;
+      top: 18px;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: var(--shadow);
+    }
+
+    nav h2 {
+      font-size: 1.25rem;
+    }
+
+    nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    nav li + li {
+      margin-top: 8px;
+    }
+
+    nav a {
+      display: block;
+      padding: 9px 10px;
+      border-radius: 12px;
+      color: var(--muted);
+      text-decoration: none;
+    }
+
+    nav a:hover {
+      background: var(--blue-soft);
+      color: var(--blue);
+    }
+
+    .nav-note {
+      margin-top: 14px;
+      padding: 13px;
+      border-radius: 14px;
+      background: var(--gold-soft);
+      color: #6f4610;
+      font-size: 0.92rem;
+    }
+
+    main {
+      display: grid;
+      gap: 20px;
+    }
+
+    section {
+      padding: 28px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: var(--shadow);
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: end;
+      margin-bottom: 18px;
+    }
+
+    .section-id {
+      margin-bottom: 5px;
+      color: var(--blue);
+      font-size: 0.84rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .subtitle {
+      max-width: 50ch;
+      color: var(--muted);
+    }
+
+    .grid-two {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .grid-three {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .panel,
+    .concept,
+    .example,
+    .theorem,
+    .warning {
+      padding: 19px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--paper);
+    }
+
+    .concept {
+      border-color: rgba(37, 99, 169, 0.22);
+      background: linear-gradient(180deg, var(--blue-soft), #fff);
+    }
+
+    .theorem {
+      border-color: rgba(46, 125, 91, 0.24);
+      background: linear-gradient(180deg, var(--green-soft), #fff);
+    }
+
+    .example {
+      border-color: rgba(165, 107, 24, 0.26);
+      background: linear-gradient(180deg, var(--gold-soft), #fff);
+    }
+
+    .warning {
+      border-color: rgba(182, 72, 52, 0.25);
+      background: linear-gradient(180deg, var(--red-soft), #fff);
+    }
+
+    .label {
+      display: inline-flex;
+      margin-bottom: 8px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: rgba(23, 32, 51, 0.08);
+      color: #344156;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .plain {
+      margin-bottom: 12px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.78);
+      font-weight: 700;
+    }
+
+    .plain span {
+      color: var(--blue);
+    }
+
+    .summary {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(23, 32, 51, 0.05);
+    }
+
+    .summary strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--ink);
+    }
+
+    ul,
+    ol {
+      margin: 10px 0 0;
+      padding-left: 22px;
+    }
+
+    li + li {
+      margin-top: 7px;
+    }
+
+    code,
+    .mono {
+      font-family: "SFMono-Regular", "Menlo", "Consolas", monospace;
+    }
+
+    .formula {
+      margin: 12px 0;
+      padding: 13px 15px;
+      border-left: 4px solid var(--blue);
+      border-radius: 0 14px 14px 0;
+      background: rgba(37, 99, 169, 0.08);
+      overflow-x: auto;
+      font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+      font-size: 1.04rem;
+      white-space: nowrap;
+    }
+
+    .eq {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin: 12px 0;
+      overflow-x: auto;
+      font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+      font-size: 1.1rem;
+    }
+
+    .matrix,
+    .det {
+      position: relative;
+      display: inline-block;
+      padding: 4px 12px;
+      vertical-align: middle;
+    }
+
+    .matrix::before,
+    .matrix::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 8px;
+      border-top: 2px solid currentColor;
+      border-bottom: 2px solid currentColor;
+    }
+
+    .matrix::before {
+      left: 0;
+      border-left: 2px solid currentColor;
+    }
+
+    .matrix::after {
+      right: 0;
+      border-right: 2px solid currentColor;
+    }
+
+    .det {
+      border-left: 2px solid currentColor;
+      border-right: 2px solid currentColor;
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+
+    .matrix table,
+    .det table {
+      border-collapse: collapse;
+    }
+
+    .matrix td,
+    .det td {
+      min-width: 2.05rem;
+      padding: 1px 7px;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .matrix.slim td {
+      min-width: 1.35rem;
+      padding-left: 4px;
+      padding-right: 4px;
+    }
+
+    .steps {
+      counter-reset: step;
+      display: grid;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .step {
+      position: relative;
+      padding: 14px 14px 14px 52px;
+      border: 1px solid rgba(23, 32, 51, 0.1);
+      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.72);
+    }
+
+    .step::before {
+      counter-increment: step;
+      content: counter(step);
+      position: absolute;
+      left: 14px;
+      top: 14px;
+      display: grid;
+      place-items: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--blue);
+      color: #fff;
+      font-size: 0.84rem;
+      font-weight: 800;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin-top: 12px;
+    }
+
+    table.summary-table {
+      width: 100%;
+      min-width: 660px;
+      border-collapse: collapse;
+      background: #fff;
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .summary-table th,
+    .summary-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .summary-table th {
+      background: #edf3fa;
+      color: #25344a;
+      font-size: 0.9rem;
+    }
+
+    details {
+      margin-top: 14px;
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.75);
+    }
+
+    summary {
+      cursor: pointer;
+      color: var(--blue);
+      font-weight: 800;
+    }
+
+    .diagram {
+      width: 100%;
+      margin: 12px 0 0;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #fff;
+    }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+      margin-top: 2px;
+      padding: 22px 24px;
+      border-radius: 22px;
+      background: #15243a;
+      color: #eef6ff;
+    }
+
+    .footer strong {
+      display: block;
+      margin-bottom: 5px;
+      font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+      font-size: 1.08rem;
+    }
+
+    @media (max-width: 1020px) {
+      .hero-grid,
+      .layout,
+      .grid-two,
+      .grid-three {
+        grid-template-columns: 1fr;
+      }
+
+      nav {
+        position: static;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .shell {
+        width: min(var(--max), calc(100% - 18px));
+        margin-top: 10px;
+      }
+
+      .hero,
+      section {
+        padding: 20px;
+      }
+
+      h1 {
+        max-width: none;
+      }
+
+      .section-head {
+        display: block;
+      }
+
+      .matrix td,
+      .det td {
+        min-width: 1.5rem;
+        padding-left: 4px;
+        padding-right: 4px;
+      }
+    }
+  </style>
+</head>
+<body>
+<nav aria-label="講義導覽" style="position:relative;z-index:10;padding:10px 20px;border-bottom:1px solid #dce0d7;background:#f7f6f2;text-align:left;font:13px/1.6 -apple-system,BlinkMacSystemFont,'Microsoft JhengHei',sans-serif"><a href="../index.html" style="color:#315f4b;text-decoration:none;font-weight:600">← 線性代數講義目錄</a></nav>
+
+  <div class="shell">
+    <header class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="eyebrow">Linear Algebra CH3-3 &amp; CH3-4</div>
+          <h1>Rank 到 Eigenvector</h1>
+          <p>
+            本講義整理教材 PDF page 77-150：3-3 先把 row space、column space、null space 的維度關係整理成 rank-nullity 與四個 fundamental spaces；3-4 再把矩陣作用中「方向不變，只改變倍數」的向量抽出來，導入 eigenvalue、eigenvector 與 eigenspace。
+          </p>
+          <div class="chips">
+            <span class="chip">Rank / Nullity</span>
+            <span class="chip">Dimension Theorem</span>
+            <span class="chip">Fundamental Spaces</span>
+            <span class="chip">Eigenvalues</span>
+            <span class="chip">Eigenspaces</span>
+          </div>
+        </div>
+        <aside class="hero-card">
+          <h3>本次進度主線</h3>
+          <ol>
+            <li>rank 是 row space 和 column space 的共同維度。</li>
+            <li>nullity 是 <code>Ax = 0</code> 解空間的維度。</li>
+            <li><code>rank(A) + nullity(A) = n</code> 把 pivot 與 free variables 接起來。</li>
+            <li>eigenvector 是被矩陣作用後仍留在同一直線上的向量。</li>
+          </ol>
+        </aside>
+      </div>
+    </header>
+
+    <div class="layout">
+      <nav>
+        <h2>閱讀地圖</h2>
+        <ul>
+          <li><a href="#map">0. 學習路線</a></li>
+          <li><a href="#rank">1. Rank 與 Nullity</a></li>
+          <li><a href="#rank-nullity">2. Rank-Nullity Theorem</a></li>
+          <li><a href="#systems">3. Over / Under Systems</a></li>
+          <li><a href="#fundamental">4. Fundamental Spaces</a></li>
+          <li><a href="#eigen-def">5. Eigenvector 定義</a></li>
+          <li><a href="#char">6. Characteristic Equation</a></li>
+          <li><a href="#eigenspace">7. Eigenspace</a></li>
+          <li><a href="#power">8. Powers &amp; Invertibility</a></li>
+          <li><a href="#practice">9. 教材練習整理</a></li>
+          <li><a href="#review">10. 複習清單</a></li>
+        </ul>
+        <div class="nav-note">
+          建議讀法：每節先讀「一句白話核心」，再看公式與例題。矩陣例題已用括號矩陣重排，避免純文字對齊跑掉。
+        </div>
+      </nav>
+
+      <main>
+        <section id="map">
+          <div class="section-head">
+            <div>
+              <div class="section-id">Roadmap</div>
+              <h2>這兩節在學什麼？</h2>
+            </div>
+            <p class="subtitle">3-3 是「空間維度總帳」，3-4 是「矩陣作用下的特殊方向」。</p>
+          </div>
+          <div class="grid-three">
+            <div class="panel">
+              <span class="label">First</span>
+              <h3>先看矩陣空間的維度</h3>
+              <p>row space 和 column space 看起來住在不同空間，但它們的維度永遠相同，這個共同維度就是 <strong>rank</strong>。</p>
+            </div>
+            <div class="panel">
+              <span class="label">Then</span>
+              <h3>再用 free variables 算 nullity</h3>
+              <p><code>Ax = 0</code> 的解空間有幾個自由參數，就代表 null space 有幾個 basis vectors，也就是 <strong>nullity</strong>。</p>
+            </div>
+            <div class="panel">
+              <span class="label">Finally</span>
+              <h3>最後進入 eigen 問題</h3>
+              <p>如果 <code>Ax</code> 只把 <code>x</code> 拉長、縮短或反向，而沒有改變方向，<code>x</code> 就是 eigenvector。</p>
+            </div>
+          </div>
+        </section>
+
+        <section id="rank">
+          <div class="section-head">
+            <div>
+              <div class="section-id">CH3-3</div>
+              <h2>Rank 與 Nullity</h2>
+            </div>
+            <p class="subtitle">從 row/column space 的共同維度，到 null space 的參數數量。</p>
+          </div>
+
+          <div class="concept">
+            <div class="plain"><span>一句白話核心：</span>rank 看「矩陣真正提供幾個獨立方向」，nullity 看「<code>Ax = 0</code> 還剩幾個自由方向」。</div>
+            <h3>細節</h3>
+            <p>教材先證明 row space 和 column space 具有相同維度。若 <code>R</code> 是 <code>A</code> 的任一 echelon form，則 row operations 讓 row space 維度不變，而 column space 的維度可由 leading 1 的數量讀出。兩者最後都等於 pivot 數量。</p>
+            <div class="formula">rank(A) = dim(Row(A)) = dim(Col(A))</div>
+            <div class="formula">nullity(A) = dim(N(A))，其中 N(A) 是 Ax = 0 的解空間</div>
+            <div class="summary">
+              <strong>重點整理</strong>
+              <ul>
+                <li>rank 不是矩陣有幾列或幾欄，而是獨立資訊的數量。</li>
+                <li>nullity 不是零的個數，而是 homogeneous system 的自由度。</li>
+                <li>對 <code>m &times; n</code> 矩陣，rank 最多只能是 <code>min(m, n)</code>。</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="example" style="margin-top: 16px;">
+            <span class="label">教材例題 page 80-81</span>
+            <h3>4 &times; 6 矩陣的 rank 與 nullity</h3>
+            <p>題目要求找出下列矩陣的 rank 和 nullity：</p>
+            <div class="eq">
+              <span>A =</span>
+              <span class="matrix">
+                <table>
+                  <tr><td>-1</td><td>2</td><td>0</td><td>4</td><td>5</td><td>-3</td></tr>
+                  <tr><td>3</td><td>-7</td><td>2</td><td>0</td><td>1</td><td>4</td></tr>
+                  <tr><td>2</td><td>-5</td><td>2</td><td>4</td><td>6</td><td>1</td></tr>
+                  <tr><td>4</td><td>-9</td><td>2</td><td>-4</td><td>-4</td><td>7</td></tr>
+                </table>
+              </span>
+            </div>
+            <div class="steps">
+              <div class="step">
+                <h4>先看 RREF，數 leading 1</h4>
+                <div class="eq">
+                  <span>rref(A) =</span>
+                  <span class="matrix">
+                    <table>
+                      <tr><td>1</td><td>0</td><td>-4</td><td>-28</td><td>-37</td><td>13</td></tr>
+                      <tr><td>0</td><td>1</td><td>-2</td><td>-12</td><td>-16</td><td>5</td></tr>
+                      <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+                      <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+                    </table>
+                  </span>
+                </div>
+                <p>有兩個 leading 1，所以 row space 和 column space 都是二維，<strong>rank(A) = 2</strong>。</p>
+              </div>
+              <div class="step">
+                <h4>再解 <code>Ax = 0</code>，找 free variables</h4>
+                <div class="formula">x<sub>1</sub> = 4x<sub>3</sub> + 28x<sub>4</sub> + 37x<sub>5</sub> - 13x<sub>6</sub></div>
+                <div class="formula">x<sub>2</sub> = 2x<sub>3</sub> + 12x<sub>4</sub> + 16x<sub>5</sub> - 5x<sub>6</sub></div>
+                <p>因此 <code>x3, x4, x5, x6</code> 是自由變數，一共有四個自由參數。</p>
+              </div>
+              <div class="step">
+                <h4>把 general solution 寫成 null space basis</h4>
+                <div class="eq">
+                  <span>x = r</span>
+                  <span class="matrix slim"><table><tr><td>4</td></tr><tr><td>2</td></tr><tr><td>1</td></tr><tr><td>0</td></tr><tr><td>0</td></tr><tr><td>0</td></tr></table></span>
+                  <span>+ s</span>
+                  <span class="matrix slim"><table><tr><td>28</td></tr><tr><td>12</td></tr><tr><td>0</td></tr><tr><td>1</td></tr><tr><td>0</td></tr><tr><td>0</td></tr></table></span>
+                  <span>+ t</span>
+                  <span class="matrix slim"><table><tr><td>37</td></tr><tr><td>16</td></tr><tr><td>0</td></tr><tr><td>0</td></tr><tr><td>1</td></tr><tr><td>0</td></tr></table></span>
+                  <span>+ u</span>
+                  <span class="matrix slim"><table><tr><td>-13</td></tr><tr><td>-5</td></tr><tr><td>0</td></tr><tr><td>0</td></tr><tr><td>0</td></tr><tr><td>1</td></tr></table></span>
+                </div>
+                <p>右邊四個向量形成 null space 的 basis，所以 <strong>nullity(A) = 4</strong>。</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="rank-nullity">
+          <div class="section-head">
+            <div>
+              <div class="section-id">Theorem 3.3.1-3.3.3</div>
+              <h2>Rank-Nullity 與等價定理</h2>
+            </div>
+            <p class="subtitle">這一段把 pivot columns 和 free variables 放進同一個公式。</p>
+          </div>
+
+          <div class="grid-two">
+            <div class="theorem">
+              <span class="label">Theorem 3.3.1</span>
+              <h3>Dimension Theorem for Matrices</h3>
+              <div class="plain"><span>一句白話核心：</span>一個未知數不是 pivot，就是 free；兩者加起來就是全部欄數。</div>
+              <div class="formula">若 A 有 n columns，則 rank(A) + nullity(A) = n</div>
+              <p>rank 是 leading variables 的數量；nullity 是 free variables 的數量。教材例題的 4 &times; 6 矩陣有 <code>rank = 2</code>、<code>nullity = 4</code>，因此 <code>2 + 4 = 6</code>。</p>
+              <div class="summary">
+                <strong>重點整理</strong>
+                <ul>
+                  <li>n 指的是 columns 數，也就是未知數個數。</li>
+                  <li>不要用 rows 數去套 rank-nullity。</li>
+                  <li>知道 rank 就能直接得到 nullity：<code>nullity(A) = n - rank(A)</code>。</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="theorem">
+              <span class="label">Theorem 3.3.2</span>
+              <h3>General Solution 的參數數量</h3>
+              <div class="plain"><span>一句白話核心：</span><code>Ax = 0</code> 的參數數量，就是 nullity。</div>
+              <ul>
+                <li><code>rank(A)</code> = <code>Ax = 0</code> general solution 中 leading variables 的數量。</li>
+                <li><code>nullity(A)</code> = <code>Ax = 0</code> general solution 中 parameters 的數量。</li>
+              </ul>
+              <p>教材例題：若 <code>A</code> 是 <code>5 &times; 7</code> 且 <code>rank(A) = 3</code>，則</p>
+              <div class="formula">nullity(A) = n - rank(A) = 7 - 3 = 4</div>
+              <p>所以 general solution 有四個 parameters。</p>
+            </div>
+          </div>
+
+          <div class="warning" style="margin-top: 16px;">
+            <span class="label">Theorem 3.3.3</span>
+            <h3>Invertible Matrix 的等價判斷</h3>
+            <p>對 <code>n &times; n</code> 矩陣，下面這些說法本質上都在說同一件事：矩陣沒有遺失任何方向。</p>
+            <div class="grid-two">
+              <ul>
+                <li><code>A</code> is invertible。</li>
+                <li><code>Ax = 0</code> 只有 trivial solution。</li>
+                <li>RREF 是 <code>I<sub>n</sub></code>。</li>
+                <li><code>det(A) &ne; 0</code>。</li>
+                <li>columns / rows linearly independent。</li>
+              </ul>
+              <ul>
+                <li>columns / rows span <code>R<sup>n</sup></code>。</li>
+                <li>columns / rows form a basis for <code>R<sup>n</sup></code>。</li>
+                <li><code>rank(A) = n</code>。</li>
+                <li><code>nullity(A) = 0</code>。</li>
+                <li><code>N(A)<sup>&perp;</sup> = R<sup>n</sup></code> 且 <code>Row(A)<sup>&perp;</sup> = {0}</code>。</li>
+              </ul>
+            </div>
+            <div class="summary">
+              <strong>考試判斷法</strong>
+              <p>如果你能證明其中一項成立，其他項通常就能直接引用等價定理。最常用的是：<code>det(A) &ne; 0</code>、<code>rank(A) = n</code>、<code>nullity(A) = 0</code>。</p>
+            </div>
+          </div>
+        </section>
+
+        <section id="systems">
+          <div class="section-head">
+            <div>
+              <div class="section-id">Theorem 3.3.4-3.3.5</div>
+              <h2>Overdetermined 與 Underdetermined Systems</h2>
+            </div>
+            <p class="subtitle">多方程不一定無解，少方程也不一定有解；rank 才是關鍵。</p>
+          </div>
+
+          <div class="concept">
+            <div class="plain"><span>一句白話核心：</span>consistent 時，解的自由度由 <code>n - rank(A)</code> 決定。</div>
+            <h3>細節</h3>
+            <p>若 <code>Ax = b</code> 是 consistent，且 <code>A</code> 是 <code>m &times; n</code>、<code>rank(A) = r</code>，則 general solution 含有 <code>n - r</code> 個 parameters。這是 Theorem 3.3.4。</p>
+            <div class="formula">consistent Ax = b &Rightarrow; number of parameters = n - r</div>
+            <div class="summary">
+              <strong>重點整理</strong>
+              <ul>
+                <li>overdetermined: <code>m &gt; n</code>，方程比未知數多，至少有某些 <code>b</code> 會讓系統 inconsistent。</li>
+                <li>underdetermined: <code>m &lt; n</code>，如果 consistent，必有至少一個自由參數，因此 infinitely many solutions。</li>
+                <li>不要只看方程數，要看 <code>b</code> 是否落在 <code>Col(A)</code>。</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="grid-two" style="margin-top: 16px;">
+            <div class="example">
+              <span class="label">教材例題 page 92</span>
+              <h3>7 equations, 5 unknowns, rank 4</h3>
+              <p>這是 overdetermined system。因為 <code>n = 5</code>、<code>r = 4</code>，若某個 <code>b</code> 讓系統 consistent，則</p>
+              <div class="formula">n - r = 5 - 4 = 1</div>
+              <p>general solution 有一個 parameter。注意：overdetermined 不代表一定無解，而是不能保證所有 <code>b</code> 都可解。</p>
+            </div>
+
+            <div class="example">
+              <span class="label">教材例題 page 92</span>
+              <h3>5 equations, 7 unknowns, rank 4</h3>
+              <p>這是 underdetermined system。它可能 inconsistent；但如果 consistent，則</p>
+              <div class="formula">n - r = 7 - 4 = 3</div>
+              <p>所以會有三個 parameters，因而有 infinitely many solutions。</p>
+            </div>
+          </div>
+
+          <details>
+            <summary>教材 overdetermined 範例的解題想法</summary>
+            <p>page 93-94 的系統有五條方程、兩個未知數：</p>
+            <div class="formula">x<sub>1</sub> - 2x<sub>2</sub> = b<sub>1</sub>, &nbsp; x<sub>1</sub> - x<sub>2</sub> = b<sub>2</sub>, &nbsp; x<sub>1</sub> + x<sub>2</sub> = b<sub>3</sub>, &nbsp; x<sub>1</sub> + 2x<sub>2</sub> = b<sub>4</sub>, &nbsp; x<sub>1</sub> + 3x<sub>2</sub> = b<sub>5</sub></div>
+            <p>Gauss-Jordan elimination 會把限制轉成右側 <code>b</code> 必須滿足的條件。教材得到：</p>
+            <div class="formula">2b<sub>1</sub> - 3b<sub>2</sub> + b<sub>3</sub> = 0</div>
+            <div class="formula">3b<sub>1</sub> - 4b<sub>2</sub> + b<sub>4</sub> = 0</div>
+            <div class="formula">4b<sub>1</sub> - 5b<sub>2</sub> + b<sub>5</sub> = 0</div>
+            <p>也就是說，overdetermined system 是否 consistent，取決於右邊的 <code>b</code> 是否符合這些相容條件。</p>
+          </details>
+        </section>
+
+        <section id="fundamental">
+          <div class="section-head">
+            <div>
+              <div class="section-id">Theorem 3.3.6-3.3.8</div>
+              <h2>四個 Fundamental Matrix Spaces</h2>
+            </div>
+            <p class="subtitle">這裡把 row、column、null space 用維度和正交關係接起來。</p>
+          </div>
+
+          <div class="grid-two">
+            <div class="theorem">
+              <span class="label">Theorem 3.3.6</span>
+              <h3>rank(A) = rank(A<sup>T</sup>)</h3>
+              <div class="plain"><span>一句白話核心：</span>轉置會交換 row 和 column，但不會改變獨立資訊的數量。</div>
+              <p>若 <code>A</code> 是 <code>m &times; n</code> 且 <code>rank(A) = r</code>，四個 fundamental spaces 的維度為：</p>
+              <div class="formula">dim(Row(A)) = r, &nbsp; dim(Col(A)) = r</div>
+              <div class="formula">dim(N(A)) = n - r, &nbsp; dim(N(A<sup>T</sup>)) = m - r</div>
+            </div>
+
+            <div class="theorem">
+              <span class="label">Definition 2 / Theorem 3.3.7</span>
+              <h3>Orthogonal Complement</h3>
+              <div class="plain"><span>一句白話核心：</span><code>W<sup>&perp;</sup></code> 收集所有跟 <code>W</code> 裡每個向量都垂直的向量。</div>
+              <p>若 <code>W</code> 是 <code>R<sup>n</sup></code> 的 subspace，則 <code>W<sup>&perp;</sup></code> 也是 subspace，且 <code>W</code> 和 <code>W<sup>&perp;</sup></code> 只有零向量重疊。</p>
+              <div class="summary">
+                <strong>幾何想像</strong>
+                <p>在 <code>R<sup>2</sup></code>，一條 through origin 的線的 orthogonal complement 是垂直的另一條線；在 <code>R<sup>3</sup></code>，一個 through origin 的平面的 orthogonal complement 是它的法向量方向。</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="concept" style="margin-top: 16px;">
+            <span class="label">Theorem 3.3.8</span>
+            <h3>Fundamental spaces 的幾何連結</h3>
+            <div class="plain"><span>一句白話核心：</span>null space 正好是跟 row space 垂直的所有方向；left null space 正好是跟 column space 垂直的所有方向。</div>
+            <div class="formula">N(A) = Row(A)<sup>&perp;</sup> 在 R<sup>n</sup> 中</div>
+            <div class="formula">N(A<sup>T</sup>) = Col(A)<sup>&perp;</sup> 在 R<sup>m</sup> 中</div>
+            <svg class="diagram" viewBox="0 0 760 280" role="img" aria-label="Four fundamental matrix spaces diagram">
+              <rect x="24" y="24" width="330" height="92" rx="14" fill="#e9f2fc" stroke="#9fc4eb" />
+              <rect x="406" y="24" width="330" height="92" rx="14" fill="#fff5df" stroke="#e6c782" />
+              <rect x="24" y="164" width="330" height="92" rx="14" fill="#e9f7f1" stroke="#9bd4be" />
+              <rect x="406" y="164" width="330" height="92" rx="14" fill="#fff0ed" stroke="#ebb0a4" />
+              <text x="189" y="61" text-anchor="middle" font-size="22" font-family="Georgia" fill="#172033">Row(A)</text>
+              <text x="571" y="61" text-anchor="middle" font-size="22" font-family="Georgia" fill="#172033">N(A)</text>
+              <text x="189" y="201" text-anchor="middle" font-size="22" font-family="Georgia" fill="#172033">Col(A)</text>
+              <text x="571" y="201" text-anchor="middle" font-size="22" font-family="Georgia" fill="#172033">N(A<tspan baseline-shift="super" font-size="14">T</tspan>)</text>
+              <text x="189" y="91" text-anchor="middle" font-size="15" font-family="Arial" fill="#5e6b7c">dimension r, lives in R^n</text>
+              <text x="571" y="91" text-anchor="middle" font-size="15" font-family="Arial" fill="#5e6b7c">dimension n-r, perpendicular to rows</text>
+              <text x="189" y="231" text-anchor="middle" font-size="15" font-family="Arial" fill="#5e6b7c">dimension r, lives in R^m</text>
+              <text x="571" y="231" text-anchor="middle" font-size="15" font-family="Arial" fill="#5e6b7c">dimension m-r, perpendicular to columns</text>
+              <line x1="354" y1="70" x2="406" y2="70" stroke="#2563a9" stroke-width="3" stroke-dasharray="7 7" />
+              <line x1="354" y1="210" x2="406" y2="210" stroke="#2563a9" stroke-width="3" stroke-dasharray="7 7" />
+              <text x="380" y="61" text-anchor="middle" font-size="22" fill="#2563a9">&perp;</text>
+              <text x="380" y="201" text-anchor="middle" font-size="22" fill="#2563a9">&perp;</text>
+            </svg>
+            <div class="summary">
+              <strong>重點整理</strong>
+              <p>3-3 的結尾不是多背兩個空間，而是要看出「解空間」和「行/列空間」其實是正交互補關係。</p>
+            </div>
+          </div>
+        </section>
+
+        <section id="eigen-def">
+          <div class="section-head">
+            <div>
+              <div class="section-id">CH3-4</div>
+              <h2>Eigenvalue 與 Eigenvector 的定義</h2>
+            </div>
+            <p class="subtitle">從矩陣作用的幾何效果開始。</p>
+          </div>
+
+          <div class="concept">
+            <div class="plain"><span>一句白話核心：</span>eigenvector 是矩陣作用後方向不變的非零向量，eigenvalue 是它被放大、縮小或反向的倍數。</div>
+            <h3>細節</h3>
+            <p>若 <code>A</code> 是 <code>n &times; n</code> 矩陣，非零向量 <code>x</code> 滿足</p>
+            <div class="formula">Ax = &lambda;x</div>
+            <p>就稱 <code>x</code> 是 <code>A</code> 的 eigenvector，<code>&lambda;</code> 是對應的 eigenvalue。若 <code>&lambda;</code> 為負，方向會反向；若 <code>0 &lt; |&lambda;| &lt; 1</code>，向量被縮短；若 <code>|&lambda;| &gt; 1</code>，向量被拉長。</p>
+            <div class="summary">
+              <strong>重點整理</strong>
+              <ul>
+                <li><code>x</code> 不能是 zero vector，因為零向量對任何 <code>&lambda;</code> 都成立，沒有方向資訊。</li>
+                <li>一般向量經過矩陣會旋轉或偏移方向；eigenvector 是少數方向仍保持在同一直線上的向量。</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="example" style="margin-top: 16px;">
+            <span class="label">教材例題 page 113</span>
+            <h3>確認一個 2 &times; 2 eigenvector</h3>
+            <div class="eq">
+              <span>x =</span>
+              <span class="matrix slim"><table><tr><td>1</td></tr><tr><td>2</td></tr></table></span>
+              <span>, &nbsp; A =</span>
+              <span class="matrix"><table><tr><td>3</td><td>0</td></tr><tr><td>8</td><td>-1</td></tr></table></span>
+            </div>
+            <div class="eq">
+              <span>Ax =</span>
+              <span class="matrix"><table><tr><td>3</td><td>0</td></tr><tr><td>8</td><td>-1</td></tr></table></span>
+              <span class="matrix slim"><table><tr><td>1</td></tr><tr><td>2</td></tr></table></span>
+              <span>=</span>
+              <span class="matrix slim"><table><tr><td>3</td></tr><tr><td>6</td></tr></table></span>
+              <span>= 3x</span>
+            </div>
+            <p>所以 <code>x</code> 是 eigenvector，對應 eigenvalue <code>&lambda; = 3</code>。</p>
+            <svg class="diagram" viewBox="0 0 520 280" role="img" aria-label="Eigenvector stretch diagram">
+              <rect x="0" y="0" width="520" height="280" rx="16" fill="#fff" />
+              <line x1="70" y1="230" x2="455" y2="230" stroke="#687386" stroke-width="2" />
+              <line x1="70" y1="230" x2="70" y2="34" stroke="#687386" stroke-width="2" />
+              <text x="465" y="234" font-size="16" fill="#435066">x-axis</text>
+              <text x="48" y="34" font-size="16" fill="#435066">y</text>
+              <line x1="70" y1="230" x2="135" y2="165" stroke="#2563a9" stroke-width="5" marker-end="url(#arrow1)" />
+              <line x1="70" y1="230" x2="265" y2="35" stroke="#24a3d8" stroke-width="5" marker-end="url(#arrow1)" />
+              <line x1="135" y1="230" x2="135" y2="165" stroke="#b5bdca" stroke-width="2" stroke-dasharray="7 7" />
+              <line x1="265" y1="230" x2="265" y2="35" stroke="#b5bdca" stroke-width="2" stroke-dasharray="7 7" />
+              <line x1="70" y1="165" x2="135" y2="165" stroke="#b5bdca" stroke-width="2" stroke-dasharray="7 7" />
+              <line x1="70" y1="35" x2="265" y2="35" stroke="#b5bdca" stroke-width="2" stroke-dasharray="7 7" />
+              <text x="145" y="166" font-size="19" fill="#2563a9">x = (1,2)</text>
+              <text x="278" y="44" font-size="19" fill="#1383b8">3x = (3,6)</text>
+              <text x="130" y="252" font-size="15" fill="#5e6b7c">1</text>
+              <text x="260" y="252" font-size="15" fill="#5e6b7c">3</text>
+              <text x="46" y="171" font-size="15" fill="#5e6b7c">2</text>
+              <text x="46" y="41" font-size="15" fill="#5e6b7c">6</text>
+              <defs>
+                <marker id="arrow1" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                  <path d="M0,0 L0,6 L8,3 z" fill="currentColor" />
+                </marker>
+              </defs>
+            </svg>
+          </div>
+        </section>
+
+        <section id="char">
+          <div class="section-head">
+            <div>
+              <div class="section-id">Theorem 3.4.1-3.4.3</div>
+              <h2>Characteristic Equation：如何找 eigenvalues</h2>
+            </div>
+            <p class="subtitle">把 <code>Ax = &lambda;x</code> 轉成 homogeneous system。</p>
+          </div>
+
+          <div class="theorem">
+            <span class="label">Theorem 3.4.1</span>
+            <h3>Eigenvalue 的判斷公式</h3>
+            <div class="plain"><span>一句白話核心：</span>要有非零解，就必須讓 <code>&lambda;I - A</code> 變成不可逆。</div>
+            <p>從 <code>Ax = &lambda;x</code> 開始：</p>
+            <div class="formula">Ax = &lambda;Ix &Rightarrow; (&lambda;I - A)x = 0</div>
+            <p>這個 homogeneous system 要有 nontrivial solution，係數矩陣必須 singular，因此：</p>
+            <div class="formula">det(&lambda;I - A) = 0</div>
+            <div class="summary">
+              <strong>重點整理</strong>
+              <ul>
+                <li><code>det(&lambda;I - A)</code> 展開後稱為 characteristic polynomial。</li>
+                <li><code>n &times; n</code> 矩陣最多有 <code>n</code> 個 distinct eigenvalues。</li>
+                <li>triangular matrix 的 eigenvalues 直接看主對角線。</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="grid-two" style="margin-top: 16px;">
+            <div class="example">
+              <span class="label">教材例題 page 115</span>
+              <h3>2 &times; 2 矩陣的 eigenvalues</h3>
+              <div class="eq">
+                <span>A =</span>
+                <span class="matrix"><table><tr><td>3</td><td>0</td></tr><tr><td>8</td><td>-1</td></tr></table></span>
+              </div>
+              <div class="steps">
+                <div class="step">
+                  <h4>寫出 characteristic equation</h4>
+                  <div class="eq">
+                    <span>det(&lambda;I - A) =</span>
+                    <span class="det"><table><tr><td>&lambda; - 3</td><td>0</td></tr><tr><td>-8</td><td>&lambda; + 1</td></tr></table></span>
+                    <span>= 0</span>
+                  </div>
+                </div>
+                <div class="step">
+                  <h4>展開並因式分解</h4>
+                  <div class="formula">(&lambda; - 3)(&lambda; + 1) = 0</div>
+                </div>
+                <div class="step">
+                  <h4>得到 eigenvalues</h4>
+                  <div class="formula">&lambda; = 3, &nbsp; &lambda; = -1</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="example">
+              <span class="label">教材例題 page 117-118</span>
+              <h3>3 &times; 3 矩陣的 eigenvalues</h3>
+              <div class="eq">
+                <span>A =</span>
+                <span class="matrix"><table><tr><td>0</td><td>1</td><td>0</td></tr><tr><td>0</td><td>0</td><td>1</td></tr><tr><td>4</td><td>-17</td><td>8</td></tr></table></span>
+              </div>
+              <p>教材先得到：</p>
+              <div class="formula">det(&lambda;I - A) = &lambda;<sup>3</sup> - 8&lambda;<sup>2</sup> + 17&lambda; - 4</div>
+              <p>整數根若存在，必為常數項 <code>-4</code> 的因數；代入可得 <code>&lambda; = 4</code> 是根。</p>
+              <div class="formula">&lambda;<sup>3</sup> - 8&lambda;<sup>2</sup> + 17&lambda; - 4 = (&lambda; - 4)(&lambda;<sup>2</sup> - 4&lambda; + 1)</div>
+              <div class="formula">&lambda; = 4, &nbsp; &lambda; = 2 + &radic;3, &nbsp; &lambda; = 2 - &radic;3</div>
+            </div>
+          </div>
+
+          <div class="theorem" style="margin-top: 16px;">
+            <span class="label">Theorem 3.4.2 / 3.4.3</span>
+            <h3>Triangular matrix 與等價說法</h3>
+            <p>若 <code>A</code> 是 upper triangular、lower triangular 或 diagonal matrix，則 eigenvalues 是主對角線 entries。</p>
+            <div class="eq">
+              <span>A =</span>
+              <span class="matrix"><table><tr><td>1/2</td><td>0</td><td>0</td><td>0</td></tr><tr><td>-1</td><td>2/3</td><td>0</td><td>0</td></tr><tr><td>5</td><td>-8</td><td>-4</td><td>0</td></tr><tr><td>0</td><td>0</td><td>0</td><td>-1/4</td></tr></table></span>
+            </div>
+            <div class="formula">&lambda; = 1/2, &nbsp; 2/3, &nbsp; -4, &nbsp; -1/4</div>
+            <p>Theorem 3.4.3 把以下說法視為等價：<code>&lambda;</code> 是 eigenvalue、<code>Ax = &lambda;x</code> 有 nontrivial solution、存在 nonzero <code>x</code> 使 <code>Ax = &lambda;x</code>、<code>det(&lambda;I - A) = 0</code>。</p>
+          </div>
+        </section>
+
+        <section id="eigenspace">
+          <div class="section-head">
+            <div>
+              <div class="section-id">Eigenspaces</div>
+              <h2>Eigenspace：每個 eigenvalue 的解空間</h2>
+            </div>
+            <p class="subtitle">找 eigenvectors 其實就是解一個 homogeneous system。</p>
+          </div>
+
+          <div class="concept">
+            <div class="plain"><span>一句白話核心：</span>固定一個 eigenvalue 後，所有對應 eigenvectors 加上 zero vector，就是一個 null space。</div>
+            <h3>細節</h3>
+            <p>對應 eigenvalue <code>&lambda;</code> 的 eigenspace 是</p>
+            <div class="formula">N(&lambda;I - A) = {x : (&lambda;I - A)x = 0}</div>
+            <p>教材強調：eigenvectors 本身不含 zero vector，但 eigenspace 是一個 subspace，所以會包含 zero vector。</p>
+            <div class="summary">
+              <strong>重點整理</strong>
+              <ul>
+                <li>找 eigenvalues：解 <code>det(&lambda;I - A)=0</code>。</li>
+                <li>找 eigenvectors：把每個 eigenvalue 代回 <code>(&lambda;I - A)x=0</code>。</li>
+                <li>eigenspace basis 就是該 homogeneous system 的 basis。</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="theorem" style="margin-top: 16px;">
+            <span class="label">Multiplicity</span>
+            <h3>Algebraic multiplicity 與 geometric multiplicity</h3>
+            <div class="plain"><span>一句白話核心：</span>一個 eigenvalue 在多項式裡重複幾次，是 algebraic multiplicity；它真的提供幾個獨立 eigenvector 方向，是 geometric multiplicity。</div>
+            <div class="formula">algebraic multiplicity = &lambda; 在 characteristic polynomial 中作為 root 的重複次數</div>
+            <div class="formula">geometric multiplicity = dim N(&lambda;I - A)</div>
+            <p>因為 eigenspace 是 <code>N(&lambda;I - A)</code>，所以 geometric multiplicity 就是 <code>(&lambda;I - A)x = 0</code> 的自由方向數量。它永遠不會超過 algebraic multiplicity：</p>
+            <div class="formula">1 &le; geometric multiplicity &le; algebraic multiplicity</div>
+            <p>直覺上，algebraic multiplicity 是 characteristic polynomial 給的「名額」，geometric multiplicity 是實際解出來的「獨立方向」。同一個 root 可以在多項式裡重複很多次，但矩陣可能沒有提供同樣多個獨立 eigenvector 方向。</p>
+            <div class="summary">
+              <strong>重點整理</strong>
+              <ul>
+                <li>解 <code>det(&lambda;I - A)=0</code> 看到 <code>(&lambda;-2)^2</code>，表示 <code>&lambda;=2</code> 的 algebraic multiplicity 是 2。</li>
+                <li>代回 <code>(2I-A)x=0</code> 後，如果 nullity 是 1，表示 geometric multiplicity 是 1。</li>
+                <li>若你已經算出 <code>dim E<sub>&lambda;</sub> = k</code>，就知道這個 eigenvalue 在 characteristic polynomial 中至少重複 <code>k</code> 次。</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="grid-two" style="margin-top: 16px;">
+            <div class="example">
+              <span class="label">教材例題 page 124-125</span>
+              <h3>2 &times; 2 矩陣的 eigenspace basis</h3>
+              <div class="eq">
+                <span>A =</span>
+                <span class="matrix"><table><tr><td>3</td><td>0</td></tr><tr><td>8</td><td>-1</td></tr></table></span>
+              </div>
+              <p>前面已知 eigenvalues 是 <code>&lambda; = 3</code> 和 <code>&lambda; = -1</code>。</p>
+              <div class="steps">
+                <div class="step">
+                  <h4>代入 &lambda; = 3</h4>
+                  <div class="eq">
+                    <span>(&lambda;I - A)x =</span>
+                    <span class="matrix"><table><tr><td>0</td><td>0</td></tr><tr><td>-8</td><td>4</td></tr></table></span>
+                    <span class="matrix slim"><table><tr><td>x<sub>1</sub></td></tr><tr><td>x<sub>2</sub></td></tr></table></span>
+                    <span>= 0</span>
+                  </div>
+                  <p>得到 <code>x<sub>2</sub> = 2x<sub>1</sub></code>，所以</p>
+                  <div class="eq">
+                    <span>x = t</span>
+                    <span class="matrix slim"><table><tr><td>1</td></tr><tr><td>2</td></tr></table></span>
+                  </div>
+                </div>
+                <div class="step">
+                  <h4>代入 &lambda; = -1</h4>
+                  <p>教材給出 basis：</p>
+                  <div class="eq">
+                    <span class="matrix slim"><table><tr><td>0</td></tr><tr><td>1</td></tr></table></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="example">
+              <span class="label">教材例題 page 126-127</span>
+              <h3>3 &times; 3 矩陣的 eigenspaces</h3>
+              <div class="eq">
+                <span>A =</span>
+                <span class="matrix"><table><tr><td>0</td><td>0</td><td>-2</td></tr><tr><td>1</td><td>2</td><td>1</td></tr><tr><td>1</td><td>0</td><td>3</td></tr></table></span>
+              </div>
+              <p>教材先得到 characteristic equation：</p>
+              <div class="formula">&lambda;<sup>3</sup> - 5&lambda;<sup>2</sup> + 8&lambda; - 4 = (&lambda; - 1)(&lambda; - 2)<sup>2</sup> = 0</div>
+              <p>所以 distinct eigenvalues 為 <code>&lambda; = 1</code> 和 <code>&lambda; = 2</code>。</p>
+              <div class="summary">
+                <strong>教材解答</strong>
+                <p>對 <code>&lambda; = 2</code>，basis 為：</p>
+                <div class="eq">
+                  <span class="matrix slim"><table><tr><td>-1</td></tr><tr><td>1</td></tr><tr><td>0</td></tr></table></span>
+                  <span>,</span>
+                  <span class="matrix slim"><table><tr><td>0</td></tr><tr><td>0</td></tr><tr><td>1</td></tr></table></span>
+                </div>
+                <p>對 <code>&lambda; = 1</code>，basis 為：</p>
+                <div class="eq">
+                  <span class="matrix slim"><table><tr><td>-2</td></tr><tr><td>1</td></tr><tr><td>1</td></tr></table></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="power">
+          <div class="section-head">
+            <div>
+              <div class="section-id">Theorem 3.4.4-3.4.6</div>
+              <h2>Powers、Invertibility 與新版等價定理</h2>
+            </div>
+            <p class="subtitle">eigenvalue 會跟著矩陣次方一起次方化。</p>
+          </div>
+
+          <div class="grid-two">
+            <div class="theorem">
+              <span class="label">Theorem 3.4.4</span>
+              <h3>Powers of a Matrix</h3>
+              <div class="plain"><span>一句白話核心：</span>如果 <code>Ax = &lambda;x</code>，那麼 <code>A<sup>k</sup>x = &lambda;<sup>k</sup>x</code>。</div>
+              <p>因為 <code>A</code> 每作用一次，就把同一個 eigenvector 乘上一個 <code>&lambda;</code>：</p>
+              <div class="formula">A<sup>2</sup>x = A(Ax) = A(&lambda;x) = &lambda;Ax = &lambda;<sup>2</sup>x</div>
+              <p>推廣到正整數 <code>k</code>，<code>&lambda;<sup>k</sup></code> 是 <code>A<sup>k</sup></code> 的 eigenvalue，<code>x</code> 仍是 corresponding eigenvector。</p>
+            </div>
+
+            <div class="theorem">
+              <span class="label">Theorem 3.4.5</span>
+              <h3>Eigenvalues and Invertibility</h3>
+              <div class="plain"><span>一句白話核心：</span>矩陣可逆，等價於 0 不是 eigenvalue。</div>
+              <p>若 <code>&lambda; = 0</code> 是 eigenvalue，代表存在非零 <code>x</code> 使 <code>Ax = 0</code>，這表示 null space 不只零向量，所以 <code>A</code> 不可逆。</p>
+              <div class="formula">A invertible &Longleftrightarrow; 0 is not an eigenvalue of A</div>
+            </div>
+          </div>
+
+          <div class="warning" style="margin-top: 16px;">
+            <span class="label">Theorem 3.4.6</span>
+            <h3>把 eigenvalue 加入 invertible checklist</h3>
+            <p>3.4.6 延伸 3.3.3：對 <code>n &times; n</code> 矩陣，除了 rank、determinant、basis、one-to-one / onto 等等價條件之外，還新增：</p>
+            <div class="formula">0 is not an eigenvalue of A</div>
+            <p>所以你可以用 eigenvalue 判斷可逆性：只要 characteristic equation 的根包含 <code>0</code>，矩陣就不可逆；反之若沒有 <code>0</code>，矩陣可逆。</p>
+          </div>
+        </section>
+
+        <section id="practice">
+          <div class="section-head">
+            <div>
+              <div class="section-id">Practice</div>
+              <h2>教材練習整理</h2>
+            </div>
+            <p class="subtitle">把 page 100-111 與 133-150 的練習整理成可複習的解題模板。</p>
+          </div>
+
+          <div class="table-wrap">
+            <table class="summary-table">
+              <thead>
+                <tr>
+                  <th>題型</th>
+                  <th>教材頁面</th>
+                  <th>核心做法</th>
+                  <th>答案/結論</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Rank / nullity 練習</td>
+                  <td>100-101</td>
+                  <td>把矩陣化成 row echelon form，數 pivot columns 得 rank，再用 <code>n - rank</code> 得 nullity。</td>
+                  <td>教材答案包含：<code>rank=1, nullity=3</code>；<code>rank=4, nullity=0</code>；<code>rank=4, nullity=1</code>；<code>rank=2, nullity=3</code>。</td>
+                </tr>
+                <tr>
+                  <td>Over / underdetermined systems</td>
+                  <td>102-111</td>
+                  <td>先判斷 <code>m</code> 與 <code>n</code>，再對 augmented matrix 做 elimination，最後看最後幾列是否產生右側矛盾。</td>
+                  <td>overdetermined 題目要找 <code>b</code> 的 consistency conditions；underdetermined 題目若 consistent，會有 infinitely many solutions。</td>
+                </tr>
+                <tr>
+                  <td>確認 eigenvector</td>
+                  <td>133-135</td>
+                  <td>直接算 <code>Ax</code>，看結果是否等於某個 scalar 乘上 <code>x</code>。</td>
+                  <td>若 <code>Ax = &lambda;x</code>，則 <code>x</code> 是 eigenvector，<code>&lambda;</code> 是 eigenvalue；其中有一題得到 <code>&lambda; = 0</code>。</td>
+                </tr>
+                <tr>
+                  <td>Left / right eigenvectors</td>
+                  <td>136-137</td>
+                  <td>right eigenvector 用 <code>Ax = &mu;x</code>；left eigenvector 用 row vector 形式，概念上可由 transpose 連接。</td>
+                  <td>兩者方向形式不同，但 eigenvalue 關係可透過轉置理解。</td>
+                </tr>
+                <tr>
+                  <td>完整找 eigenvalues/eigenvectors</td>
+                  <td>140-144</td>
+                  <td>先解 characteristic equation，再逐一代入 <code>(A - &lambda;I)x = 0</code> 找 eigenspace。</td>
+                  <td>對 <code>A = [[1,3,0],[3,1,0],[0,0,-2]]</code>，eigenvalues 為 <code>4, -2, -2</code>。</td>
+                </tr>
+                <tr>
+                  <td>特殊矩陣 pattern</td>
+                  <td>147-150</td>
+                  <td>對角線全是 <code>&pi;</code>、非對角線全是 <code>e</code> 的 <code>n &times; n</code> 矩陣，可以利用 trace 與 rank 找 eigenvalues。</td>
+                  <td><code>&lambda; = &pi; - e</code> multiplicity <code>n - 1</code>；<code>&lambda; = &pi; + (n - 1)e</code> 對應 all-ones vector。</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="example" style="margin-top: 16px;">
+            <span class="label">完整練習 page 140-144</span>
+            <h3>找 eigenvalues 與 eigenvectors</h3>
+            <div class="eq">
+              <span>A =</span>
+              <span class="matrix"><table><tr><td>1</td><td>3</td><td>0</td></tr><tr><td>3</td><td>1</td><td>0</td></tr><tr><td>0</td><td>0</td><td>-2</td></tr></table></span>
+            </div>
+            <div class="steps">
+              <div class="step">
+                <h4>先找 eigenvalues</h4>
+                <div class="formula">|A - &lambda;I| = -(&lambda; - 4)(&lambda; + 2)<sup>2</sup> = 0</div>
+                <p>因此 eigenvalues 是 <code>&lambda; = 4</code> 與 <code>&lambda; = -2</code>，其中 <code>-2</code> 重複兩次。</p>
+              </div>
+              <div class="step">
+                <h4>代入 &lambda; = 4</h4>
+                <p>解 <code>(A - 4I)x = 0</code> 得 <code>x<sub>1</sub> = x<sub>2</sub></code>、<code>x<sub>3</sub> = 0</code>，所以 basis 可取：</p>
+                <div class="eq">
+                  <span class="matrix slim"><table><tr><td>1</td></tr><tr><td>1</td></tr><tr><td>0</td></tr></table></span>
+                </div>
+              </div>
+              <div class="step">
+                <h4>代入 &lambda; = -2</h4>
+                <p>解 <code>(A + 2I)x = 0</code> 得 <code>x<sub>1</sub> = -x<sub>2</sub></code>，<code>x<sub>3</sub></code> 自由，所以 basis 可取：</p>
+                <div class="eq">
+                  <span class="matrix slim"><table><tr><td>-1</td></tr><tr><td>1</td></tr><tr><td>0</td></tr></table></span>
+                  <span>,</span>
+                  <span class="matrix slim"><table><tr><td>0</td></tr><tr><td>0</td></tr><tr><td>1</td></tr></table></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="example" style="margin-top: 16px;">
+            <span class="label">教材練習 page 147-150</span>
+            <h3>特殊 n &times; n 矩陣的 eigenvalues 與 eigenspaces</h3>
+            <p>題目矩陣的主對角線都是 <code>&pi;</code>，非主對角線都是 <code>e</code>：</p>
+            <div class="eq">
+              <span>A =</span>
+              <span class="matrix">
+                <table>
+                  <tr><td>&pi;</td><td>e</td><td>e</td><td>...</td><td>e</td></tr>
+                  <tr><td>e</td><td>&pi;</td><td>e</td><td>...</td><td>e</td></tr>
+                  <tr><td>e</td><td>e</td><td>&pi;</td><td>...</td><td>e</td></tr>
+                  <tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td></tr>
+                  <tr><td>e</td><td>e</td><td>e</td><td>...</td><td>&pi;</td></tr>
+                </table>
+              </span>
+            </div>
+            <div class="steps">
+              <div class="step">
+                <h4>先代入 &lambda; = &pi; - e</h4>
+                <p>計算 <code>A - (&pi;-e)I</code>。對角線變成 <code>&pi; - (&pi;-e) = e</code>，非對角線原本就是 <code>e</code>，所以整個矩陣變成 all-e matrix：</p>
+                <div class="eq">
+                  <span>A - (&pi;-e)I =</span>
+                  <span class="matrix">
+                    <table>
+                      <tr><td>e</td><td>e</td><td>...</td><td>e</td></tr>
+                      <tr><td>e</td><td>e</td><td>...</td><td>e</td></tr>
+                      <tr><td>...</td><td>...</td><td>...</td><td>...</td></tr>
+                      <tr><td>e</td><td>e</td><td>...</td><td>e</td></tr>
+                    </table>
+                  </span>
+                </div>
+                <p>每一列都一樣，所以 <code>rank(A - (&pi;-e)I) = 1</code>，因此 determinant 為 0，<code>&lambda; = &pi;-e</code> 是 eigenvalue。</p>
+              </div>
+              <div class="step">
+                <h4>從 rank-nullity 得到 eigenspace 維度</h4>
+                <p>因為這是 <code>n &times; n</code> 矩陣，且 rank 是 1：</p>
+                <div class="formula">dim E<sub>&pi;-e</sub> = nullity(A - (&pi;-e)I) = n - 1</div>
+                <p>這直接表示 <code>&lambda; = &pi;-e</code> 的 geometric multiplicity 是 <code>n-1</code>，也就是它有 <code>n-1</code> 個獨立 eigenvector 方向。</p>
+              </div>
+              <div class="step">
+                <h4>用 geometric multiplicity 推 algebraic multiplicity</h4>
+                <p>由於 <code>geometric multiplicity &le; algebraic multiplicity</code>，所以 <code>&pi;-e</code> 在 characteristic polynomial 裡至少重複 <code>n-1</code> 次。characteristic polynomial 總次數只有 <code>n</code>，因此剩下最多只差一個 eigenvalue。</p>
+              </div>
+              <div class="step">
+                <h4>用 trace 補出最後一個 eigenvalue</h4>
+                <p>矩陣主對角線有 <code>n</code> 個 <code>&pi;</code>，所以：</p>
+                <div class="formula">tr(A) = n&pi;</div>
+                <p>eigenvalues 的總和等於 trace。已知有 <code>n-1</code> 個 eigenvalues 是 <code>&pi;-e</code>，設最後一個為 <code>&lambda;<sub>n</sub></code>：</p>
+                <div class="formula">(n-1)(&pi;-e) + &lambda;<sub>n</sub> = n&pi;</div>
+                <div class="formula">&lambda;<sub>n</sub> = &pi; + (n-1)e</div>
+              </div>
+              <div class="step">
+                <h4>找兩個 eigenspaces</h4>
+                <p>對 <code>&lambda; = &pi;-e</code>，all-e matrix 乘上 <code>x</code> 會得到每一列都是 <code>e(x<sub>1</sub> + ... + x<sub>n</sub>)</code>，所以：</p>
+                <div class="formula">E<sub>&pi;-e</sub> = {x : x<sub>1</sub> + x<sub>2</sub> + ... + x<sub>n</sub> = 0}</div>
+                <p>一組 basis 可以取 <code>[1,-1,0,...,0]<sup>T</sup></code>、<code>[1,0,-1,...,0]<sup>T</sup></code>、...、<code>[1,0,0,...,-1]<sup>T</sup></code>。</p>
+                <p>對 <code>&lambda; = &pi; + (n-1)e</code>，對應方向是全部分量相等：</p>
+                <div class="eq">
+                  <span>E<sub>&pi;+(n-1)e</sub> = span</span>
+                  <span>{</span>
+                  <span class="matrix slim"><table><tr><td>1</td></tr><tr><td>1</td></tr><tr><td>...</td></tr><tr><td>1</td></tr></table></span>
+                  <span>}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="review">
+          <div class="section-head">
+            <div>
+              <div class="section-id">Review</div>
+              <h2>考前複習清單</h2>
+            </div>
+            <p class="subtitle">用這些問題檢查自己是否真的懂 3-3 和 3-4。</p>
+          </div>
+
+          <div class="grid-two">
+            <div class="panel">
+              <h3>3-3 必會</h3>
+              <ul>
+                <li>你能不能用一句話解釋 rank 和 nullity 分別在數什麼？</li>
+                <li>看到 <code>m &times; n</code> 矩陣時，你會用哪個 <code>n</code> 套 rank-nullity？</li>
+                <li>為什麼 overdetermined 不等於一定無解？</li>
+                <li>為什麼 underdetermined 如果 consistent 就一定 infinitely many solutions？</li>
+                <li><code>N(A)</code> 和 <code>Row(A)</code> 為什麼是 orthogonal complements？</li>
+              </ul>
+            </div>
+            <div class="panel">
+              <h3>3-4 必會</h3>
+              <ul>
+                <li>為什麼 eigenvector 不能是 zero vector？</li>
+                <li>如何從 <code>Ax = &lambda;x</code> 推到 <code>det(&lambda;I - A)=0</code>？</li>
+                <li>triangular matrix 的 eigenvalues 為什麼可以直接看主對角線？</li>
+                <li>找 eigenspace 時，為什麼要解 <code>(&lambda;I - A)x = 0</code>？</li>
+                <li>為什麼 <code>0</code> 是 eigenvalue 代表矩陣不可逆？</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <div class="footer">
+          <div>
+            <strong>學習策略</strong>
+            <span>先熟練 rank-nullity，再做 eigenvalue。前者訓練你看 pivot / free variables，後者把同一套 homogeneous system 技巧拿來找特殊方向。</span>
+          </div>
+          <div>
+            <strong>來源範圍</strong>
+            <span>ch3_20250418_revised.pdf, PDF page 77-150</span>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

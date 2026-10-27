@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 2 Pages 68-76 學習講義</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+:root {
+  --bg: #f7f8fb;
+  --paper: #ffffff;
+  --ink: #243042;
+  --muted: #667085;
+  --line: #d8dee9;
+  --blue: #2f6fbd;
+  --blue-soft: #edf4ff;
+  --green: #2f8f5b;
+  --green-soft: #edf8f1;
+  --gold: #b7791f;
+  --gold-soft: #fff7e6;
+  --red: #b42318;
+  --red-soft: #fff1f0;
+  --purple: #6b46c1;
+  --purple-soft: #f4f0ff;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+  line-height: 1.85;
+}
+
+header {
+  background: #162033;
+  color: white;
+  padding: 44px 24px;
+  border-bottom: 6px solid var(--blue);
+}
+
+.header-inner, main {
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.eyebrow {
+  color: #b8d4ff;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 10px 0 12px;
+  font-size: clamp(30px, 5vw, 48px);
+  line-height: 1.15;
+  letter-spacing: 0;
+}
+
+.subtitle {
+  max-width: 760px;
+  margin: 0;
+  color: #e6edf7;
+  font-size: 18px;
+}
+
+main {
+  padding: 28px 20px 64px;
+}
+
+.toc {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.toc a {
+  display: block;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-left: 5px solid var(--blue);
+  border-radius: 8px;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+section {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 26px;
+  margin-bottom: 22px;
+  box-shadow: 0 8px 22px rgba(31, 41, 55, 0.05);
+}
+
+h2 {
+  margin: 0 0 16px;
+  font-size: 28px;
+  line-height: 1.25;
+}
+
+h3 {
+  margin: 24px 0 8px;
+  font-size: 20px;
+}
+
+p { margin: 10px 0; }
+
+ul, ol {
+  padding-left: 24px;
+  margin: 10px 0;
+}
+
+li { margin: 5px 0; }
+
+.tag {
+  display: inline-block;
+  color: var(--blue);
+  background: var(--blue-soft);
+  border: 1px solid #c9ddff;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.box {
+  border-radius: 8px;
+  padding: 16px 18px;
+  margin: 16px 0;
+  border: 1px solid var(--line);
+  background: #fbfcfe;
+}
+
+.box.theorem {
+  border-left: 5px solid var(--blue);
+  background: var(--blue-soft);
+}
+
+.box.proof {
+  border-left: 5px solid var(--green);
+  background: var(--green-soft);
+}
+
+.box.warning {
+  border-left: 5px solid var(--red);
+  background: var(--red-soft);
+}
+
+.box.example {
+  border-left: 5px solid var(--gold);
+  background: var(--gold-soft);
+}
+
+.box.check {
+  border-left: 5px solid var(--purple);
+  background: var(--purple-soft);
+}
+
+.box-title {
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.math {
+  overflow-x: auto;
+  padding: 4px 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 15px;
+}
+
+th, td {
+  border: 1px solid var(--line);
+  padding: 10px 12px;
+  vertical-align: top;
+}
+
+th {
+  background: #f1f5f9;
+  text-align: left;
+}
+
+.small {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.formula-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 12px;
+}
+
+.formula-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px;
+  background: #ffffff;
+}
+
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  background: #eef2f7;
+  border-radius: 4px;
+  padding: 2px 5px;
+}
+
+@media print {
+  body { background: white; }
+  header { padding: 30px 20px; }
+  section { box-shadow: none; break-inside: avoid; }
+  .toc { display: none; }
+}
+</style>
+</head>
+<body>
+<nav aria-label="講義導覽" style="position:relative;z-index:10;padding:10px 20px;border-bottom:1px solid #dce0d7;background:#f7f6f2;text-align:left;font:13px/1.6 -apple-system,BlinkMacSystemFont,'Microsoft JhengHei',sans-serif"><a href="../index.html" style="color:#315f4b;text-decoration:none;font-weight:600">← 線性代數講義目錄</a></nav>
+
+<header>
+  <div class="header-inner">
+    <div class="eyebrow">Linear Algebra Chapter 2 · PDF Pages 68-76</div>
+    <h1>Cramer’s Rule 與可逆矩陣等價命題</h1>
+    <p class="subtitle">這份講義整理 PDF 第 68-76 頁的重點：Cramer 法則、證明邏輯、用 determinant 求解線性系統、可逆矩陣的等價條件，以及兩題練習的解題套路。</p>
+  </div>
+</header>
+
+<main>
+  <nav class="toc" aria-label="目錄">
+    <a href="#cramer">1. Cramer’s Rule</a>
+    <a href="#proof">2. 證明怎麼來</a>
+    <a href="#example">3. 解聯立方程範例</a>
+    <a href="#equivalent">4. 可逆矩陣等價命題</a>
+    <a href="#exercises">5. 練習題整理</a>
+    <a href="#review">6. 考前檢查表</a>
+  </nav>
+
+  <section id="cramer">
+    <span class="tag">Theorem 2.3.7</span>
+    <h2>Cramer’s Rule 是什麼？</h2>
+    <p>Cramer’s Rule 是用 determinant 直接求線性方程組解的方法。它處理的系統是</p>
+    <div class="math">$$A\mathbf{x}=\mathbf{b}$$</div>
+    <p>其中 \(A\) 是 \(n\times n\) coefficient matrix，\(\mathbf{x}\) 是未知數向量，\(\mathbf{b}\) 是常數向量。</p>
+
+    <div class="box theorem">
+      <div class="box-title">使用條件</div>
+      <p>必須要有</p>
+      <div class="math">$$\det(A)\neq 0$$</div>
+      <p>也就是 \(A\) 可逆。這時候系統有唯一解。</p>
+    </div>
+
+    <p>如果 \(\det(A)\neq 0\)，解可以寫成：</p>
+    <div class="math">$$x_1=\frac{\det(A_1)}{\det(A)},\quad
+      x_2=\frac{\det(A_2)}{\det(A)},\quad \ldots,\quad
+      x_n=\frac{\det(A_n)}{\det(A)}$$</div>
+
+    <div class="box check">
+      <div class="box-title">\(A_j\) 怎麼做？</div>
+      <p>\(A_j\) 是把 \(A\) 的第 \(j\) 欄換成 \(\mathbf{b}\) 得到的矩陣。其他欄不動。</p>
+      <div class="math">$$
+      A_j=
+      \begin{bmatrix}
+      a_{11}&\cdots&a_{1,j-1}&b_1&a_{1,j+1}&\cdots&a_{1n}\\
+      a_{21}&\cdots&a_{2,j-1}&b_2&a_{2,j+1}&\cdots&a_{2n}\\
+      \vdots&&\vdots&\vdots&\vdots&&\vdots\\
+      a_{n1}&\cdots&a_{n,j-1}&b_n&a_{n,j+1}&\cdots&a_{nn}
+      \end{bmatrix}
+      $$</div>
+    </div>
+
+    <div class="box warning">
+      <div class="box-title">不要忽略的限制</div>
+      <p>Cramer’s Rule 不能直接用在 \(\det(A)=0\) 的情況，因為公式分母是 \(\det(A)\)。當 \(\det(A)=0\) 時，系統可能無解或有無限多解，不能用這個公式判定。</p>
+    </div>
+  </section>
+
+  <section id="proof">
+    <span class="tag">Proof of Cramer’s Rule</span>
+    <h2>證明的核心想法</h2>
+    <p>證明不是硬背公式，而是從反矩陣公式推出來。因為 \(\det(A)\neq 0\)，所以 \(A\) 可逆，方程組</p>
+    <div class="math">$$A\mathbf{x}=\mathbf{b}$$</div>
+    <p>有唯一解</p>
+    <div class="math">$$\mathbf{x}=A^{-1}\mathbf{b}$$</div>
+
+    <div class="box proof">
+      <div class="box-title">第一步：套用 adjugate 反矩陣公式</div>
+      <div class="math">$$A^{-1}=\frac{1}{\det(A)}\operatorname{adj}(A)$$</div>
+      <p>所以</p>
+      <div class="math">$$\mathbf{x}
+      =A^{-1}\mathbf{b}
+      =\frac{1}{\det(A)}\operatorname{adj}(A)\mathbf{b}$$</div>
+    </div>
+
+    <p>這裡要注意課本使用的 \(\operatorname{adj}(A)\) 是 cofactor matrix 的轉置，因此它的列長成：</p>
+    <div class="math">$$
+    \operatorname{adj}(A)=
+    \begin{bmatrix}
+    C_{11}&C_{21}&\cdots&C_{n1}\\
+    C_{12}&C_{22}&\cdots&C_{n2}\\
+    \vdots&\vdots&\ddots&\vdots\\
+    C_{1n}&C_{2n}&\cdots&C_{nn}
+    \end{bmatrix}
+    $$</div>
+
+    <div class="box proof">
+      <div class="box-title">第二步：把矩陣乘法展開</div>
+      <div class="math">$$
+      \mathbf{x}
+      =
+      \frac{1}{\det(A)}
+      \begin{bmatrix}
+      b_1C_{11}+b_2C_{21}+\cdots+b_nC_{n1}\\
+      b_1C_{12}+b_2C_{22}+\cdots+b_nC_{n2}\\
+      \vdots\\
+      b_1C_{1n}+b_2C_{2n}+\cdots+b_nC_{nn}
+      \end{bmatrix}
+      $$</div>
+      <p>因此第 \(j\) 個未知數是</p>
+      <div class="math">$$x_j=\frac{b_1C_{1j}+b_2C_{2j}+\cdots+b_nC_{nj}}{\det(A)}$$</div>
+    </div>
+
+    <div class="box proof">
+      <div class="box-title">第三步：分子其實就是 \(\det(A_j)\)</div>
+      <p>\(A_j\) 是把 \(A\) 的第 \(j\) 欄換成 \(\mathbf{b}\)。如果沿著第 \(j\) 欄展開 \(\det(A_j)\)，得到：</p>
+      <div class="math">$$\det(A_j)=b_1C_{1j}+b_2C_{2j}+\cdots+b_nC_{nj}$$</div>
+      <p>所以</p>
+      <div class="math">$$x_j=\frac{\det(A_j)}{\det(A)}$$</div>
+    </div>
+
+    <div class="box warning">
+      <div class="box-title">常見卡住點</div>
+      <p>為什麼 \(\det(A_j)\) 的 cofactors 可以寫成原本 \(A\) 的 \(C_{1j},C_{2j},\ldots,C_{nj}\)？因為沿第 \(j\) 欄展開時，計算 cofactor 會刪掉第 \(j\) 欄。第 \(j\) 欄原本是 \(A\) 的欄，或被換成 \(\mathbf{b}\)，都會被刪掉，所以 cofactor 不受影響。</p>
+    </div>
+  </section>
+
+  <section id="example">
+    <span class="tag">Example</span>
+    <h2>用 Cramer’s Rule 解線性系統</h2>
+    <p>題目：</p>
+    <div class="math">$$
+    \begin{aligned}
+    x_1+2x_3&=6,\\
+    -3x_1+4x_2+6x_3&=30,\\
+    -x_1-2x_2+3x_3&=8.
+    \end{aligned}
+    $$</div>
+
+    <p>先寫出 coefficient matrix 與三個替換欄矩陣：</p>
+    <div class="math">$$
+    A=
+    \begin{bmatrix}
+    1&0&2\\
+    -3&4&6\\
+    -1&-2&3
+    \end{bmatrix}
+    $$</div>
+
+    <div class="math">$$
+    A_1=
+    \begin{bmatrix}
+    6&0&2\\
+    30&4&6\\
+    8&-2&3
+    \end{bmatrix},\quad
+    A_2=
+    \begin{bmatrix}
+    1&6&2\\
+    -3&30&6\\
+    -1&8&3
+    \end{bmatrix},\quad
+    A_3=
+    \begin{bmatrix}
+    1&0&6\\
+    -3&4&30\\
+    -1&-2&8
+    \end{bmatrix}
+    $$</div>
+
+    <p>課本算出的 determinants 是：</p>
+    <div class="math">$$\det(A)=44,\quad \det(A_1)=-40,\quad \det(A_2)=72,\quad \det(A_3)=152$$</div>
+
+    <p>所以解為：</p>
+    <div class="math">$$
+    x_1=\frac{-40}{44}=-\frac{10}{11},\quad
+    x_2=\frac{72}{44}=\frac{18}{11},\quad
+    x_3=\frac{152}{44}=\frac{38}{11}
+    $$</div>
+
+    <div class="box check">
+      <div class="box-title">操作順序</div>
+      <ol>
+        <li>先確認 \(\det(A)\neq 0\)。</li>
+        <li>要求 \(x_j\)，就把第 \(j\) 欄換成 \(\mathbf{b}\)。</li>
+        <li>算 \(\det(A_j)\)。</li>
+        <li>用 \(x_j=\det(A_j)/\det(A)\)。</li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="equivalent">
+    <span class="tag">Theorem 2.3.8</span>
+    <h2>可逆矩陣的等價命題</h2>
+    <p>如果 \(A\) 是 \(n\times n\) 方陣，以下敘述全部等價。也就是說，只要其中一個成立，全部成立；只要其中一個不成立，全部不成立。</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>敘述</th>
+          <th>中文理解</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>\(A\) is invertible.</td>
+          <td>\(A\) 有反矩陣。</td>
+        </tr>
+        <tr>
+          <td>\(A\mathbf{x}=0\) has only the trivial solution.</td>
+          <td>齊次方程組只有零解，沒有 nontrivial solution。</td>
+        </tr>
+        <tr>
+          <td>The RREF of \(A\) is \(I_n\).</td>
+          <td>把 \(A\) row reduce 到最簡列階梯形會得到 identity。</td>
+        </tr>
+        <tr>
+          <td>\(A\) is expressible as a product of elementary matrices.</td>
+          <td>\(A\) 可以寫成一串 elementary matrices 的乘積。</td>
+        </tr>
+        <tr>
+          <td>\(A\mathbf{x}=\mathbf{b}\) is consistent for every \(\mathbf{b}\).</td>
+          <td>不管右邊 \(\mathbf{b}\) 是什麼，系統至少有解。</td>
+        </tr>
+        <tr>
+          <td>\(A\mathbf{x}=\mathbf{b}\) has exactly one solution for every \(\mathbf{b}\).</td>
+          <td>不管右邊 \(\mathbf{b}\) 是什麼，系統都有唯一解。</td>
+        </tr>
+        <tr>
+          <td>\(\det(A)\neq 0\).</td>
+          <td>行列式非零。</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="box theorem">
+      <div class="box-title">考試常用連結</div>
+      <div class="formula-row">
+        <div class="formula-card">\(\det(A)\neq 0\)<br>代表 \(A\) 可逆。</div>
+        <div class="formula-card">\(A\) 可逆<br>代表 RREF 是 \(I_n\)。</div>
+        <div class="formula-card">RREF 是 \(I_n\)<br>代表每個變數欄都有 pivot。</div>
+        <div class="formula-card">每個變數欄都有 pivot<br>代表 \(A\mathbf{x}=0\) 只有零解。</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="exercises">
+    <span class="tag">Exercises</span>
+    <h2>練習題觀念整理</h2>
+
+    <h3>練習 1：已知 \(\operatorname{adj}(A)\)，求 \(|A|\) 與 \(A\)</h3>
+    <p>題目給：</p>
+    <div class="math">$$
+    \operatorname{adj}(A)=
+    \begin{bmatrix}
+    2&-2&0\\
+    0&2&-1\\
+    0&0&1
+    \end{bmatrix}
+    $$</div>
+
+    <div class="box proof">
+      <div class="box-title">關鍵公式</div>
+      <p>對 \(3\times 3\) 矩陣，利用</p>
+      <div class="math">$$A\operatorname{adj}(A)=|A|I$$</div>
+      <p>兩邊取 determinant：</p>
+      <div class="math">$$|A|\cdot|\operatorname{adj}(A)|=\det(|A|I)=|A|^3$$</div>
+      <p>因此如果 \(|A|\neq 0\)，可得</p>
+      <div class="math">$$|\operatorname{adj}(A)|=|A|^2$$</div>
+    </div>
+
+    <p>題目中</p>
+    <div class="math">$$
+    |\operatorname{adj}(A)|
+    =
+    \begin{vmatrix}
+    2&-2&0\\
+    0&2&-1\\
+    0&0&1
+    \end{vmatrix}
+    =4
+    $$</div>
+    <p>所以</p>
+    <div class="math">$$|A|^2=4,\quad |A|=\pm 2$$</div>
+
+    <p>再由</p>
+    <div class="math">$$A\operatorname{adj}(A)=|A|I$$</div>
+    <p>得到</p>
+    <div class="math">$$A=|A|\{\operatorname{adj}(A)\}^{-1}$$</div>
+    <p>因此課本得到：</p>
+    <div class="math">$$
+    A=\pm
+    \begin{bmatrix}
+    1&1&1\\
+    0&1&1\\
+    0&0&2
+    \end{bmatrix}
+    $$</div>
+
+    <div class="box warning">
+      <div class="box-title">這題容易錯在哪裡？</div>
+      <p>不要把 \(|\operatorname{adj}(A)|\) 誤認成 \(|A|\)。對 \(n\times n\) 矩陣，實際關係是</p>
+      <div class="math">$$\det(\operatorname{adj}(A))=\det(A)^{\,n-1}$$</div>
+      <p>這題 \(n=3\)，所以是平方。</p>
+    </div>
+
+    <h3>練習 2：用 Cramer’s Rule 找 \(A^{-1}\) 的指定 entries</h3>
+    <p>題目給 \(B=A^{-1}\)，且</p>
+    <div class="math">$$
+    A=
+    \begin{bmatrix}
+    -1&4&-1&5\\
+    -4&0&3&-2\\
+    1&-3&1&1\\
+    -2&1&1&-1
+    \end{bmatrix}
+    $$</div>
+    <p>要求 \(b_{22}, b_{41}, b_{23}\)。</p>
+
+    <div class="box proof">
+      <div class="box-title">為什麼可以用 Cramer’s Rule？</div>
+      <p>因為 \(B=A^{-1}\)，所以</p>
+      <div class="math">$$AB=I$$</div>
+      <p>把 \(B\) 看成一欄一欄的向量，則第 \(k\) 欄滿足：</p>
+      <div class="math">$$A(\text{第 }k\text{ 欄})=\mathbf{e}_k$$</div>
+      <p>所以 \(B\) 的每一欄都可以用 Cramer’s Rule 解出來。</p>
+    </div>
+
+    <p>課本計算：</p>
+    <div class="math">$$\det(A)=-5$$</div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>要找的 entry</th>
+          <th>對應的線性系統</th>
+          <th>課本結果</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>\(b_{22}\)</td>
+          <td>看 \(B\) 的第 2 欄，解 \(A\mathbf{x}=\mathbf{e}_2\)，取第 2 個變數。</td>
+          <td>\(\displaystyle b_{22}=\frac{18}{-5}=-\frac{18}{5}\)</td>
+        </tr>
+        <tr>
+          <td>\(b_{23}\)</td>
+          <td>看 \(B\) 的第 3 欄，解 \(A\mathbf{x}=\mathbf{e}_3\)，取第 2 個變數。</td>
+          <td>\(\displaystyle b_{23}=\frac{-11}{-5}=\frac{11}{5}\)</td>
+        </tr>
+        <tr>
+          <td>\(b_{41}\)</td>
+          <td>看 \(B\) 的第 1 欄，解 \(A\mathbf{x}=\mathbf{e}_1\)，取第 4 個變數。</td>
+          <td>\(\displaystyle b_{41}=\frac{-1}{-5}=\frac{1}{5}\)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="box check">
+      <div class="box-title">解這類題目的固定套路</div>
+      <ol>
+        <li>先寫 \(AB=I\)。</li>
+        <li>要找 \(b_{ik}\)，就看 \(B\) 的第 \(k\) 欄。</li>
+        <li>第 \(k\) 欄滿足 \(A\mathbf{x}=\mathbf{e}_k\)。</li>
+        <li>\(b_{ik}\) 就是這個解向量的第 \(i\) 個分量。</li>
+        <li>用 Cramer’s Rule：把 \(A\) 的第 \(i\) 欄換成 \(\mathbf{e}_k\)，再除以 \(\det(A)\)。</li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="review">
+    <span class="tag">Review</span>
+    <h2>考前檢查表</h2>
+    <div class="box check">
+      <div class="box-title">你需要會的事</div>
+      <ul>
+        <li>看到 \(A\mathbf{x}=\mathbf{b}\) 且 \(\det(A)\neq 0\)，知道可以用 Cramer’s Rule。</li>
+        <li>知道 \(A_j\) 是把第 \(j\) 欄換成 \(\mathbf{b}\)。</li>
+        <li>能解釋 Cramer’s Rule 為什麼來自 \(A^{-1}=\frac{1}{\det(A)}\operatorname{adj}(A)\)。</li>
+        <li>知道 \(\det(A)\neq 0\)、\(A\) 可逆、RREF 是 \(I_n\)、齊次系統只有零解是等價的。</li>
+        <li>知道 \(\det(\operatorname{adj}(A))=\det(A)^{n-1}\)。</li>
+        <li>知道 \(B=A^{-1}\) 時，可以用 \(AB=I\) 把 \(B\) 的每一欄當成一個線性系統解。</li>
+      </ul>
+    </div>
+
+    <div class="box warning">
+      <div class="box-title">最容易混淆的三件事</div>
+      <ol>
+        <li>\(A_j\) 是換第 \(j\) 欄，不是換第 \(j\) 列。</li>
+        <li>\(\operatorname{adj}(A)\) 是 cofactor matrix 的轉置。</li>
+        <li>\(\det(A)=0\) 時不能用 Cramer’s Rule，因為公式分母會是 0。</li>
+      </ol>
+    </div>
+  </section>
+
+  <p class="small">整理來源：CH2_20260406.pdf 第 68-76 頁。</p>
+</main>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  renderMathInElement(document.body, {
+    delimiters: [
+      {left: "$$", right: "$$", display: true},
+      {left: "\\(", right: "\\)", display: false}
+    ],
+    throwOnError: false
+  });
+});
+</script>
+</body>
+</html>

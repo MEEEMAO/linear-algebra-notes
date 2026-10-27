@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Linear Algebra CH3 學習講義</title>
+  <style>
+    :root {
+      --bg: #f5f0e8;
+      --paper: rgba(255, 255, 255, 0.78);
+      --paper-strong: rgba(255, 255, 255, 0.92);
+      --ink: #18314f;
+      --muted: #526779;
+      --accent: #3b82c4;
+      --accent-deep: #1f5f99;
+      --gold: #e3b66b;
+      --line: rgba(24, 49, 79, 0.12);
+      --shadow: 0 18px 45px rgba(24, 49, 79, 0.12);
+      --radius: 24px;
+      --radius-sm: 16px;
+      --max: 1180px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: "Avenir Next", "PingFang TC", "Noto Sans TC", sans-serif;
+      line-height: 1.7;
+      background:
+        radial-gradient(circle at top left, rgba(227, 182, 107, 0.28), transparent 28%),
+        radial-gradient(circle at top right, rgba(59, 130, 196, 0.18), transparent 24%),
+        linear-gradient(180deg, #f8f3eb 0%, #eef3f8 52%, #f7f4ee 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(59, 130, 196, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59, 130, 196, 0.05) 1px, transparent 1px);
+      background-size: 28px 28px;
+      mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.26), transparent 92%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .shell {
+      width: min(var(--max), calc(100% - 32px));
+      margin: 28px auto 80px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 42px;
+      border: 1px solid rgba(59, 130, 196, 0.2);
+      border-radius: 36px;
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(245, 249, 253, 0.82)),
+        rgba(255, 255, 255, 0.85);
+      box-shadow: var(--shadow);
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      top: -120px;
+      right: -80px;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(59, 130, 196, 0.2), transparent 70%);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(59, 130, 196, 0.09);
+      color: var(--accent-deep);
+      font-size: 0.92rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    h1, h2, h3, h4 {
+      margin: 0 0 12px;
+      font-family: "Iowan Old Style", "Palatino Linotype", "Noto Serif TC", serif;
+      line-height: 1.12;
+      letter-spacing: -0.02em;
+    }
+
+    h1 {
+      max-width: 10ch;
+      font-size: clamp(2.6rem, 5.5vw, 5rem);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.35fr 0.95fr;
+      gap: 26px;
+      align-items: end;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero p {
+      max-width: 62ch;
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.05rem;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .chip {
+      padding: 9px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(24, 49, 79, 0.08);
+      background: rgba(255, 255, 255, 0.7);
+      font-size: 0.95rem;
+      color: var(--ink);
+    }
+
+    .hero-note {
+      padding: 22px;
+      border-radius: 24px;
+      background: linear-gradient(180deg, rgba(24, 49, 79, 0.95), rgba(31, 95, 153, 0.92));
+      color: #f7fbff;
+    }
+
+    .hero-note h3 {
+      margin-bottom: 10px;
+      font-size: 1.35rem;
+    }
+
+    .hero-note ol {
+      margin: 0;
+      padding-left: 22px;
+    }
+
+    .hero-note li + li {
+      margin-top: 8px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: 24px;
+      margin-top: 26px;
+      align-items: start;
+    }
+
+    nav {
+      position: sticky;
+      top: 20px;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 26px;
+      background: var(--paper);
+      backdrop-filter: blur(12px);
+      box-shadow: var(--shadow);
+    }
+
+    nav h2 {
+      margin-bottom: 14px;
+      font-size: 1.35rem;
+    }
+
+    nav ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    nav li + li {
+      margin-top: 10px;
+    }
+
+    nav a {
+      display: block;
+      padding: 10px 12px;
+      border-radius: 14px;
+      text-decoration: none;
+      color: var(--muted);
+      transition: 180ms ease;
+    }
+
+    nav a:hover {
+      background: rgba(59, 130, 196, 0.08);
+      color: var(--accent-deep);
+      transform: translateX(3px);
+    }
+
+    .nav-tip {
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(227, 182, 107, 0.14);
+      color: #6b4d18;
+      font-size: 0.94rem;
+    }
+
+    main {
+      display: grid;
+      gap: 20px;
+    }
+
+    section {
+      padding: 28px;
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background: var(--paper);
+      backdrop-filter: blur(12px);
+      box-shadow: var(--shadow);
+      animation: rise 520ms ease both;
+    }
+
+    @keyframes rise {
+      from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: end;
+      margin-bottom: 18px;
+    }
+
+    .section-id {
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--accent-deep);
+      text-transform: uppercase;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      max-width: 56ch;
+      margin: 0;
+    }
+
+    .grid-two {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .grid-three {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      padding: 20px;
+      border-radius: 22px;
+      border: 1px solid rgba(24, 49, 79, 0.08);
+      background: var(--paper-strong);
+    }
+
+    .card h3, .card h4 {
+      font-size: 1.28rem;
+      margin-bottom: 10px;
+    }
+
+    .card p:last-child,
+    .card ul:last-child,
+    .card ol:last-child {
+      margin-bottom: 0;
+    }
+
+    .math {
+      margin: 14px 0;
+      padding: 16px 18px;
+      border-left: 4px solid var(--accent);
+      border-radius: 0 16px 16px 0;
+      background: rgba(59, 130, 196, 0.08);
+      font-family: "SFMono-Regular", "JetBrains Mono", monospace;
+      font-size: 0.95rem;
+      overflow-x: auto;
+      white-space: pre-wrap;
+    }
+
+    .theorem {
+      position: relative;
+      overflow: hidden;
+      padding: 20px 22px;
+      border-radius: 24px;
+      border: 1px solid rgba(31, 95, 153, 0.16);
+      background: linear-gradient(180deg, rgba(59, 130, 196, 0.1), rgba(255, 255, 255, 0.96));
+    }
+
+    .theorem::before {
+      content: "Theorem";
+      position: absolute;
+      top: 16px;
+      right: 18px;
+      font-size: 0.84rem;
+      letter-spacing: 0.08em;
+      color: rgba(31, 95, 153, 0.68);
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .example {
+      border: 1px solid rgba(227, 182, 107, 0.28);
+      background: linear-gradient(180deg, rgba(227, 182, 107, 0.12), rgba(255, 255, 255, 0.98));
+    }
+
+    .warning {
+      border: 1px solid rgba(201, 90, 37, 0.22);
+      background: linear-gradient(180deg, rgba(201, 90, 37, 0.09), rgba(255, 255, 255, 0.98));
+    }
+
+    .timeline {
+      display: grid;
+      gap: 14px;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 64px 1fr;
+      gap: 16px;
+      align-items: start;
+      padding: 16px;
+      border-radius: 20px;
+      background: var(--paper-strong);
+      border: 1px solid rgba(24, 49, 79, 0.08);
+    }
+
+    .step-index {
+      display: grid;
+      place-items: center;
+      width: 64px;
+      height: 64px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, var(--accent-deep), var(--accent));
+      color: white;
+      font-family: "Iowan Old Style", "Palatino Linotype", serif;
+      font-size: 1.45rem;
+      box-shadow: 0 10px 25px rgba(31, 95, 153, 0.22);
+    }
+
+    details {
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(24, 49, 79, 0.08);
+      padding: 16px 18px;
+    }
+
+    details + details {
+      margin-top: 12px;
+    }
+
+    summary {
+      cursor: pointer;
+      font-weight: 700;
+      color: var(--accent-deep);
+    }
+
+    summary::marker {
+      color: var(--accent);
+    }
+
+    ul, ol {
+      margin: 12px 0 0;
+      padding-left: 22px;
+    }
+
+    li + li {
+      margin-top: 8px;
+    }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+      padding: 22px 26px;
+      border-radius: 24px;
+      background: rgba(24, 49, 79, 0.94);
+      color: rgba(247, 251, 255, 0.92);
+    }
+
+    .footer strong {
+      display: block;
+      margin-bottom: 6px;
+      font-family: "Iowan Old Style", "Palatino Linotype", serif;
+      font-size: 1.15rem;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    @media (max-width: 1024px) {
+      .hero-grid,
+      .layout,
+      .grid-two,
+      .grid-three {
+        grid-template-columns: 1fr;
+      }
+
+      nav {
+        position: static;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .shell {
+        width: min(var(--max), calc(100% - 18px));
+        margin-top: 12px;
+      }
+
+      .hero,
+      section {
+        padding: 22px;
+      }
+
+      h1 {
+        max-width: none;
+      }
+
+      .step {
+        grid-template-columns: 1fr;
+      }
+
+      .step-index {
+        width: 56px;
+        height: 56px;
+        border-radius: 18px;
+      }
+
+      .section-head {
+        display: block;
+      }
+    }
+  </style>
+</head>
+<body>
+<nav aria-label="講義導覽" style="position:relative;z-index:10;padding:10px 20px;border-bottom:1px solid #dce0d7;background:#f7f6f2;text-align:left;font:13px/1.6 -apple-system,BlinkMacSystemFont,'Microsoft JhengHei',sans-serif"><a href="../index.html" style="color:#315f4b;text-decoration:none;font-weight:600">← 線性代數講義目錄</a></nav>
+
+  <div class="shell">
+    <header class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="eyebrow">Linear Algebra • CH3 精讀講義</div>
+          <h1>正交到基底</h1>
+          <p>
+            這份講義依照課堂投影片的順序重組：先建立正交與投影的幾何直覺，再把這個直覺延伸到距離公式、
+            線性系統、row space / column space / null space，以及如何用 row reduction 找 basis。
+            每一段都保留「概念、例題、證明脈絡」三條線，適合課後複習或考前快速總整。
+          </p>
+          <div class="chip-row">
+            <div class="chip">Orthogonality</div>
+            <div class="chip">Projection &amp; Distance</div>
+            <div class="chip">Column / Row / Null Space</div>
+            <div class="chip">Basis by Row Reduction</div>
+            <div class="chip">Span(S) Practice</div>
+          </div>
+        </div>
+        <aside class="hero-note">
+          <h3>本章最重要的主線</h3>
+          <ol>
+            <li>正交讓「長度、角度、距離」變得可計算。</li>
+            <li>投影把幾何問題翻成代數公式。</li>
+            <li><code>Ax=b</code> 的可解性其實就是 <code>b ∈ Col(A)</code>。</li>
+            <li>row operations 很會幫我們找 basis，但不能亂解讀 column space。</li>
+          </ol>
+        </aside>
+      </div>
+    </header>
+
+    <div class="layout">
+      <nav>
+        <h2>閱讀地圖</h2>
+        <ul>
+          <li><a href="#roadmap">學習路線</a></li>
+          <li><a href="#orthogonality">1. Orthogonality</a></li>
+          <li><a href="#projection">2. Projection 與分解</a></li>
+          <li><a href="#distance">3. Distance Problems</a></li>
+          <li><a href="#spaces">4. Row / Column / Null Space</a></li>
+          <li><a href="#basis">5. Basis 與 Row Reduction</a></li>
+          <li><a href="#span-practice">6. Span(S) 與空間練習</a></li>
+          <li><a href="#pitfalls">7. 常錯觀念</a></li>
+          <li><a href="#review">8. 複習清單</a></li>
+        </ul>
+        <div class="nav-tip">
+          建議讀法：先看每節的「一句話核心」，再做例題，最後打開證明摺疊區確認自己是否真的理解。
+        </div>
+      </nav>
+
+      <main>
+        <section id="roadmap">
+          <div class="section-head">
+            <div>
+              <div class="section-id">Roadmap</div>
+              <h2>循序學習路線</h2>
+            </div>
+            <p class="subtitle">
+              這不是把投影片照抄，而是把課堂節奏整理成一條可吸收的學習鏈。
+            </p>
+          </div>
+          <div class="timeline">
+            <div class="step">
+              <div class="step-index">01</div>
+              <div>
+                <h3>先把正交看成「內積等於零」</h3>
+                <p>你要先熟悉 <code>u · v = 0</code> 的代數意義，才能把幾何上的垂直轉成可運算的條件。</p>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-index">02</div>
+              <div>
+                <h3>再學投影，把向量拆成平行與垂直兩部分</h3>
+                <p>這一步會自然導出 projection formula，也會讓點到線、點到平面的距離公式變得合理。</p>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-index">03</div>
+              <div>
+                <h3>接著把幾何直覺推進到線性系統</h3>
+                <p><code>Ax</code> 是 column vectors 的線性組合，所以 <code>Ax=b</code> 可解等價於 <code>b</code> 落在 column space 裡。</p>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-index">04</div>
+              <div>
+                <h3>最後再用 row reduction 找 basis</h3>
+                <p>這裡的關鍵不是「把矩陣化簡」而已，而是要知道哪些空間被保留，哪些只保留依賴關係、不保留空間本身。</p>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-index">05</div>
+              <div>
+                <h3>把 basis 技巧拿來解 span 與幾何練習</h3>
+                <p>新版投影片後段把前面的定理整理成實作流程：從一組向量挑 basis、寫出 dependency equations，再用 null space 與 column space 描述座標平面。</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="orthogonality">
+          <div class="section-head">
+            <div>
+              <div class="section-id">Part 1</div>
+              <h2>Orthogonality：從內積建立幾何語言</h2>
+            </div>
+            <p class="subtitle">
+              一句話核心：正交不是「看起來垂直」，而是可以被內積精確辨認與計算。
+            </p>
+          </div>
+
+          <div class="grid-two">
+            <div class="theorem">
+              <h3>定義與基本性質</h3>
+              <p>在 <code>Rⁿ</code> 中，若 <code>u · v = 0</code>，就說 <code>u</code> 與 <code>v</code> orthogonal。</p>
+              <div class="math">‖v‖ ≥ 0
+‖v‖ = 0  ⇔  v = 0
+‖kv‖ = |k| ‖v‖</div>
+              <p>課堂一開始先證明 norm 的三個基本性質，這是後面所有 projection 與 distance 公式的底層。</p>
+            </div>
+
+            <div class="card example">
+              <h3>例題 1：檢查兩向量是否正交</h3>
+              <p>投影片中的例子：</p>
+              <div class="math">u = (-2, 3, 1, 4),    v = (1, 2, 0, -1)</div>
+              <div class="math">u · v = (-2)(1) + (3)(2) + (1)(0) + (4)(-1)
+      = -2 + 6 + 0 - 4
+      = 0</div>
+              <p>所以這兩個向量 orthogonal。考試常見陷阱是「看起來不像垂直」就先懷疑，但在高維空間裡只有內積才是標準。</p>
+            </div>
+          </div>
+
+          <div class="grid-two" style="margin-top: 16px;">
+            <div class="card">
+              <h3>法向量如何決定線與平面</h3>
+              <p>若一條直線或一個平面有法向量 <code>n</code>，那麼上面的每個方向向量都會與 <code>n</code> 正交。</p>
+              <div class="math">在 R²：a(x - x₀) + b(y - y₀) = 0
+在 R³：a(x - x₀) + b(y - y₀) + c(z - z₀) = 0</div>
+              <p>這就是 point-normal equation。它把幾何物件直接翻成方程式。</p>
+            </div>
+
+            <div class="card">
+              <h3>Through the Origin 的版本</h3>
+              <p>若線或平面通過原點，方程會變成 homogeneous equation：</p>
+              <div class="math">ax + by = 0
+ax + by + cz = 0</div>
+              <p>係數向量 <code>n = (a, b)</code> 或 <code>n = (a, b, c)</code> 就是法向量。課堂上特別強調這種寫法會在後面連回 null space。</p>
+            </div>
+          </div>
+
+          <details>
+            <summary>證明筆記：為什麼 ‖kv‖ = |k|‖v‖？</summary>
+            <div class="math">若 v = (v₁, v₂, …, vₙ)，則 kv = (kv₁, kv₂, …, kvₙ)</div>
+            <div class="math">‖kv‖
+= √((kv₁)² + (kv₂)² + ··· + (kvₙ)²)
+= √(k²(v₁² + v₂² + ··· + vₙ²))
+= |k| √(v₁² + v₂² + ··· + vₙ²)
+= |k| ‖v‖</div>
+            <p>這個證明看似基本，但它讓我們可以放心把純量拉出 norm，後面 distance 與 projection 都靠它。</p>
+          </details>
+        </section>
+
+        <section id="projection">
+          <div class="section-head">
+            <div>
+              <div class="section-id">Part 2</div>
+              <h2>Projection：把向量拆成平行與垂直</h2>
+            </div>
+            <p class="subtitle">
+              一句話核心：只要找到投影，就能把向量分解成「沿著 a 的部分」和「垂直於 a 的部分」。
+            </p>
+          </div>
+
+          <div class="theorem">
+            <h3>Projection Theorem（課上 Theorem 3.1.2）</h3>
+            <p>若 <code>a ≠ 0</code>，則任一向量 <code>u</code> 都能唯一寫成</p>
+            <div class="math">u = w₁ + w₂</div>
+            <p>其中 <code>w₁</code> 是 <code>a</code> 的純量倍數，而 <code>w₂ ⟂ a</code>。</p>
+            <div class="math">projₐ u = (u · a / ‖a‖²) a
+u - projₐ u  ⟂  a</div>
+          </div>
+
+          <div class="grid-two" style="margin-top: 16px;">
+            <div class="card example">
+              <h3>例題 2：求投影與正交分量</h3>
+              <p>投影片使用：</p>
+              <div class="math">u = (2, -1, 3),    a = (4, -1, 2)</div>
+              <div class="math">u · a = 2(4) + (-1)(-1) + 3(2) = 15
+‖a‖² = 4² + (-1)² + 2² = 21</div>
+              <div class="math">projₐ u = (15/21)a = (5/7)(4, -1, 2)
+         = (20/7, -5/7, 10/7)</div>
+              <div class="math">u - projₐ u
+= (2, -1, 3) - (20/7, -5/7, 10/7)
+= (-6/7, -2/7, 11/7)</div>
+            </div>
+
+            <div class="card">
+              <h3>這個分解為什麼重要？</h3>
+              <ul>
+                <li>它把幾何上的「垂直落下」精確寫成公式。</li>
+                <li>它說明最短距離其實就是正交分量的長度。</li>
+                <li>它也是 Pythagorean theorem 在 <code>Rⁿ</code> 裡成立的原因。</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="grid-two" style="margin-top: 16px;">
+            <div class="card">
+              <h3>向量分量的長度</h3>
+              <div class="math">‖projₐ u‖ = |u · a| / ‖a‖ = ‖u‖ |cos θ|</div>
+              <p>這條式子把 projection 與角度聯在一起，也讓你知道「投影大」代表方向接近。</p>
+            </div>
+
+            <div class="card">
+              <h3>Pythagoras in Rⁿ（課上 Theorem 3.1.3）</h3>
+              <div class="math">若 u ⟂ v，則  ‖u + v‖² = ‖u‖² + ‖v‖²</div>
+              <p>關鍵不是畫直角三角形，而是展開內積後，中間項 <code>2(u · v)</code> 消失。</p>
+            </div>
+          </div>
+
+          <details>
+            <summary>證明筆記：為什麼投影公式是 (u · a / ‖a‖²)a？</summary>
+            <p>因為沿著 <code>a</code> 的部分一定長成 <code>ka</code>。我們希望剩下的部分與 <code>a</code> 正交，所以令</p>
+            <div class="math">u = ka + w,    且 w · a = 0</div>
+            <p>把兩邊都與 <code>a</code> 取內積：</p>
+            <div class="math">u · a = (ka + w) · a = k(a · a) + w · a = k‖a‖²</div>
+            <div class="math">因此  k = (u · a) / ‖a‖²</div>
+            <p>所以平行分量就是 <code>ka = (u · a / ‖a‖²)a</code>。唯一性來自於這個 <code>k</code> 被內積完全決定。</p>
+          </details>
+
+          <details>
+            <summary>證明筆記：Pythagorean theorem 在高維空間為何成立？</summary>
+            <div class="math">‖u + v‖²
+= (u + v) · (u + v)
+= u · u + 2u · v + v · v
+= ‖u‖² + ‖v‖²</div>
+            <p>因為 <code>u ⟂ v</code> 等價於 <code>u · v = 0</code>。所以畢氏定理本質上其實是「正交會消掉交叉項」。</p>
+          </details>
+        </section>
+
+        <section id="distance">
+          <div class="section-head">
+            <div>
+              <div class="section-id">Part 3</div>
+              <h2>Distance Problems：把距離看成投影長度</h2>
+            </div>
+            <p class="subtitle">
+              一句話核心：距離不是硬背，而是把位移向量投影到法向量的方向。
+            </p>
+          </div>
+
+          <div class="grid-two">
+            <div class="theorem">
+              <h3>距離公式（課上 Theorem 3.1.4）</h3>
+              <div class="math">點到直線 ax + by + c = 0 的距離
+D = |ax₀ + by₀ + c| / √(a² + b²)</div>
+              <div class="math">點到平面 ax + by + cz + d = 0 的距離
+D = |ax₀ + by₀ + cz₀ + d| / √(a² + b² + c²)</div>
+            </div>
+
+            <div class="card example">
+              <h3>例題 3：點到平面的距離</h3>
+              <p>投影片範例：</p>
+              <div class="math">點 P = (1, -4, -3)
+平面 2x - 3y + 6z = -1</div>
+              <p>先寫成標準型 <code>2x - 3y + 6z + 1 = 0</code>：</p>
+              <div class="math">D = |2(1) - 3(-4) + 6(-3) + 1| / √(2² + (-3)² + 6²)
+  = |2 + 12 - 18 + 1| / √49
+  = 3/7</div>
+            </div>
+          </div>
+
+          <div class="grid-two" style="margin-top: 16px;">
+            <div class="card">
+              <h3>平行平面的距離怎麼做</h3>
+              <p>若兩平面法向量平行，就先在其中一個平面挑一點，再把「點到另一平面」套入即可。課堂範例得到：</p>
+              <div class="math">距離 = 1/6</div>
+              <p>所以平行平面的問題其實還是點到平面的問題。</p>
+            </div>
+
+            <div class="card">
+              <h3>幾何直覺</h3>
+              <p>從點 <code>P</code> 到平面最近的路徑，必須沿著法向量方向。因為任何斜著走的路徑都會比正交落下更長。</p>
+            </div>
+          </div>
+
+          <details>
+            <summary>證明筆記：點到平面距離公式從哪裡來？</summary>
+            <p>令平面的法向量為 <code>n = (a, b, c)</code>，平面上一點為 <code>Q</code>。從 <code>Q</code> 指向 <code>P</code> 的位移向量是 <code>QP</code>。</p>
+            <div class="math">距離 D = |projₙ(QP)| = |QP · n| / ‖n‖</div>
+            <p>而因為 <code>Q</code> 在平面上，<code>ax₁ + by₁ + cz₁ + d = 0</code>，代入整理後就變成</p>
+            <div class="math">D = |ax₀ + by₀ + cz₀ + d| / √(a² + b² + c²)</div>
+            <p>重點是「距離 = 位移在法向量上的投影長度」。公式只是最後一行。</p>
+          </details>
+        </section>
+
+        <section id="spaces">
+          <div class="section-head">
+            <div>
+              <div class="section-id">Part 4</div>
+              <h2>Row Space、Column Space、Null Space</h2>
+            </div>
+            <p class="subtitle">
+              一句話核心：矩陣不是只有數字表格，它同時攜帶三個重要子空間。
+            </p>
+          </div>
+
+          <div class="grid-three">
+            <div class="card">
+              <h3>Row Space</h3>
+              <p>由矩陣所有 row vectors 張成的子空間。</p>
+              <div class="math">Row(A) = span{r₁, r₂, …, r_m}</div>
+            </div>
+            <div class="card">
+              <h3>Column Space</h3>
+              <p>由矩陣所有 column vectors 張成的子空間。</p>
+              <div class="math">Col(A) = span{c₁, c₂, …, c_n}</div>
+            </div>
+            <div class="card">
+              <h3>Null Space</h3>
+              <p>所有滿足 <code>Ax = 0</code> 的向量集合。</p>
+              <div class="math">Null(A) = {x : Ax = 0}</div>
+            </div>
+          </div>
+
+          <div class="grid-two" style="margin-top: 16px;">
+            <div class="theorem">
+              <h3>Consistency Theorem（課上 Theorem 3.2.1）</h3>
+              <p>線性系統 <code>Ax = b</code> 有解，當且僅當 <code>b ∈ Col(A)</code>。</p>
+              <div class="math">Ax = x₁c₁ + x₂c₂ + ··· + x_n c_n</div>
+              <p>這句話是本章後半最關鍵的橋梁，因為它把「解方程」變成「看 b 能不能由 columns 組出來」。</p>
+            </div>
+
+            <div class="card example">
+              <h3>例題 4：判斷 b 是否在 column space</h3>
+              <div class="math">A = [ [-1, 3, 2],
+      [ 1, 2,-3],
+      [ 2, 1,-2] ],   b = (1, -9, -3)</div>
+              <p>投影片用 Gaussian elimination 找到一組解 <code>x = (2, -1, 3)</code>，所以</p>
+              <div class="math">b = 2c₁ - c₂ + 3c₃</div>
+              <p>因此 <code>b ∈ Col(A)</code>，也因此 <code>Ax=b</code> consistent。</p>
+            </div>
+          </div>
+
+          <div class="grid-two" style="margin-top: 16px;">
+            <div class="card">
+              <h3>General Solution 的結構</h3>
+              <p>課上 Theorem 3.2.2 把所有解整理成：</p>
+              <div class="math">x = x₀ + c₁v₁ + c₂v₂ + ··· + c_kv_k</div>
+              <p>其中 <code>x₀</code> 是某個 particular solution，而 <code>v₁, …, v_k</code> 是 <code>Null(A)</code> 的 basis。</p>
+            </div>
+
+            <div class="card">
+              <h3>幾何解讀</h3>
+              <p>若 <code>Ax=b</code> 有解，所有解形成「某個特定解 + Null(A)」的平移。這就是為什麼 homogeneous system 會決定自由度。</p>
+            </div>
+          </div>
+
+          <details>
+            <summary>證明筆記：為什麼 Ax = b 可解等價於 b 在 column space？</summary>
+            <div class="math">若 x = (x₁, x₂, …, x_n)ᵀ，則
+Ax = x₁c₁ + x₂c₂ + ··· + x_n c_n</div>
+            <p>因此：</p>
+            <ul>
+              <li>如果 <code>Ax=b</code> 有解，那麼 <code>b</code> 就是 columns 的線性組合，所以 <code>b ∈ Col(A)</code>。</li>
+              <li>反過來，如果 <code>b ∈ Col(A)</code>，那代表存在係數 <code>x₁, …, x_n</code> 使得上式成立，也就是存在 <code>x</code> 使 <code>Ax=b</code>。</li>
+            </ul>
+            <p>這是一個完全雙向的等價，不只是「有點像」。</p>
+          </details>
+        </section>
+
+        <section id="basis">
+          <div class="section-head">
+            <div>
+              <div class="section-id">Part 5</div>
+              <h2>Basis 與 Row Reduction：什麼能保留，什麼不能？</h2>
+            </div>
+            <p class="subtitle">
+              一句話核心：row operations 很適合找 basis，但你必須分清楚「空間被保留」和「只保留依賴關係」。
+            </p>
+          </div>
+
+          <div class="grid-two">
+            <div class="theorem">
+              <h3>課堂重點整理（Theorem 3.2.3 ~ 3.2.6）</h3>
+              <ul>
+                <li>elementary row operations 不改變 <code>Null(A)</code>。</li>
+                <li>elementary row operations 不改變 <code>Row(A)</code>。</li>
+                <li>但它們會改變 <code>Col(A)</code> 本身。</li>
+                <li>它們不改變 columns 之間的 linear dependence relationships。</li>
+              </ul>
+            </div>
+
+            <div class="card warning">
+              <h3>最容易錯的地方</h3>
+              <p>投影片特別提醒：row operations <strong>不保留 column space</strong>。</p>
+              <div class="math">A = [ [1, 3],
+      [2, 6] ],   B = [ [1, 3],
+                         [0, 0] ]</div>
+              <p><code>B</code> 可由 <code>A</code> 做 row operation 得到，但 <code>Col(A)</code> 是 <code>(1, 2)</code> 的所有倍數，<code>Col(B)</code> 則是 <code>(1, 0)</code> 的所有倍數，兩者不同。</p>
+            </div>
+          </div>
+
+          <div class="grid-two" style="margin-top: 16px;">
+            <div class="card">
+              <h3>如何找 Row Space 的 basis</h3>
+              <p>把 <code>A</code> 化成 row echelon form <code>R</code>。由於 row space 不變，所以 <code>R</code> 的非零 row 就是一組 basis。</p>
+              <div class="math">Basis for Row(A) = nonzero rows of R</div>
+            </div>
+
+            <div class="card">
+              <h3>如何找 Column Space 的 basis</h3>
+              <p>先在 <code>R</code> 裡找 pivot columns，但真正要拿來做 basis 的，是 <strong>原矩陣 A 對應位置的 columns</strong>。</p>
+              <div class="math">Pivot columns of R  →  corresponding columns of A</div>
+            </div>
+          </div>
+
+          <div class="grid-two" style="margin-top: 16px;">
+            <div class="card example">
+              <h3>例題 5：用 row reduction 找 span 的 basis</h3>
+              <p>投影片給的四個向量：</p>
+              <div class="math">v₁ = (1, -2, 0, 0, 3)
+v₂ = (2, -5, -3, -2, 6)
+v₃ = (0, 5, 15, 10, 0)
+v₄ = (2, 6, 18, 8, 6)</div>
+              <p>把它們當成 row 組成矩陣，化簡後得到 row echelon form 的非零 rows：</p>
+              <div class="math">w₁ = (1, -2, 0, 0, 3)
+w₂ = (0, 1, 3, 2, 0)
+w₃ = (0, 0, 0, 1, 0)</div>
+              <p>因此 <code>{w₁, w₂, w₃}</code> 就是一組 basis。</p>
+            </div>
+
+            <div class="card example">
+              <h3>例題 6：找 Null Space 的 basis</h3>
+              <p>課堂把矩陣化簡後，最後從 free variables 得到</p>
+              <div class="math">v₁ = (-3, 1, 0, 0, 0)ᵀ
+v₂ = (-4, 0, 1, 0, 0)ᵀ
+v₃ = (-2, 0, 0, 1, 0)ᵀ</div>
+              <p>這些向量共同描述 homogeneous system 的所有自由方向，所以它們就是 <code>Null(A)</code> 的 basis。</p>
+            </div>
+          </div>
+
+          <details>
+            <summary>證明筆記：為什麼 row operations 不改變 null space？</summary>
+            <p>每一個 elementary row operation 都只是把方程組改寫成等價方程組，所以 <code>Ax=0</code> 與 <code>Rx=0</code> 有完全相同的解集。</p>
+            <div class="math">Null(A) = {x : Ax = 0} = {x : Rx = 0} = Null(R)</div>
+            <p>既然解集一樣，null space 就一樣。這是「row reduction 可以用來找 null space basis」的根本原因。</p>
+          </details>
+
+          <details>
+            <summary>證明筆記：為什麼找 column space basis 時不能直接拿 R 的 columns？</summary>
+            <p>因為 row operations 會改變 column vectors 本身所在的空間方向。它們保留的是「哪些 columns 線性依賴、哪些 columns 對應 pivot」，而不是保留 <code>Col(A)</code> 這個空間。</p>
+            <p>所以流程一定是：</p>
+            <ol>
+              <li>先用 <code>R</code> 判斷哪幾欄是 pivot columns。</li>
+              <li>再回到原矩陣 <code>A</code>，取出同編號的欄向量。</li>
+            </ol>
+          </details>
+        </section>
+
+        <section id="span-practice">
+          <div class="section-head">
+            <div>
+              <div class="section-id">Part 6</div>
+              <h2>Span(S) 與空間練習：從定理到操作</h2>
+            </div>
+            <p class="subtitle">
+              一句話核心：row reduction 用來判斷哪些原始向量要留下；留下的是 basis，被淘汰的向量要能由 basis 線性組合出來。
+            </p>
+          </div>
+
+          <div class="grid-two">
+            <div class="theorem">
+              <h3>Basis and Linear Combinations</h3>
+              <p>給定一組向量 <code>S = {v₁, v₂, ..., v_k}</code>，目標有兩件事：</p>
+              <ol>
+                <li>找出其中一部分向量，作為 <code>span(S)</code> 的 basis。</li>
+                <li>把沒有進 basis 的向量，寫成 basis vectors 的 linear combination。</li>
+              </ol>
+              <p>這裡的 basis 必須是原本 <code>S</code> 裡的向量，不是 row reduction 後新產生的向量。</p>
+            </div>
+
+            <div class="card">
+              <h3>完整流程（投影片 59-60）</h3>
+              <ol>
+                <li>把 <code>S</code> 裡的向量當作 columns，組成矩陣 <code>A</code>。</li>
+                <li>把 <code>A</code> 化成 reduced row echelon form <code>R</code>。</li>
+                <li>在 <code>R</code> 裡找 pivot columns。</li>
+                <li>回到原本 <code>A</code>，取出同編號的 columns 作為 <code>span(S)</code> 的 basis。</li>
+                <li>在 <code>R</code> 裡把 non-pivot columns 寫成 pivot columns 的線性組合。</li>
+                <li>把同樣的 dependency equations 套回原本 <code>A</code> 的 columns。</li>
+              </ol>
+            </div>
+          </div>
+
+          <div class="grid-two" style="margin-top: 16px;">
+            <div class="card example">
+              <h3>例題 7：從五個向量挑出 span 的 basis</h3>
+              <p>投影片給定：</p>
+              <div class="math">v₁ = (1, -2, 0, 3)
+v₂ = (2, -5, -3, 6)
+v₃ = (0, 1, 3, 0)
+v₄ = (2, -1, 4, -7)
+v₅ = (5, -8, 1, 2)</div>
+              <p>把這五個向量當作 columns 組成 <code>A</code>，row reduce 後得到：</p>
+              <div class="math">R = [ [1, 0,  2, 0, 1],
+      [0, 1, -1, 0, 1],
+      [0, 0,  0, 1, 1],
+      [0, 0,  0, 0, 0] ]</div>
+              <p><code>R</code> 的 pivot columns 是第 1、2、4 欄，所以回到原本的向量集合：</p>
+              <div class="math">Basis for span(S) = {v₁, v₂, v₄}</div>
+            </div>
+
+            <div class="card example">
+              <h3>Dependency Equations</h3>
+              <p>第 3、5 欄不是 pivot columns，所以它們不是新的基本方向。從 <code>R</code> 可以看出：</p>
+              <div class="math">w₃ = 2w₁ - w₂
+w₅ = w₁ + w₂ + w₄</div>
+              <p>Theorem 3.2.6 告訴我們，row reduction 保留 columns 之間的 dependence relationships。因此回到原本的 <code>A</code>：</p>
+              <div class="math">v₃ = 2v₁ - v₂
+v₅ = v₁ + v₂ + v₄</div>
+              <p>這就是「沒有進 basis 的向量」如何由 basis vectors 組合出來。</p>
+            </div>
+          </div>
+
+          <div class="grid-two" style="margin-top: 16px;">
+            <div class="card">
+              <h3>把 Ax 看成 column vectors 的組合</h3>
+              <p>投影片 61-62 的練習是在確認一個基本觀念：</p>
+              <div class="math">若 A = [c₁ c₂ ··· c_n]，且 x = (x₁, x₂, ..., x_n)ᵀ，
+則 Ax = x₁c₁ + x₂c₂ + ··· + x_n c_n</div>
+              <p>例如若 <code>x = (3, 0, -5)ᵀ</code>，那麼第三個係數是 <code>-5</code>，第二個係數是 <code>0</code>，所以第二欄雖然存在，但不貢獻這次的線性組合。</p>
+            </div>
+
+            <div class="card">
+              <h3>General Solution 練習</h3>
+              <p>投影片 63-69 使用同一個矩陣：</p>
+              <div class="math">A = [ [1,  2, 0],
+      [1, -1, 4] ]</div>
+              <p>當 <code>b=(0,0)</code> 時，這就是 homogeneous system，解形成 null space：</p>
+              <div class="math">x = t(-8/3, 4/3, 1),    t ∈ R</div>
+              <p>當 <code>b=(1,3)</code> 或 <code>b=(-1,1)</code> 時，解會變成「particular solution + 同一條 null direction」。</p>
+              <div class="math">b = (1, 3):    x = (7/3, -2/3, 0) + t(-8/3, 4/3, 1)
+b = (-1, 1):   x = (1/3, -2/3, 0) + t(-8/3, 4/3, 1)</div>
+              <p>同一個 <code>A</code> 的 null space 不會因為 <code>b</code> 改變；改變的是 particular solution。</p>
+            </div>
+          </div>
+
+          <div class="grid-two" style="margin-top: 16px;">
+            <div class="card example">
+              <h3>幾何例題：Null Space 是 z-axis</h3>
+              <p>投影片 70-73 給定：</p>
+              <div class="math">A = [ [0, 1, 0],
+      [1, 0, 0],
+      [0, 0, 0] ]</div>
+              <p>對任意 <code>x = (x, y, z)ᵀ</code>，</p>
+              <div class="math">Ax = (y, x, 0)ᵀ</div>
+              <p>若 <code>Ax=0</code>，則 <code>x=0</code> 且 <code>y=0</code>，只有 <code>z</code> 可以自由變動：</p>
+              <div class="math">Null(A) = { (0, 0, z)ᵀ : z ∈ R }</div>
+              <p>所以 null space 是 <code>z</code>-axis。</p>
+            </div>
+
+            <div class="card example">
+              <h3>同一矩陣的 Column Space 是 xy-plane</h3>
+              <p><code>A</code> 的 columns 是：</p>
+              <div class="math">a₁ = (0, 1, 0)ᵀ,    a₂ = (1, 0, 0)ᵀ,    a₃ = (0, 0, 0)ᵀ</div>
+              <p>前兩個 columns 可以組出所有 <code>z=0</code> 的向量：</p>
+              <div class="math">Col(A) = span{(0,1,0)ᵀ, (1,0,0)ᵀ}
+       = { (x, y, 0)ᵀ : x, y ∈ R }</div>
+              <p>所以 column space 是 <code>xy</code>-plane。這個例子把「null space 看 input，column space 看 output」變成很直觀的幾何圖像。</p>
+            </div>
+          </div>
+
+          <div class="grid-two" style="margin-top: 16px;">
+            <div class="card example">
+              <h3>反向設計矩陣：指定 Null Space 與 Column Space</h3>
+              <p>投影片 74-76 要找一個 <code>3 × 3</code> 矩陣，使得：</p>
+              <div class="math">Null(B) = x-axis = { (x, 0, 0)ᵀ : x ∈ R }
+Col(B) = yz-plane = { (0, y, z)ᵀ : y, z ∈ R }</div>
+              <p>一個自然選擇是：</p>
+              <div class="math">B = [ [0, 0, 0],
+      [0, 1, 0],
+      [0, 0, 1] ]</div>
+            </div>
+
+            <div class="card">
+              <h3>為什麼這個 B 有效？</h3>
+              <p>對 <code>x = (x, y, z)ᵀ</code>，</p>
+              <div class="math">Bx = (0, y, z)ᵀ</div>
+              <p>若 <code>Bx=0</code>，必須 <code>y=0</code> 且 <code>z=0</code>，而 <code>x</code> 不受限制，所以 null space 是 <code>x</code>-axis。</p>
+              <p>另外 <code>B</code> 的 columns 是 <code>(0,0,0)ᵀ</code>、<code>(0,1,0)ᵀ</code>、<code>(0,0,1)ᵀ</code>，它們張成所有 <code>(0,y,z)ᵀ</code>，所以 column space 是 <code>yz</code>-plane。</p>
+            </div>
+          </div>
+        </section>
+
+        <section id="pitfalls">
+          <div class="section-head">
+            <div>
+              <div class="section-id">Part 7</div>
+              <h2>常錯觀念整理</h2>
+            </div>
+            <p class="subtitle">
+              下面這幾條如果混在一起，這章就會很容易失分。
+            </p>
+          </div>
+          <div class="grid-two">
+            <div class="card warning">
+              <h3>錯誤 1</h3>
+              <p>把「orthogonal」和「independent」當成同一件事。事實上 orthogonal 一定 independent（零向量除外），但 independent 不代表 orthogonal。</p>
+            </div>
+            <div class="card warning">
+              <h3>錯誤 2</h3>
+              <p>背點到平面的距離公式，卻不知道分母為什麼是法向量的長度。其實那是投影時的正規化。</p>
+            </div>
+            <div class="card warning">
+              <h3>錯誤 3</h3>
+              <p>看到 <code>Ax=b</code> 就只想做 elimination，卻忘了 <code>b</code> 是否在 <code>Col(A)</code> 裡才是本質。</p>
+            </div>
+            <div class="card warning">
+              <h3>錯誤 4</h3>
+              <p>直接拿 row echelon form 的 columns 當成 <code>Col(A)</code> 的 basis。這是本章最需要刻意避免的誤解。</p>
+            </div>
+          </div>
+        </section>
+
+        <section id="review">
+          <div class="section-head">
+            <div>
+              <div class="section-id">Part 8</div>
+              <h2>考前複習清單</h2>
+            </div>
+            <p class="subtitle">
+              如果這 10 題你都能不看答案說清楚，CH3 的主架構就真的站穩了。
+            </p>
+          </div>
+          <div class="grid-two">
+            <div class="card">
+              <ol>
+                <li>如何用內積判斷兩向量 orthogonal？</li>
+                <li>point-normal equation 為什麼能描述線與平面？</li>
+                <li>projection formula 如何推導？</li>
+                <li>為什麼距離公式其實是投影長度？</li>
+              </ol>
+            </div>
+            <div class="card">
+              <ol start="5">
+                <li>為什麼 <code>Ax=b</code> 可解等價於 <code>b ∈ Col(A)</code>？</li>
+                <li>general solution 為什麼是 <code>x₀ + Null(A)</code>？</li>
+                <li>row operations 對 row space、null space、column space 各有什麼影響？</li>
+                <li>找 column space basis 時，為什麼要回到原矩陣取 pivot columns？</li>
+                <li>如何從 <code>S={v₁,...,v_k}</code> 挑出 <code>span(S)</code> 的 basis？</li>
+                <li>如何用 null space 與 column space 描述座標軸或座標平面？</li>
+              </ol>
+            </div>
+          </div>
+        </section>
+
+        <div class="footer">
+          <div>
+            <strong>使用建議</strong>
+            先把每個藍色 theorem 盒中的結論背成一句話，再拿旁邊例題驗證。這樣會比直接死背公式穩很多。
+          </div>
+          <div>
+            <strong>講義範圍</strong>
+            依據你提供的 CH3 課堂 PDF 已出現的內容重組，涵蓋 Orthogonality、Projection、Distance、Row / Column / Null Space、Basis by Row Reduction，以及新版 PDF 第 56-76 頁的 span 與空間練習。
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

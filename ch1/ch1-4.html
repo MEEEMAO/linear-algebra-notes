@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 1.4 完整學習講義</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"></script>
+<style>
+  :root {
+    --bg: #FAFAF8;
+    --card: #FFFFFF;
+    --text: #1a1a1a;
+    --muted: #6b6b6b;
+    --accent: #2755A0;
+    --accent-light: #E8EEFB;
+    --border: #e2e2e0;
+    --red: #C0392B;
+    --red-bg: #FDF2F0;
+    --green: #1B7A3D;
+    --green-bg: #EEFBF2;
+    --orange: #B8600B;
+    --orange-bg: #FFF6ED;
+    --purple: #6C3FA0;
+    --purple-bg: #F3EEFB;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.9;
+    padding: 2.5rem 2rem;
+    max-width: 820px;
+    margin: 0 auto;
+  }
+  h1 {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+  h1 span { color: var(--accent); }
+  .subtitle {
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* TOC */
+  .toc {
+    background: var(--accent-light);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+  .toc-title {
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.75rem;
+  }
+  .toc a {
+    display: block;
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 0.95rem;
+    padding: 3px 0;
+  }
+  .toc a:hover { text-decoration: underline; }
+
+  /* Sections */
+  .section { margin-bottom: 3rem; }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.25rem;
+  }
+  .section-num {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: white;
+    font-weight: 700;
+    font-size: 0.95rem;
+    flex-shrink: 0;
+  }
+  .section-title {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+
+  /* Boxes */
+  .theorem-box {
+    background: var(--accent-light);
+    border-left: 4px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+  .theorem-box .label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.3rem;
+  }
+  .def-box {
+    background: var(--purple-bg);
+    border-left: 4px solid var(--purple);
+    border-radius: 0 8px 8px 0;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+  .def-box .label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--purple);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.3rem;
+  }
+  .warn-box {
+    background: var(--red-bg);
+    border-left: 4px solid var(--red);
+    border-radius: 0 8px 8px 0;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+  .warn-box .label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--red);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.3rem;
+  }
+  .tip-box {
+    background: var(--orange-bg);
+    border-left: 4px solid var(--orange);
+    border-radius: 0 8px 8px 0;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+  .tip-box .label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--orange);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.3rem;
+  }
+  .example-box {
+    background: var(--green-bg);
+    border-left: 4px solid var(--green);
+    border-radius: 0 8px 8px 0;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+  .example-box .label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--green);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.3rem;
+  }
+
+  /* Proof steps */
+  .proof {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+  .proof-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.5rem;
+  }
+  .proof p { font-size: 0.95rem; line-height: 1.9; }
+  .qed {
+    text-align: right;
+    font-size: 1.1rem;
+    color: var(--accent);
+    margin-top: 0.5rem;
+  }
+
+  /* Math */
+  .math-display {
+    text-align: center;
+    margin: 0.75rem 0;
+    overflow-x: auto;
+  }
+  .katex { font-size: 1.05em; }
+  .math-display .katex { font-size: 1.15em; }
+
+  /* Misc */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 2.5rem 0;
+  }
+  p { margin-bottom: 0.5rem; }
+  .content p { font-size: 0.95rem; }
+  strong { font-weight: 700; }
+  .highlight { background: #FFF3CD; padding: 2px 4px; border-radius: 3px; }
+
+  @media print {
+    body { padding: 1rem; font-size: 0.9rem; }
+    .toc { break-after: page; }
+    .section { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<nav aria-label="講義導覽" style="position:relative;z-index:10;padding:10px 20px;border-bottom:1px solid #dce0d7;background:#f7f6f2;text-align:left;font:13px/1.6 -apple-system,BlinkMacSystemFont,'Microsoft JhengHei',sans-serif"><a href="../index.html" style="color:#315f4b;text-decoration:none;font-weight:600">← 線性代數講義目錄</a></nav>
+
+
+<h1>Chapter 1.4 — <span>逆矩陣與矩陣代數性質</span></h1>
+<p class="subtitle">完整學習講義｜涵蓋所有定理、證明、範例與重要觀念</p>
+
+<!-- TOC -->
+<div class="toc">
+  <div class="toc-title">目錄</div>
+  <a href="#s1">① 矩陣運算的基本性質 (Thm 1.4.1)</a>
+  <a href="#s2">② 矩陣乘法的特殊性 — 不可交換 & 消去律失敗</a>
+  <a href="#s3">③ 零矩陣與恆等矩陣</a>
+  <a href="#s4">④ 方陣 RREF 的二分性 (Thm 1.4.3)</a>
+  <a href="#s5">⑤ 逆矩陣的定義與唯一性 (Thm 1.4.4)</a>
+  <a href="#s6">⑥ 2×2 逆矩陣公式 (Thm 1.4.5)</a>
+  <a href="#s7">⑦ 用逆矩陣解線性系統</a>
+  <a href="#s8">⑧ 乘積的逆 (Thm 1.4.6)</a>
+  <a href="#s9">⑨ 矩陣的冪次與指數性質 (Thm 1.4.7)</a>
+  <a href="#s10">⑩ 矩陣多項式</a>
+  <a href="#s11">⑪ 轉置性質 (Thm 1.4.8)</a>
+  <a href="#s12">⑫ 轉置的逆 (Thm 1.4.9)</a>
+  <a href="#s13">⑬ Trace 的性質</a>
+</div>
+
+<!-- ================================================================ -->
+<!-- SECTION 1 -->
+<!-- ================================================================ -->
+<section class="section" id="s1">
+  <div class="section-header">
+    <div class="section-num">1</div>
+    <div class="section-title">矩陣運算的基本性質</div>
+  </div>
+
+  <div class="theorem-box">
+    <div class="label">Theorem 1.4.1 — 矩陣算術性質</div>
+    <div>假設矩陣大小使運算可行，以下法則成立：</div>
+  </div>
+
+  <div class="content">
+    <p><strong>加法：</strong></p>
+    <div class="math-display">$$1.\; A + B = B + A \quad\text{（交換律）}$$</div>
+    <div class="math-display">$$2.\; A + (B + C) = (A + B) + C \quad\text{（結合律）}$$</div>
+
+    <p><strong>乘法：</strong></p>
+    <div class="math-display">$$3.\; A(BC) = (AB)C \quad\text{（結合律）}$$</div>
+
+    <p><strong>分配律：</strong></p>
+    <div class="math-display">$$4.\; A(B + C) = AB + AC \quad\text{（左分配律）}$$</div>
+    <div class="math-display">$$5.\; (B + C)A = BA + CA \quad\text{（右分配律）}$$</div>
+    <div class="math-display">$$6.\; A(B - C) = AB - AC$$</div>
+    <div class="math-display">$$7.\; (B - C)A = BA - CA$$</div>
+
+    <p><strong>純量與矩陣：</strong></p>
+    <div class="math-display">$$8.\; a(B + C) = aB + aC \qquad 9.\; a(B - C) = aB - aC$$</div>
+    <div class="math-display">$$10.\; (a + b)C = aC + bC \qquad 11.\; (a - b)C = aC - bC$$</div>
+    <div class="math-display">$$12.\; a(bC) = (ab)C \qquad 13.\; (aB)C = B(aC)$$</div>
+  </div>
+
+  <!-- 分配律證明 -->
+  <div class="proof">
+    <div class="proof-title">證明：$A(B+C) = AB + AC$（左分配律）</div>
+    <p><strong>Step 1 — 確認大小相同：</strong></p>
+    <p>設 $B, C$ 都是 $m \times n$ 矩陣，$A$ 是 $r \times m$ 矩陣。</p>
+    <p>左邊 $A(B+C)$ 是 $r \times n$，右邊 $AB + AC$ 也是 $r \times n$。✓</p>
+
+    <p><strong>Step 2 — 設定符號：</strong></p>
+    <p>設 $A = [a_{ij}]$，$B = [b_{ij}]$，$C = [c_{ij}]$。要證兩邊的 $(i,j)$ 元素相等。</p>
+
+    <p><strong>Step 3 — 展開左邊：</strong></p>
+    <div class="math-display">
+      $$[A(B+C)]_{ij} = \sum_{k=1}^{m} a_{ik}(b_{kj} + c_{kj}) = \sum_{k=1}^{m} a_{ik}b_{kj} + \sum_{k=1}^{m} a_{ik}c_{kj}$$
+    </div>
+
+    <p><strong>Step 4 — 辨認右邊：</strong></p>
+    <div class="math-display">
+      $$= [AB]_{ij} + [AC]_{ij} = [AB + AC]_{ij}$$
+    </div>
+    <p>每個 $(i,j)$ 元素相等，且大小相同，所以 $A(B+C) = AB + AC$。</p>
+    <div class="qed">∎</div>
+  </div>
+
+  <!-- 結合律範例 -->
+  <div class="example-box">
+    <div class="label">範例 — 結合律驗證 (p.112-113)</div>
+    <div class="math-display">
+      $$A = \begin{bmatrix} 1 & 2 \\ 3 & 4 \\ 0 & 1 \end{bmatrix}, \quad
+      B = \begin{bmatrix} 4 & 3 \\ 2 & 1 \end{bmatrix}, \quad
+      C = \begin{bmatrix} 1 & 0 \\ 2 & 3 \end{bmatrix}$$
+    </div>
+    <div class="math-display">
+      $$AB = \begin{bmatrix} 8 & 5 \\ 20 & 13 \\ 2 & 1 \end{bmatrix}, \quad
+      BC = \begin{bmatrix} 10 & 9 \\ 4 & 3 \end{bmatrix}$$
+    </div>
+    <div class="math-display">
+      $$(AB)C = \begin{bmatrix} 18 & 15 \\ 46 & 39 \\ 4 & 3 \end{bmatrix} = A(BC)  \quad\checkmark$$
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ================================================================ -->
+<!-- SECTION 2 -->
+<!-- ================================================================ -->
+<section class="section" id="s2">
+  <div class="section-header">
+    <div class="section-num">2</div>
+    <div class="section-title">矩陣乘法的特殊性</div>
+  </div>
+
+  <div class="warn-box">
+    <div class="label">重要觀念 — AB ≠ BA（乘法不可交換）</div>
+    <div>$AB$ 和 $BA$ 可能不相等，有三種情況：</div>
+    <p>1. $AB$ 有定義但 $BA$ 沒有（例：$A$ 是 $2\times3$，$B$ 是 $3\times4$）</p>
+    <p>2. $AB$ 和 $BA$ 都有定義但大小不同（例：$A$ 是 $2\times3$，$B$ 是 $3\times2$）</p>
+    <p>3. $AB$ 和 $BA$ 大小相同但值不同</p>
+  </div>
+
+  <div class="example-box">
+    <div class="label">反例 — 同大小但乘積不同 (p.114)</div>
+    <div class="math-display">
+      $$A = \begin{bmatrix} -1 & 0 \\ 2 & 3 \end{bmatrix}, \quad
+      B = \begin{bmatrix} 1 & 2 \\ 3 & 0 \end{bmatrix}$$
+    </div>
+    <div class="math-display">
+      $$AB = \begin{bmatrix} -1 & -2 \\ 11 & 4 \end{bmatrix}, \quad
+      BA = \begin{bmatrix} 3 & 6 \\ -3 & 0 \end{bmatrix} \quad\Rightarrow\quad AB \neq BA$$
+    </div>
+  </div>
+
+  <div class="warn-box">
+    <div class="label">消去律在矩陣中不成立</div>
+    <div>$AB = AC$ 且 $A \neq 0$，<strong>不能</strong>推出 $B = C$。</div>
+  </div>
+
+  <div class="example-box">
+    <div class="label">反例 — 消去律失敗 (p.117)</div>
+    <div class="math-display">
+      $$A = \begin{bmatrix} 0 & 1 \\ 0 & 2 \end{bmatrix}, \;
+      B = \begin{bmatrix} 1 & 1 \\ 3 & 4 \end{bmatrix}, \;
+      C = \begin{bmatrix} 2 & 5 \\ 3 & 4 \end{bmatrix}$$
+    </div>
+    <div class="math-display">
+      $$AB = AC = \begin{bmatrix} 3 & 4 \\ 6 & 8 \end{bmatrix}, \quad\text{但 } B \neq C$$
+    </div>
+    <p>原因：$\det(A) = 0$，$A$ 不可逆。</p>
+  </div>
+
+  <div class="warn-box">
+    <div class="label">零乘積不代表有零因子</div>
+    <div>$AB = 0$，<strong>不能</strong>推出 $A = 0$ 或 $B = 0$。</div>
+  </div>
+
+  <div class="example-box">
+    <div class="label">反例 — 非零因子乘積為零 (p.117)</div>
+    <div class="math-display">
+      $$A = \begin{bmatrix} 0 & 1 \\ 0 & 2 \end{bmatrix}, \quad
+      B = \begin{bmatrix} 3 & 7 \\ 0 & 0 \end{bmatrix}, \quad
+      AB = \begin{bmatrix} 0 & 0 \\ 0 & 0 \end{bmatrix}$$
+    </div>
+    <p>$A \neq 0$，$B \neq 0$，但 $AB = 0$。</p>
+  </div>
+
+  <div class="tip-box">
+    <div class="label">關鍵理解</div>
+    <div>消去律失敗的根本原因：$A \neq 0$ 不代表 $A$ 可逆。如果 $A$ <strong>可逆</strong>，消去律就成立（兩邊左乘 $A^{-1}$ 即可消掉）。「不可逆的非零矩陣」就像普通數字中的「$0$」— 會吞掉資訊，讓不同的東西變一樣。</div>
+  </div>
+
+  <div class="warn-box">
+    <div class="label">矩陣和的平方</div>
+    <div>因為 $AB \neq BA$，所以：</div>
+    <div class="math-display">$$(A+B)^2 = A^2 + AB + BA + B^2 \neq A^2 + 2AB + B^2$$</div>
+    <div>只有當 $AB = BA$（$A$ 和 $B$ 可交換）時，才能寫成 $A^2 + 2AB + B^2$。</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ================================================================ -->
+<!-- SECTION 3 -->
+<!-- ================================================================ -->
+<section class="section" id="s3">
+  <div class="section-header">
+    <div class="section-num">3</div>
+    <div class="section-title">零矩陣與恆等矩陣</div>
+  </div>
+
+  <div class="def-box">
+    <div class="label">定義 — 零矩陣</div>
+    <div>所有元素皆為 $0$ 的矩陣，記為 $\mathbf{0}$（或 $\mathbf{0}_{m \times n}$）。</div>
+  </div>
+
+  <div class="theorem-box">
+    <div class="label">零矩陣的性質</div>
+    <div>設 $c$ 是純量，$A$ 是矩陣，大小適當時：</div>
+    <div class="math-display">$$(a)\; A + 0 = 0 + A = A \qquad (b)\; A - 0 = A$$</div>
+    <div class="math-display">$$(c)\; A - A = A + (-A) = 0 \qquad (d)\; 0A = 0$$</div>
+    <div class="math-display">$$(e)\; \text{若 } cA = 0，\text{則 } c = 0 \text{ 或 } A = 0$$</div>
+  </div>
+
+  <div class="def-box">
+    <div class="label">定義 — 恆等矩陣 (Identity Matrix)</div>
+    <div>主對角線為 $1$、其他位置全為 $0$ 的方陣，記為 $I$（或 $I_n$）。</div>
+    <div class="math-display">
+      $$I_2 = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}, \quad
+      I_3 = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix}$$
+    </div>
+  </div>
+
+  <div class="theorem-box">
+    <div class="label">恆等矩陣的性質</div>
+    <div>對任何 $m \times n$ 矩陣 $A$：</div>
+    <div class="math-display">$$A I_n = A \quad\text{且}\quad I_m A = A$$</div>
+    <div>恆等矩陣在矩陣乘法中扮演的角色，就像數字 $1$ 在實數乘法中一樣：$a \cdot 1 = 1 \cdot a = a$。</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ================================================================ -->
+<!-- SECTION 4 -->
+<!-- ================================================================ -->
+<section class="section" id="s4">
+  <div class="section-header">
+    <div class="section-num">4</div>
+    <div class="section-title">方陣 RREF 的二分性</div>
+  </div>
+
+  <div class="theorem-box">
+    <div class="label">Theorem 1.4.3</div>
+    <div>若 $R$ 是 $n \times n$ 方陣 $A$ 的 RREF，則 $R$ 要嘛有一列全為零，要嘛 $R = I_n$。</div>
+  </div>
+
+  <div class="proof">
+    <div class="proof-title">證明</div>
+    <p>設 $R$ 是 $A$ 的 RREF。</p>
+    <p>看最後一列：要嘛它全是 $0$，要嘛不是。</p>
+    <p><strong>Case 1：</strong>最後一列全為 $0$ → 屬於「有零列」的情況，完成。</p>
+    <p><strong>Case 2：</strong>最後一列不全為 $0$ → 矩陣沒有零列 → $n$ 列各有一個 leading $1$。</p>
+    <p>由 RREF 的定義，leading $1$ 隨列數遞增向右移。在 $n \times n$ 矩陣中有 $n$ 個 leading $1$ 分佈在 $n$ 行中，所以它們必定分別落在第 $1, 2, \ldots, n$ 行，即主對角線上。</p>
+    <p>再由 RREF 要求 leading $1$ 所在行的其他元素都是 $0$，所以 $R = I_n$。</p>
+    <div class="qed">∎</div>
+  </div>
+
+  <div class="tip-box">
+    <div class="label">補充</div>
+    <div>零矩陣 $\mathbf{0}_{n\times n}$ 也是合法的 RREF（屬於「有零列」的情況）。RREF 的條件 2-4 對零矩陣「空泛成立 (vacuously true)」，因為不存在非零列需要檢查。</div>
+  </div>
+
+  <div class="tip-box">
+    <div class="label">為什麼重要？</div>
+    <div>此定理直接連結到可逆性：$A$ 可逆 $\Leftrightarrow$ $A$ 的 RREF 是 $I_n$。</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ================================================================ -->
+<!-- SECTION 5 -->
+<!-- ================================================================ -->
+<section class="section" id="s5">
+  <div class="section-header">
+    <div class="section-num">5</div>
+    <div class="section-title">逆矩陣的定義與唯一性</div>
+  </div>
+
+  <div class="def-box">
+    <div class="label">定義 — 逆矩陣 (Inverse)</div>
+    <div>若 $A$ 是方陣，且存在同大小的矩陣 $B$ 使得：
+    $$AB = BA = I$$
+    則 $A$ 稱為<strong>可逆的 (invertible)</strong>（或非奇異的 nonsingular），$B$ 稱為 $A$ 的<strong>逆矩陣</strong>。</div>
+    <div>若不存在這樣的 $B$，則 $A$ 稱為<strong>奇異的 (singular)</strong>。</div>
+  </div>
+
+  <div class="content">
+    <p><strong>Remark：</strong>$AB = BA = I$ 中交換 $A$ 和 $B$ 後關係不變。所以若 $A$ 可逆且 $B$ 是 $A$ 的逆，則 $B$ 也可逆且 $A$ 是 $B$ 的逆。我們說 $A$ 和 $B$ <strong>互為逆矩陣</strong>。</p>
+  </div>
+
+  <div class="example-box">
+    <div class="label">範例 — 驗證可逆 (p.123)</div>
+    <div class="math-display">
+      $$A = \begin{bmatrix} 2 & -5 \\ -1 & 3 \end{bmatrix}, \quad
+      B = \begin{bmatrix} 3 & 5 \\ 1 & 2 \end{bmatrix}$$
+    </div>
+    <div class="math-display">
+      $$AB = \begin{bmatrix} 2 & -5 \\ -1 & 3 \end{bmatrix}\begin{bmatrix} 3 & 5 \\ 1 & 2 \end{bmatrix} = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix} = I$$
+    </div>
+    <div class="math-display">
+      $$BA = \begin{bmatrix} 3 & 5 \\ 1 & 2 \end{bmatrix}\begin{bmatrix} 2 & -5 \\ -1 & 3 \end{bmatrix} = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix} = I$$
+    </div>
+    <p>$A$ 和 $B$ 互為逆矩陣。</p>
+  </div>
+
+  <div class="theorem-box">
+    <div class="label">Theorem 1.4.4 — 逆矩陣是唯一的</div>
+    <div>若 $B$ 和 $C$ 都是 $A$ 的逆，則 $B = C$。</div>
+  </div>
+
+  <div class="proof">
+    <div class="proof-title">證明</div>
+    <p>因為 $B$ 是 $A$ 的逆，所以 $BA = I$。</p>
+    <p>右邊乘上 $C$：$(BA)C = IC = C$。</p>
+    <p>但由結合律：$(BA)C = B(AC) = BI = B$。</p>
+    <p>所以 $B = C$。</p>
+    <div class="qed">∎</div>
+  </div>
+
+  <div class="content">
+    <p>既然逆是唯一的，我們用 $A^{-1}$ 表示 $A$ 的逆矩陣：</p>
+    <div class="math-display">$$AA^{-1} = A^{-1}A = I$$</div>
+  </div>
+
+  <div class="content">
+    <p><strong>什麼樣的矩陣一定是奇異的？</strong>含有零列或零行的方陣一定是奇異的 (p.124)。</p>
+  </div>
+
+  <div class="example-box">
+    <div class="label">範例 — 奇異矩陣 (p.124)</div>
+    <div class="math-display">
+      $$A = \begin{bmatrix} 1 & 4 & 0 \\ 2 & 5 & 0 \\ 3 & 6 & 0 \end{bmatrix}$$
+    </div>
+    <p>第三行全為 $0$。對任意 $3\times3$ 矩陣 $B$，$BA$ 的第三行也全為 $0$（因為 $BA = B[c_1 \;\; c_2 \;\; \mathbf{0}] = [Bc_1 \;\; Bc_2 \;\; \mathbf{0}]$）。</p>
+    <p>所以 $BA \neq I$，即 $A$ 不可逆。</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ================================================================ -->
+<!-- SECTION 6 -->
+<!-- ================================================================ -->
+<section class="section" id="s6">
+  <div class="section-header">
+    <div class="section-num">6</div>
+    <div class="section-title">2×2 逆矩陣公式</div>
+  </div>
+
+  <div class="theorem-box">
+    <div class="label">Theorem 1.4.5</div>
+    <div>矩陣 $A = \begin{bmatrix} a & b \\ c & d \end{bmatrix}$ 可逆 $\Leftrightarrow$ $ad - bc \neq 0$，此時：</div>
+    <div class="math-display">
+      $$A^{-1} = \frac{1}{ad - bc}\begin{bmatrix} d & -b \\ -c & a \end{bmatrix}$$
+    </div>
+    <div>量 $ad - bc$ 稱為 $A$ 的<strong>行列式 (determinant)</strong>，記為 $\det(A) = ad - bc$。</div>
+  </div>
+
+  <div class="tip-box">
+    <div class="label">記憶方法</div>
+    <div>對角線元素互換，副對角線元素加負號，整體除以行列式。</div>
+  </div>
+
+  <div class="example-box">
+    <div class="label">範例 (a) — 可逆 (p.128-129)</div>
+    <div class="math-display">
+      $$A = \begin{bmatrix} 6 & 1 \\ 5 & 2 \end{bmatrix}, \quad \det(A) = 6\cdot2 - 1\cdot5 = 7 \neq 0$$
+    </div>
+    <div class="math-display">
+      $$A^{-1} = \frac{1}{7}\begin{bmatrix} 2 & -1 \\ -5 & 6 \end{bmatrix} = \begin{bmatrix} \frac{2}{7} & -\frac{1}{7} \\ -\frac{5}{7} & \frac{6}{7} \end{bmatrix}$$
+    </div>
+  </div>
+
+  <div class="example-box">
+    <div class="label">範例 (b) — 不可逆 (p.129)</div>
+    <div class="math-display">
+      $$A = \begin{bmatrix} -1 & 2 \\ 3 & -6 \end{bmatrix}, \quad \det(A) = (-1)(-6) - (2)(3) = 0$$
+    </div>
+    <p>行列式為 $0$，所以 $A$ 不可逆。</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ================================================================ -->
+<!-- SECTION 7 -->
+<!-- ================================================================ -->
+<section class="section" id="s7">
+  <div class="section-header">
+    <div class="section-num">7</div>
+    <div class="section-title">用逆矩陣解線性系統</div>
+  </div>
+
+  <div class="content">
+    <p>對於方程組 $Ax = b$，若 $A$ 可逆，兩邊左乘 $A^{-1}$：</p>
+    <div class="math-display">$$A^{-1}(Ax) = A^{-1}b \;\Rightarrow\; (A^{-1}A)x = A^{-1}b \;\Rightarrow\; Ix = A^{-1}b \;\Rightarrow\; x = A^{-1}b$$</div>
+  </div>
+
+  <div class="content">
+    <p>每一步用到的性質：</p>
+    <p>① 等式兩邊做相同運算 → ② 結合律 → ③ 逆矩陣定義 $A^{-1}A = I$ → ④ $Ix = x$</p>
+  </div>
+
+  <div class="example-box">
+    <div class="label">範例 — 2×2 系統 (p.131)</div>
+    <p>解 $u = ax + by$，$v = cx + dy$：</p>
+    <div class="math-display">
+      $$\begin{bmatrix} x \\ y \end{bmatrix} = \frac{1}{ad-bc}\begin{bmatrix} d & -b \\ -c & a \end{bmatrix}\begin{bmatrix} u \\ v \end{bmatrix}$$
+    </div>
+    <div class="math-display">
+      $$x = \frac{du - bv}{ad - bc}, \qquad y = \frac{av - cu}{ad - bc}$$
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <div class="label">為什麼可以兩邊同乘 $A^{-1}$？</div>
+    <div>前提是 $A$ 可逆（$A^{-1}$ 存在）。這與消去律失敗不矛盾 — 消去律要求的只是 $A \neq 0$（不夠強），而同乘逆矩陣要求 $A$ 可逆（更強的條件）。</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ================================================================ -->
+<!-- SECTION 8 -->
+<!-- ================================================================ -->
+<section class="section" id="s8">
+  <div class="section-header">
+    <div class="section-num">8</div>
+    <div class="section-title">乘積的逆</div>
+  </div>
+
+  <div class="theorem-box">
+    <div class="label">Theorem 1.4.6</div>
+    <div>若 $A$ 和 $B$ 是同大小的可逆矩陣，則 $AB$ 也可逆，且：</div>
+    <div class="math-display">$$(AB)^{-1} = B^{-1}A^{-1}$$</div>
+    <div>推廣：多個可逆矩陣的乘積仍然可逆，其逆是各逆矩陣按<strong>相反順序</strong>相乘。</div>
+  </div>
+
+  <div class="proof">
+    <div class="proof-title">證明</div>
+    <p>只需驗證 $B^{-1}A^{-1}$ 確實是 $AB$ 的逆，即證兩個方向：</p>
+    <div class="math-display">
+      $$(AB)(B^{-1}A^{-1}) = A(\underbrace{BB^{-1}}_{I})A^{-1} = AIA^{-1} = AA^{-1} = I$$
+    </div>
+    <div class="math-display">
+      $$(B^{-1}A^{-1})(AB) = B^{-1}(\underbrace{A^{-1}A}_{I})B = B^{-1}IB = B^{-1}B = I$$
+    </div>
+    <p>兩個方向都得到 $I$，所以 $(AB)^{-1} = B^{-1}A^{-1}$。</p>
+    <div class="qed">∎</div>
+  </div>
+
+  <div class="example-box">
+    <div class="label">範例 (p.133)</div>
+    <div class="math-display">
+      $$A = \begin{bmatrix} 1 & 2 \\ 1 & 3 \end{bmatrix}, \quad B = \begin{bmatrix} 3 & 2 \\ 2 & 2 \end{bmatrix}$$
+    </div>
+    <div class="math-display">
+      $$AB = \begin{bmatrix} 7 & 6 \\ 9 & 8 \end{bmatrix}, \quad (AB)^{-1} = \begin{bmatrix} 4 & -3 \\ -\frac{9}{2} & \frac{7}{2} \end{bmatrix}$$
+    </div>
+    <div class="math-display">
+      $$A^{-1} = \begin{bmatrix} 3 & -2 \\ -1 & 1 \end{bmatrix}, \quad B^{-1} = \begin{bmatrix} 1 & -1 \\ -1 & \frac{3}{2} \end{bmatrix}$$
+    </div>
+    <div class="math-display">
+      $$B^{-1}A^{-1} = \begin{bmatrix} 1 & -1 \\ -1 & \frac{3}{2} \end{bmatrix}\begin{bmatrix} 3 & -2 \\ -1 & 1 \end{bmatrix} = \begin{bmatrix} 4 & -3 \\ -\frac{9}{2} & \frac{7}{2} \end{bmatrix} = (AB)^{-1} \quad\checkmark$$
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <div class="label">穿鞋穿襪原則</div>
+    <div>穿：先襪後鞋。脫：先鞋後襪。逆矩陣一樣：$(AB)^{-1} = B^{-1}A^{-1}$，順序反轉。</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ================================================================ -->
+<!-- SECTION 9 -->
+<!-- ================================================================ -->
+<section class="section" id="s9">
+  <div class="section-header">
+    <div class="section-num">9</div>
+    <div class="section-title">矩陣的冪次與指數性質</div>
+  </div>
+
+  <div class="def-box">
+    <div class="label">定義 — 矩陣的冪次</div>
+    <div>設 $A$ 是方陣：</div>
+    <div class="math-display">$$A^0 = I, \qquad A^n = \underbrace{A \cdot A \cdots A}_{n \text{ 個}}$$</div>
+    <div>若 $A$ 可逆，負冪次定義為：</div>
+    <div class="math-display">$$A^{-n} = (A^{-1})^n = \underbrace{A^{-1} \cdot A^{-1} \cdots A^{-1}}_{n \text{ 個}}$$</div>
+  </div>
+
+  <div class="theorem-box">
+    <div class="label">Theorem 1.4.7 — 指數性質</div>
+    <div>若 $A$ 可逆，$n$ 是非負整數，則：</div>
+    <div class="math-display">$$(a)\; A^{-1} \text{ 可逆，且 } (A^{-1})^{-1} = A$$</div>
+    <div class="math-display">$$(b)\; A^n \text{ 可逆，且 } (A^n)^{-1} = A^{-n} = (A^{-1})^n$$</div>
+    <div class="math-display">$$(c)\; kA \text{ 可逆（} k \neq 0 \text{），且 } (kA)^{-1} = k^{-1}A^{-1}$$</div>
+    <div>指數的一般法則：</div>
+    <div class="math-display">$$A^r A^s = A^{r+s} \qquad (A^r)^s = A^{rs}$$</div>
+  </div>
+
+  <div class="proof">
+    <div class="proof-title">證明 (c)：$(kA)^{-1} = k^{-1}A^{-1}$</div>
+    <p>驗證 $k^{-1}A^{-1}$ 是 $kA$ 的逆：</p>
+    <div class="math-display">
+      $$(kA)(k^{-1}A^{-1}) = k^{-1}(kA)A^{-1} = (k^{-1}k)AA^{-1} = (1)I = I$$
+    </div>
+    <p>另一方向同理：$(k^{-1}A^{-1})(kA) = I$。</p>
+    <p>所以 $kA$ 可逆，且 $(kA)^{-1} = k^{-1}A^{-1}$。</p>
+    <div class="qed">∎</div>
+  </div>
+
+  <div class="example-box">
+    <div class="label">範例 (p.136)</div>
+    <div class="math-display">
+      $$A = \begin{bmatrix} 1 & 2 \\ 1 & 3 \end{bmatrix}, \quad A^{-1} = \begin{bmatrix} 3 & -2 \\ -1 & 1 \end{bmatrix}$$
+    </div>
+    <div class="math-display">
+      $$A^{-3} = (A^{-1})^3 = \begin{bmatrix} 3 & -2 \\ -1 & 1 \end{bmatrix}^3 = \begin{bmatrix} 41 & -30 \\ -15 & 11 \end{bmatrix}$$
+    </div>
+    <div class="math-display">
+      $$A^3 = \begin{bmatrix} 11 & 30 \\ 15 & 41 \end{bmatrix}, \quad (A^3)^{-1} = \frac{1}{1}\begin{bmatrix} 41 & -30 \\ -15 & 11 \end{bmatrix} = A^{-3} \quad\checkmark$$
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ================================================================ -->
+<!-- SECTION 10 -->
+<!-- ================================================================ -->
+<section class="section" id="s10">
+  <div class="section-header">
+    <div class="section-num">10</div>
+    <div class="section-title">矩陣多項式</div>
+  </div>
+
+  <div class="content">
+    <p>如果 $p(x) = a_n x^n + \cdots + a_1 x + a_0$ 是多項式，$A$ 是方陣，則：</p>
+    <div class="math-display">$$p(A) = a_n A^n + \cdots + a_1 A + a_0 I$$</div>
+    <p>注意：常數項 $a_0$ 要乘上恆等矩陣 $I$，不是直接加數字。</p>
+  </div>
+
+  <div class="example-box">
+    <div class="label">範例 1 (p.138) — $p(x) = x^2 - 2x - 5$</div>
+    <div class="math-display">
+      $$A = \begin{bmatrix} -1 & 2 \\ 1 & 3 \end{bmatrix}, \quad p(A) = A^2 - 2A - 5I$$
+    </div>
+    <div class="math-display">
+      $$A^2 = \begin{bmatrix} 3 & 4 \\ 2 & 11 \end{bmatrix}, \quad 2A = \begin{bmatrix} -2 & 4 \\ 2 & 6 \end{bmatrix}, \quad 5I = \begin{bmatrix} 5 & 0 \\ 0 & 5 \end{bmatrix}$$
+    </div>
+    <div class="math-display">
+      $$p(A) = \begin{bmatrix} 3 & 4 \\ 2 & 11 \end{bmatrix} - \begin{bmatrix} -2 & 4 \\ 2 & 6 \end{bmatrix} - \begin{bmatrix} 5 & 0 \\ 0 & 5 \end{bmatrix} = \begin{bmatrix} 0 & 0 \\ 0 & 0 \end{bmatrix}$$
+    </div>
+    <p>$p(A) = 0$（零矩陣）。</p>
+  </div>
+
+  <div class="example-box">
+    <div class="label">範例 2 (p.142) — $p(x) = x^3 - 2x + 1$</div>
+    <div class="math-display">
+      $$A = \begin{bmatrix} 3 & 1 \\ 2 & 1 \end{bmatrix}, \quad p(A) = A^3 - 2A + I$$
+    </div>
+    <div class="math-display">
+      $$A^3 = \begin{bmatrix} 41 & 15 \\ 30 & 11 \end{bmatrix}, \quad 2A = \begin{bmatrix} 6 & 2 \\ 4 & 2 \end{bmatrix}$$
+    </div>
+    <div class="math-display">
+      $$p(A) = \begin{bmatrix} 41 & 15 \\ 30 & 11 \end{bmatrix} - \begin{bmatrix} 6 & 2 \\ 4 & 2 \end{bmatrix} + \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix} = \begin{bmatrix} 36 & 13 \\ 26 & 10 \end{bmatrix}$$
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ================================================================ -->
+<!-- SECTION 11 -->
+<!-- ================================================================ -->
+<section class="section" id="s11">
+  <div class="section-header">
+    <div class="section-num">11</div>
+    <div class="section-title">轉置性質</div>
+  </div>
+
+  <div class="theorem-box">
+    <div class="label">Theorem 1.4.8 — 轉置的性質</div>
+    <div>若矩陣大小適當，則：</div>
+    <div class="math-display">$$(a)\; (A^T)^T = A$$</div>
+    <div class="math-display">$$(b)\; (A + B)^T = A^T + B^T \qquad (c)\; (A - B)^T = A^T - B^T$$</div>
+    <div class="math-display">$$(d)\; (kA)^T = kA^T$$</div>
+    <div class="math-display">$$(e)\; (AB)^T = B^T A^T$$</div>
+    <div>推廣：多個矩陣乘積的轉置 = 各轉置按<strong>相反順序</strong>相乘。</div>
+  </div>
+
+  <div class="proof">
+    <div class="proof-title">證明 (e)：$(AB)^T = B^T A^T$</div>
+
+    <p><strong>Step 1 — 確認大小：</strong></p>
+    <p>設 $A$ 是 $m \times k$，$B$ 是 $k \times n$。</p>
+    <p>$(AB)^T$ 是 $n \times m$。$B^T$ 是 $n \times k$，$A^T$ 是 $k \times m$，所以 $B^T A^T$ 也是 $n \times m$。✓</p>
+
+    <p><strong>Step 2 — 展開左邊的 $(i,j)$ 元素：</strong></p>
+    <div class="math-display">
+      $$[(AB)^T]_{ij} = [AB]_{ji} = \sum_{k=1}^{k} a_{jk}\,b_{ki}$$
+    </div>
+
+    <p><strong>Step 3 — 展開右邊的 $(i,j)$ 元素：</strong></p>
+    <div class="math-display">
+      $$[B^T A^T]_{ij} = \sum_{k=1}^{k} [B^T]_{ik}\,[A^T]_{kj} = \sum_{k=1}^{k} b_{ki}\,a_{jk} = \sum_{k=1}^{k} a_{jk}\,b_{ki}$$
+    </div>
+
+    <p><strong>Step 4 — 結論：</strong>左右相等，所以 $(AB)^T = B^T A^T$。</p>
+    <div class="qed">∎</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ================================================================ -->
+<!-- SECTION 12 -->
+<!-- ================================================================ -->
+<section class="section" id="s12">
+  <div class="section-header">
+    <div class="section-num">12</div>
+    <div class="section-title">轉置的逆</div>
+  </div>
+
+  <div class="theorem-box">
+    <div class="label">Theorem 1.4.9</div>
+    <div>若 $A$ 可逆，則 $A^T$ 也可逆，且：</div>
+    <div class="math-display">$$(A^T)^{-1} = (A^{-1})^T$$</div>
+  </div>
+
+  <div class="proof">
+    <div class="proof-title">證明</div>
+    <p>需要驗證 $(A^{-1})^T$ 是 $A^T$ 的逆，即證兩個方向：</p>
+
+    <p><strong>方向一：</strong></p>
+    <div class="math-display">
+      $$A^T\,(A^{-1})^T = (A^{-1}A)^T = I^T = I$$
+    </div>
+    <p>（利用 Thm 1.4.8(e)：$(AB)^T = B^T A^T$，所以 $B^T A^T = (AB)^T$）</p>
+
+    <p><strong>方向二：</strong></p>
+    <div class="math-display">
+      $$(A^{-1})^T\,A^T = (AA^{-1})^T = I^T = I$$
+    </div>
+
+    <p>兩個方向都得 $I$，所以 $A^T$ 可逆且 $(A^T)^{-1} = (A^{-1})^T$。</p>
+    <div class="qed">∎</div>
+  </div>
+
+  <div class="example-box">
+    <div class="label">範例 — 2×2 驗證 (p.141)</div>
+    <div class="math-display">
+      $$A = \begin{bmatrix} a & b \\ c & d \end{bmatrix}, \quad A^T = \begin{bmatrix} a & c \\ b & d \end{bmatrix}$$
+    </div>
+    <p>$\det(A) = ad - bc$，$\det(A^T) = ad - cb = ad - bc$（相同）。</p>
+    <div class="math-display">
+      $$(A^T)^{-1} = \frac{1}{ad-bc}\begin{bmatrix} d & -c \\ -b & a \end{bmatrix}$$
+    </div>
+    <div class="math-display">
+      $$(A^{-1})^T = \left(\frac{1}{ad-bc}\begin{bmatrix} d & -b \\ -c & a \end{bmatrix}\right)^T = \frac{1}{ad-bc}\begin{bmatrix} d & -c \\ -b & a \end{bmatrix}$$
+    </div>
+    <p>完全相同 ✓</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ================================================================ -->
+<!-- SECTION 13 -->
+<!-- ================================================================ -->
+<section class="section" id="s13">
+  <div class="section-header">
+    <div class="section-num">13</div>
+    <div class="section-title">Trace 的性質</div>
+  </div>
+
+  <div class="def-box">
+    <div class="label">定義 — Trace（跡）</div>
+    <div>方陣的主對角線元素之和：$\text{trace}(A) = \displaystyle\sum_{i=1}^{n} a_{ii}$</div>
+  </div>
+
+  <div class="theorem-box">
+    <div class="label">Exercise (p.143-144)</div>
+    <div>$(1)$ $\text{trace}(AB) = \text{trace}(BA)$</div>
+    <div>$(2)$ $\text{trace}(SAS^{-1}) = \text{trace}(A)$</div>
+  </div>
+
+  <div class="proof">
+    <div class="proof-title">證明 (1)：$\text{trace}(AB) = \text{trace}(BA)$</div>
+
+    <p>設 $A = [a_{ij}]$，$B = [b_{ij}]$，$C = AB = [c_{ij}]$。</p>
+    <div class="math-display">$$c_{ij} = \sum_{k=1}^{n} a_{ik}\,b_{kj}$$</div>
+
+    <p>取 trace（$i = j$）：</p>
+    <div class="math-display">
+      $$\text{trace}(AB) = \sum_{i=1}^{n} c_{ii} = \sum_{i=1}^{n}\sum_{k=1}^{n} a_{ik}\,b_{ki}$$
+    </div>
+
+    <p>交換求和順序（有限和可自由交換）：</p>
+    <div class="math-display">
+      $$= \sum_{k=1}^{n}\sum_{i=1}^{n} a_{ik}\,b_{ki} = \sum_{k=1}^{n}\sum_{i=1}^{n} b_{ki}\,a_{ik}$$
+    </div>
+
+    <p>內層 $\displaystyle\sum_{i=1}^{n} b_{ki}\,a_{ik}$ 正是 $(BA)$ 的 $(k,k)$ 元素，所以：</p>
+    <div class="math-display">
+      $$= \sum_{k=1}^{n} [BA]_{kk} = \text{trace}(BA)$$
+    </div>
+    <div class="qed">∎</div>
+  </div>
+
+  <div class="proof">
+    <div class="proof-title">證明 (2)：$\text{trace}(SAS^{-1}) = \text{trace}(A)$</div>
+    <p>由 (1)，$\text{trace}(SAS^{-1}) = \text{trace}((SA)(S^{-1}))$。</p>
+    <p>把 $SA$ 看成一個矩陣，$S^{-1}$ 看成另一個，用 (1)：</p>
+    <div class="math-display">
+      $$= \text{trace}(S^{-1}(SA)) = \text{trace}((S^{-1}S)A) = \text{trace}(IA) = \text{trace}(A)$$
+    </div>
+    <div class="qed">∎</div>
+  </div>
+
+  <div class="tip-box">
+    <div class="label">注意 (p.144)</div>
+    <div>即使 $A$ 是 $m \times n$，$B$ 是 $n \times m$（不是方陣），$\text{trace}(AB) = \text{trace}(BA)$ 仍然成立。</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SUMMARY -->
+<section class="section">
+  <div class="section-header">
+    <div class="section-num" style="background: var(--red);">!</div>
+    <div class="section-title">考前速查表</div>
+  </div>
+
+  <div class="warn-box">
+    <div class="label">矩陣 vs 實數 — 不同之處</div>
+    <div>
+      <p>$AB \neq BA$（一般情況）</p>
+      <p>$AB = AC,\, A \neq 0 \;\not\Rightarrow\; B = C$（除非 $A$ 可逆）</p>
+      <p>$AB = 0 \;\not\Rightarrow\; A = 0 \text{ 或 } B = 0$</p>
+      <p>$(A+B)^2 = A^2 + AB + BA + B^2 \neq A^2 + 2AB + B^2$（除非 $AB = BA$）</p>
+    </div>
+  </div>
+
+  <div class="theorem-box">
+    <div class="label">順序反轉公式（必背）</div>
+    <div class="math-display">$$(AB)^{-1} = B^{-1}A^{-1} \qquad (AB)^T = B^T A^T \qquad (A^T)^{-1} = (A^{-1})^T$$</div>
+  </div>
+
+  <div class="theorem-box">
+    <div class="label">其他重要公式</div>
+    <div class="math-display">$$A^{-1} = \frac{1}{ad-bc}\begin{bmatrix} d & -b \\ -c & a \end{bmatrix} \quad\text{（2×2 逆矩陣）}$$</div>
+    <div class="math-display">$$(kA)^{-1} = k^{-1}A^{-1} \qquad (A^n)^{-1} = (A^{-1})^n$$</div>
+    <div class="math-display">$$\text{trace}(AB) = \text{trace}(BA) \qquad \text{trace}(SAS^{-1}) = \text{trace}(A)$$</div>
+  </div>
+</section>
+
+<script>
+  renderMathInElement(document.body, {
+    delimiters: [
+      {left: '$$', right: '$$', display: true},
+      {left: '$', right: '$', display: false}
+    ],
+    throwOnError: false
+  });
+</script>
+
+</body>
+</html>

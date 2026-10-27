@@ -1,0 +1,1416 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chapter 5 考前秘笈：Matrix Functions 與 Cayley-Hamilton</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "\\[", right: "\\]", display: true },
+          { left: "\\(", right: "\\)", display: false }
+        ],
+        throwOnError: false
+      });
+    });
+  </script>
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #5e687a;
+      --line: #d9e1ee;
+      --paper: #fbfcff;
+      --panel: #ffffff;
+      --blue: #2457d6;
+      --blue-soft: #eaf0ff;
+      --green: #0f7b5f;
+      --green-soft: #e8f6f1;
+      --amber: #9a5a00;
+      --amber-soft: #fff5df;
+      --red: #b42318;
+      --red-soft: #fff0ee;
+      --gray-soft: #f3f5f9;
+      --shadow: 0 18px 50px rgba(23, 32, 51, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #f7f9fe 0%, #ffffff 260px);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+      line-height: 1.72;
+    }
+
+    a {
+      color: var(--blue);
+      text-decoration: none;
+    }
+
+    .page {
+      width: min(1180px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 28px 0 72px;
+    }
+
+    header {
+      padding: 28px 0 24px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--blue);
+      font-size: 0.92rem;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 900px;
+      font-size: clamp(2rem, 5vw, 4.3rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 820px;
+      margin: 18px 0 0;
+      color: var(--muted);
+      font-size: 1.08rem;
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .grid.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    section {
+      margin-top: 34px;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: clamp(1.45rem, 2.2vw, 2rem);
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 0 0 10px;
+      font-size: 1.18rem;
+      line-height: 1.35;
+      letter-spacing: 0;
+    }
+
+    h4 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+      letter-spacing: 0;
+    }
+
+    p {
+      margin: 0 0 10px;
+    }
+
+    ul, ol {
+      margin: 8px 0 0 1.25rem;
+      padding: 0;
+    }
+
+    li {
+      margin: 4px 0;
+    }
+
+    .panel,
+    .card,
+    .example {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .panel {
+      padding: 18px;
+    }
+
+    .card {
+      padding: 16px;
+      box-shadow: none;
+    }
+
+    .example {
+      margin-top: 18px;
+      overflow: hidden;
+    }
+
+    .example-head {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--line);
+      background: #f8faff;
+    }
+
+    .example-body {
+      padding: 18px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 2px 10px;
+      border-radius: 999px;
+      background: var(--blue-soft);
+      color: var(--blue);
+      font-size: 0.86rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .tag.green {
+      background: var(--green-soft);
+      color: var(--green);
+    }
+
+    .tag.amber {
+      background: var(--amber-soft);
+      color: var(--amber);
+    }
+
+    .tag.red {
+      background: var(--red-soft);
+      color: var(--red);
+    }
+
+    .note {
+      padding: 13px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--gray-soft);
+    }
+
+    .note.fast {
+      border-color: #bad2ff;
+      background: var(--blue-soft);
+    }
+
+    .note.warn {
+      border-color: #ffd8a8;
+      background: var(--amber-soft);
+    }
+
+    .note.good {
+      border-color: #b8e5d6;
+      background: var(--green-soft);
+    }
+
+    .steps {
+      counter-reset: step;
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .step {
+      position: relative;
+      padding: 12px 14px 12px 48px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .step::before {
+      counter-increment: step;
+      content: counter(step);
+      position: absolute;
+      left: 14px;
+      top: 14px;
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--blue);
+      color: #fff;
+      font-size: 0.82rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .formula {
+      margin: 10px 0;
+      padding: 12px;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+    }
+
+    .answer {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-left: 4px solid var(--green);
+      background: var(--green-soft);
+      border-radius: 0 8px 8px 0;
+    }
+
+    .toc {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .toc a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 4px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      color: var(--ink);
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    th, td {
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+    }
+
+    th {
+      background: #f1f5ff;
+      color: #20315a;
+    }
+
+    code {
+      padding: 0.1em 0.35em;
+      border-radius: 5px;
+      background: #eef2f8;
+      color: #15243d;
+      font-family: "SFMono-Regular", Consolas, Menlo, monospace;
+      font-size: 0.92em;
+    }
+
+    .katex-display {
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 3px 0;
+    }
+
+    @media (max-width: 860px) {
+      .grid.two,
+      .grid.three {
+        grid-template-columns: 1fr;
+      }
+
+      .example-head {
+        display: block;
+      }
+
+      .example-head .tag {
+        margin-top: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+<nav aria-label="講義導覽" style="position:relative;z-index:10;padding:10px 20px;border-bottom:1px solid #dce0d7;background:#f7f6f2;text-align:left;font:13px/1.6 -apple-system,BlinkMacSystemFont,'Microsoft JhengHei',sans-serif"><a href="../index.html" style="color:#315f4b;text-decoration:none;font-weight:600">← 線性代數講義目錄</a></nav>
+
+  <main class="page">
+    <header>
+      <p class="eyebrow">Chapter 5 Exam Cram</p>
+      <h1>Matrix Functions 與 Cayley-Hamilton 考前秘笈</h1>
+      <p class="subtitle">這份不是完整觀念講義，而是考前兩小時用的「看到題目就知道怎麼動筆」版本。每題都先抓題型，再給套法、解題步驟與答案。</p>
+      <div class="toc">
+        <a href="#two-hour">兩小時念法</a>
+        <a href="#patterns">題型速查</a>
+        <a href="#section-51">5.1 例題</a>
+        <a href="#section-52">5.2 例題</a>
+        <a href="#last-page">最後一頁背誦</a>
+      </div>
+    </header>
+
+    <section id="two-hour">
+      <h2>兩小時念法</h2>
+      <div class="grid three">
+        <div class="card">
+          <h3>第 0-30 分鐘</h3>
+          <p>先背「題型速查」。考試時先判斷：是特徵值轉換、矩陣函數、微分方程，還是 Cayley-Hamilton 降冪。</p>
+        </div>
+        <div class="card">
+          <h3>第 30-90 分鐘</h3>
+          <p>照順序看 15 題例題。每題先看藍色套法，再看步驟。不要卡在證明直覺，先學會怎麼寫答案。</p>
+        </div>
+        <div class="card">
+          <h3>第 90-120 分鐘</h3>
+          <p>只複習答案框與最後一頁背誦。遇到高次方或 \(e^{At}\)，優先用最小多項式降成低次。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="patterns">
+      <h2>題型速查</h2>
+      <div class="panel">
+        <table>
+          <thead>
+            <tr>
+              <th>看到題目</th>
+              <th>先用哪招</th>
+              <th>考場寫法</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>\(A^{-1}\)、\(A^k\) 的 eigenvalues</td>
+              <td>特徵值直接轉換</td>
+              <td>若 \(A\) 的特徵值是 \(\lambda\)，則 \(A^{-1}\) 是 \(1/\lambda\)，\(A^k\) 是 \(\lambda^k\)。</td>
+            </tr>
+            <tr>
+              <td>\(f(A)\)、\(e^A\)、\(\sin A\)</td>
+              <td>先找特徵值；可對角化就用 \(S f(D) S^{-1}\)</td>
+              <td>若有 Jordan block，右上角放導數：\(\begin{bmatrix} f(\lambda) &amp; f'(\lambda)\\0 &amp; f(\lambda)\end{bmatrix}\)。</td>
+            </tr>
+            <tr>
+              <td>大次方 \(A^{100}, A^{300}\)</td>
+              <td>用最小多項式做餘式</td>
+              <td>把 \(x^m\) 除以 minimal polynomial，只留低次餘式，例如 \(x^{300}=Q(x)(x-2)(x-5)+ax+b\)。</td>
+            </tr>
+            <tr>
+              <td>微分系統 \(X'=AX\)</td>
+              <td>找 eigenvalue/eigenvector</td>
+              <td>答案是 \(\sum c_i v_i e^{\lambda_i t}\)。</td>
+            </tr>
+            <tr>
+              <td>非齊次系統 \(X'=AX+B(t)\)</td>
+              <td>令 \(X=SZ\) 對角化</td>
+              <td>變成每個 \(z_i\) 的一階 ODE，分開解，再乘回 \(X=SZ\)。</td>
+            </tr>
+            <tr>
+              <td>全 1 矩陣</td>
+              <td>直接背 \(A^2=nA\)</td>
+              <td>\(n\times n\) 全 1 矩陣滿足 \(A^m=n^{m-1}A\)。</td>
+            </tr>
+            <tr>
+              <td>nilpotent</td>
+              <td>檢查 \(A^m=0\)</td>
+              <td>若 \(A^3=0\)，則 \(e^{At}=I+tA+\frac{t^2}{2}A^2\)。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="section-51">
+      <h2>5.1 Matrix Functions 例題</h2>
+
+      <article class="example" id="e51-1">
+        <div class="example-head">
+          <div>
+            <h3>5.1-1 特徵值轉換：\(A^{-1}\) 與 \(A^4\)</h3>
+            <p>題目給 \(A=\begin{bmatrix}0.8&amp;0.2&amp;0.4\\0.1&amp;0.3&amp;0.1\\0.1&amp;0.5&amp;0.5\end{bmatrix}\)，求 \(A^{-1}\) 與 \(A^4\) 的特徵值。</p>
+          </div>
+          <span class="tag">特徵值秒殺題</span>
+        </div>
+        <div class="example-body">
+          <div class="note fast">
+            <strong>考前套法：</strong>不要真的算 \(A^{-1}\) 或 \(A^4\)。只要先找 \(A\) 的特徵值，接著把特徵值倒數或取四次方。
+          </div>
+          <div class="steps">
+            <div class="step">
+              <p>特徵方程式：</p>
+              <div class="formula">\[
+                \det(A-\lambda I)=(-1)^3(\lambda^3-1.6\lambda^2+0.68\lambda-0.08)=0
+              \]</div>
+            </div>
+            <div class="step">
+              <p>解出 \(A\) 的特徵值：</p>
+              <div class="formula">\[
+                \lambda=1,\quad 0.4,\quad 0.2
+              \]</div>
+            </div>
+            <div class="step">
+              <p>\(A^{-1}\) 的特徵值是倒數：</p>
+              <div class="formula">\[
+                1,\quad \frac{1}{0.4}=2.5,\quad \frac{1}{0.2}=5
+              \]</div>
+            </div>
+            <div class="step">
+              <p>\(A^4\) 的特徵值是四次方：</p>
+              <div class="formula">\[
+                1^4=1,\quad (0.4)^4,\quad (0.2)^4
+              \]</div>
+            </div>
+          </div>
+          <div class="answer">
+            <strong>答案：</strong>\(A^{-1}\) 的 eigenvalues 是 \(1,2.5,5\)；\(A^4\) 的 eigenvalues 是 \(1,(0.4)^4,(0.2)^4\)。
+          </div>
+        </div>
+      </article>
+
+      <article class="example" id="e51-2">
+        <div class="example-head">
+          <div>
+            <h3>5.1-2 Jordan block 矩陣函數：\(A^{1/2}\)、\(\sin A\)、\(e^{A^2}\)</h3>
+            <p>題目給 \(A=\begin{bmatrix}4&amp;1\\-1&amp;2\end{bmatrix}\)，求 \(A^{1/2}\)、\(\sin A\)、\(e^{A^2}\)。</p>
+          </div>
+          <span class="tag amber">重根 + 導數</span>
+        </div>
+        <div class="example-body">
+          <div class="note fast">
+            <strong>考前套法：</strong>重根只有一個 eigenvector 時，用 Jordan block。對 \(J=\begin{bmatrix}\lambda&amp;1\\0&amp;\lambda\end{bmatrix}\)，直接背 \(f(J)=\begin{bmatrix}f(\lambda)&amp;f'(\lambda)\\0&amp;f(\lambda)\end{bmatrix}\)。
+          </div>
+          <div class="steps">
+            <div class="step">
+              <p>先找特徵值與 eigenvector：</p>
+              <div class="formula">\[
+                \det(A-\lambda I)=0 \Rightarrow \lambda=3,3,\qquad
+                X_1=\begin{bmatrix}1\\-1\end{bmatrix}
+              \]</div>
+            </div>
+            <div class="step">
+              <p>找 generalized eigenvector：</p>
+              <div class="formula">\[
+                (A-3I)X_2=X_1,\qquad
+                X_2=\begin{bmatrix}1\\0\end{bmatrix}
+              \]</div>
+              <div class="formula">\[
+                S=\begin{bmatrix}1&amp;1\\-1&amp;0\end{bmatrix},
+                \qquad
+                S^{-1}=\begin{bmatrix}0&amp;-1\\1&amp;1\end{bmatrix}
+              \]</div>
+            </div>
+            <div class="step">
+              <p>平方根：令 \(f(x)=\sqrt{x}\)，\(f'(x)=\frac{1}{2\sqrt{x}}\)。</p>
+              <div class="formula">\[
+                A^{1/2}=S
+                \begin{bmatrix}
+                \sqrt3 &amp; \frac{1}{2\sqrt3}\\
+                0 &amp; \sqrt3
+                \end{bmatrix}S^{-1}
+              \]</div>
+              <div class="formula">\[
+                A^{1/2}=
+                \begin{bmatrix}
+                \sqrt3+\frac{1}{2\sqrt3} &amp; \frac{1}{2\sqrt3}\\
+                -\frac{1}{2\sqrt3} &amp; \sqrt3-\frac{1}{2\sqrt3}
+                \end{bmatrix}
+              \]</div>
+            </div>
+            <div class="step">
+              <p>正弦：令 \(g(x)=\sin x\)，\(g'(x)=\cos x\)。</p>
+              <div class="formula">\[
+                \sin A=S
+                \begin{bmatrix}
+                \sin3 &amp; \cos3\\
+                0 &amp; \sin3
+                \end{bmatrix}S^{-1}
+                =
+                \begin{bmatrix}
+                \sin3+\cos3 &amp; \cos3\\
+                -\cos3 &amp; \sin3-\cos3
+                \end{bmatrix}
+              \]</div>
+            </div>
+            <div class="step">
+              <p>指數 \(e^{A^2}\)：把它看成 \(h(A)\)，其中 \(h(x)=e^{x^2}\)，\(h'(x)=2xe^{x^2}\)。代 \(x=3\)：\(h(3)=e^9\)、\(h'(3)=6e^9\)。</p>
+              <div class="formula">\[
+                e^{A^2}=S
+                \begin{bmatrix}
+                e^9 &amp; 6e^9\\
+                0 &amp; e^9
+                \end{bmatrix}S^{-1}
+                =
+                \begin{bmatrix}
+                7e^9 &amp; 6e^9\\
+                -6e^9 &amp; -5e^9
+                \end{bmatrix}
+              \]</div>
+            </div>
+          </div>
+          <div class="answer">
+            <strong>答案：</strong>重根不可只把特徵值代入；Jordan block 的右上角一定要放導數值。
+          </div>
+        </div>
+      </article>
+
+      <article class="example" id="e51-3">
+        <div class="example-head">
+          <div>
+            <h3>5.1-3 齊次微分系統：\(X'=AX\)</h3>
+            <p>解 \(X'=\begin{bmatrix}0&amp;2&amp;2\\2&amp;0&amp;2\\2&amp;2&amp;0\end{bmatrix}X\)。</p>
+          </div>
+          <span class="tag green">微分系統</span>
+        </div>
+        <div class="example-body">
+          <div class="note fast">
+            <strong>考前套法：</strong>齊次系統 \(X'=AX\) 只要找 eigenvalue/eigenvector。每一組 \((\lambda,v)\) 產生一項 \(cve^{\lambda t}\)。
+          </div>
+          <div class="steps">
+            <div class="step">
+              <p>特徵值：</p>
+              <div class="formula">\[
+                \lambda=-2,-2,4
+              \]</div>
+            </div>
+            <div class="step">
+              <p>對 \(\lambda=-2\)，取兩個獨立 eigenvectors：</p>
+              <div class="formula">\[
+                v_1=\begin{bmatrix}1\\0\\-1\end{bmatrix},
+                \qquad
+                v_2=\begin{bmatrix}0\\1\\-1\end{bmatrix}
+              \]</div>
+            </div>
+            <div class="step">
+              <p>對 \(\lambda=4\)，取：</p>
+              <div class="formula">\[
+                v_3=\begin{bmatrix}1\\1\\1\end{bmatrix}
+              \]</div>
+            </div>
+            <div class="step">
+              <p>把每個 \(v_i\) 配上 \(e^{\lambda_i t}\)：</p>
+              <div class="formula">\[
+                X(t)=c_1v_1e^{-2t}+c_2v_2e^{-2t}+c_3v_3e^{4t}
+              \]</div>
+            </div>
+          </div>
+          <div class="answer">
+            <strong>答案：</strong>
+            \[
+              X(t)=
+              c_1\begin{bmatrix}1\\0\\-1\end{bmatrix}e^{-2t}
+              +c_2\begin{bmatrix}0\\1\\-1\end{bmatrix}e^{-2t}
+              +c_3\begin{bmatrix}1\\1\\1\end{bmatrix}e^{4t}.
+            \]
+          </div>
+        </div>
+      </article>
+
+      <article class="example" id="e51-4">
+        <div class="example-head">
+          <div>
+            <h3>5.1-4 非齊次微分系統：先對角化再分開解</h3>
+            <p>解 \(\frac{dx}{dt}=6x+y+6t\)、\(\frac{dy}{dt}=4x+3y-10t+4\)。</p>
+          </div>
+          <span class="tag green">非齊次系統</span>
+        </div>
+        <div class="example-body">
+          <div class="note fast">
+            <strong>考前套法：</strong>寫成 \(X'=AX+B(t)\)，找 \(A=SDS^{-1}\)，令 \(X=SZ\)。這樣 \(Z'=DZ+S^{-1}B(t)\)，每個 \(z_i\) 可以分開解。
+          </div>
+          <div class="steps">
+            <div class="step">
+              <p>矩陣形式：</p>
+              <div class="formula">\[
+                X'=
+                \begin{bmatrix}6&amp;1\\4&amp;3\end{bmatrix}X+
+                \begin{bmatrix}6t\\-10t+4\end{bmatrix}
+              \]</div>
+            </div>
+            <div class="step">
+              <p>特徵值與 eigenvectors：</p>
+              <div class="formula">\[
+                \lambda=2,7,\qquad
+                v_1=\begin{bmatrix}1\\-4\end{bmatrix},\quad
+                v_2=\begin{bmatrix}1\\1\end{bmatrix}
+              \]</div>
+              <div class="formula">\[
+                S=\begin{bmatrix}1&amp;1\\-4&amp;1\end{bmatrix}
+              \]</div>
+            </div>
+            <div class="step">
+              <p>令 \(X=SZ\)，得到：</p>
+              <div class="formula">\[
+                \begin{cases}
+                z_1'=2z_1+\frac{16}{5}t-\frac45\\
+                z_2'=7z_2+\frac{14}{5}t+\frac45
+                \end{cases}
+              \]</div>
+            </div>
+            <div class="step">
+              <p>解兩條一階方程：</p>
+              <p>考場最快做法：右邊是一次式，所以 particular solution 也猜一次式 \(at+b\)。齊次解先直接寫 \(ce^{\lambda t}\)。</p>
+              <div class="formula">\[
+                z_1'-2z_1=\frac{16}{5}t-\frac45,\qquad
+                z_{1p}=at+b
+              \]</div>
+              <div class="formula">\[
+                a-2(at+b)=(-2a)t+(a-2b)=\frac{16}{5}t-\frac45
+              \]</div>
+              <div class="formula">\[
+                -2a=\frac{16}{5},\quad a-2b=-\frac45
+                \Rightarrow
+                a=-\frac85,\quad b=-\frac25
+              \]</div>
+              <div class="formula">\[
+                z_2'-7z_2=\frac{14}{5}t+\frac45,\qquad
+                z_{2p}=at+b
+              \]</div>
+              <div class="formula">\[
+                a-7(at+b)=(-7a)t+(a-7b)=\frac{14}{5}t+\frac45
+              \]</div>
+              <div class="formula">\[
+                -7a=\frac{14}{5},\quad a-7b=\frac45
+                \Rightarrow
+                a=-\frac25,\quad b=-\frac{6}{35}
+              \]</div>
+              <div class="formula">\[
+                z_1=c_1e^{2t}-\left(\frac85t+\frac25\right),\qquad
+                z_2=c_2e^{7t}-\left(\frac25t+\frac{6}{35}\right)
+              \]</div>
+            </div>
+            <div class="step">
+              <p>乘回 \(X=SZ\)：</p>
+              <div class="formula">\[
+                X(t)=c_1\begin{bmatrix}1\\-4\end{bmatrix}e^{2t}
+                +c_2\begin{bmatrix}1\\1\end{bmatrix}e^{7t}
+                +\begin{bmatrix}-2t-\frac47\\6t+\frac{10}{7}\end{bmatrix}
+              \]</div>
+            </div>
+          </div>
+          <div class="answer">
+            <strong>答案：</strong>齊次解來自 eigenvectors，非齊次解是最後那個多項式向量。
+          </div>
+        </div>
+      </article>
+
+      <article class="example" id="e51-5">
+        <div class="example-head">
+          <div>
+            <h3>5.1-5 非齊次微分系統完整題：含初始條件</h3>
+            <p>\(Y'=AY+H\)，\(A=\begin{bmatrix}1&amp;2\\4&amp;3\end{bmatrix}\)，\(H=\begin{bmatrix}1\\t\end{bmatrix}\)，且 \(Y(0)=\begin{bmatrix}4\\-3\end{bmatrix}\)。</p>
+          </div>
+          <span class="tag green">完整流程</span>
+        </div>
+        <div class="example-body">
+          <div class="note fast">
+            <strong>考前套法：</strong>這題是上一題的標準版。先找 \(A\) 的 eigenvalues/eigenvectors，組 \(X\)，令 \(Y=XZ\)，解 \(Z\)，最後用 \(Z(0)=X^{-1}Y(0)\) 決定常數。
+          </div>
+          <div class="steps">
+            <div class="step">
+              <p>特徵方程式：</p>
+              <div class="formula">\[
+                \det(A-\lambda I)=\lambda^2-4\lambda-5=(\lambda-5)(\lambda+1)
+              \]</div>
+              <p>所以 \(\lambda=-1,5\)。</p>
+            </div>
+            <div class="step">
+              <p>eigenvectors 與對角化：</p>
+              <div class="formula">\[
+                X_1=\begin{bmatrix}1\\-1\end{bmatrix},\quad
+                X_2=\begin{bmatrix}1\\2\end{bmatrix},\quad
+                X=\begin{bmatrix}1&amp;1\\-1&amp;2\end{bmatrix}
+              \]</div>
+              <div class="formula">\[
+                X^{-1}=\begin{bmatrix}\frac23&amp;-\frac13\\\frac13&amp;\frac13\end{bmatrix},
+                \qquad
+                D=X^{-1}AX=\begin{bmatrix}-1&amp;0\\0&amp;5\end{bmatrix}
+              \]</div>
+            </div>
+            <div class="step">
+              <p>令 \(Y=XZ\)，則：</p>
+              <div class="formula">\[
+                Z'=DZ+X^{-1}H
+              \]</div>
+              <div class="formula">\[
+                X^{-1}H=
+                \begin{bmatrix}\frac23&amp;-\frac13\\\frac13&amp;\frac13\end{bmatrix}
+                \begin{bmatrix}1\\t\end{bmatrix}
+                =
+                \begin{bmatrix}\frac23-\frac13t\\\frac13+\frac13t\end{bmatrix}
+              \]</div>
+            </div>
+            <div class="step">
+              <p>所以 \(Z\) 的兩條方程是：</p>
+              <div class="formula">\[
+                \begin{cases}
+                z_1'=-z_1+\frac23-\frac13t\\
+                z_2'=5z_2+\frac13+\frac13t
+                \end{cases}
+              \]</div>
+              <p>解得：</p>
+              <div class="formula">\[
+                z_1=c_1e^{-t}+1-\frac13t,\qquad
+                z_2=c_2e^{5t}-\frac{2}{25}-\frac{1}{15}t
+              \]</div>
+            </div>
+            <div class="step">
+              <p>用初始值算 \(c_1,c_2\)：</p>
+              <div class="formula">\[
+                Z(0)=X^{-1}Y(0)=
+                \begin{bmatrix}\frac23&amp;-\frac13\\\frac13&amp;\frac13\end{bmatrix}
+                \begin{bmatrix}4\\-3\end{bmatrix}
+                =
+                \begin{bmatrix}\frac{11}{3}\\\frac13\end{bmatrix}
+              \]</div>
+              <div class="formula">\[
+                \begin{bmatrix}z_1(0)\\z_2(0)\end{bmatrix}
+                =
+                \begin{bmatrix}c_1+1\\c_2-\frac{2}{25}\end{bmatrix}
+                =
+                \begin{bmatrix}\frac{11}{3}\\\frac13\end{bmatrix}
+                \Rightarrow
+                c_1=\frac83,\quad c_2=\frac{31}{75}
+              \]</div>
+            </div>
+            <div class="step">
+              <p>乘回 \(Y=XZ\)：</p>
+              <div class="formula">\[
+                Y(t)=
+                \begin{bmatrix}1&amp;1\\-1&amp;2\end{bmatrix}
+                \begin{bmatrix}
+                \frac83e^{-t}+1-\frac13t\\
+                \frac{31}{75}e^{5t}-\frac{2}{25}-\frac{1}{15}t
+                \end{bmatrix}
+              \]</div>
+            </div>
+          </div>
+          <div class="answer">
+            <strong>答案：</strong>
+            \[
+              Y(t)=
+              \begin{bmatrix}
+              \frac83e^{-t}+\frac{31}{75}e^{5t}+\frac{23}{25}-\frac25t\\
+              -\frac83e^{-t}+\frac{62}{75}e^{5t}-\frac{29}{25}+\frac15t
+              \end{bmatrix}.
+            \]
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section id="section-52">
+      <h2>5.2 Cayley-Hamilton 例題</h2>
+
+      <article class="example" id="e52-1">
+        <div class="example-head">
+          <div>
+            <h3>5.2-1 用 minimal polynomial 算 \(e^A\)</h3>
+            <p>\(A=\begin{bmatrix}1&amp;-1\\1&amp;3\end{bmatrix}\)，求 \(e^A\)。</p>
+          </div>
+          <span class="tag amber">重根餘式法</span>
+        </div>
+        <div class="example-body">
+          <div class="note fast">
+            <strong>考前套法：</strong>2x2 矩陣的 \(e^A\) 常寫成 \(\alpha A+\beta I\)。如果特徵值重根 \(\lambda=2\)，要同時用 \(f(2)\) 和 \(f'(2)\)。
+          </div>
+          <div class="steps">
+            <div class="step">
+              <p>特徵方程式：</p>
+              <div class="formula">\[
+                \det(A-\lambda I)=\lambda^2-4\lambda+4=(\lambda-2)^2
+              \]</div>
+            </div>
+            <div class="step">
+              <p>令 \(e^A=\alpha A+\beta I\)，對應到多項式 \(r(x)=\alpha x+\beta\)。</p>
+            </div>
+            <div class="step">
+              <p>因為重根是 2，要滿足函數值和導數值：</p>
+              <div class="formula">\[
+                e^2=2\alpha+\beta,\qquad e^2=\alpha
+              \]</div>
+              <p>所以 \(\alpha=e^2\)，\(\beta=-e^2\)。</p>
+            </div>
+          </div>
+          <div class="answer">
+            <strong>答案：</strong>
+            \[
+              e^A=e^2A-e^2I=e^2(A-I).
+            \]
+          </div>
+        </div>
+      </article>
+
+      <article class="example" id="e52-2">
+        <div class="example-head">
+          <div>
+            <h3>5.2-2 已知 \(A^2=I\)：偶次變 \(I\)，奇次變 \(A\)</h3>
+            <p>\(A=\frac12\begin{bmatrix}1&amp;-1&amp;-1&amp;-1\\-1&amp;1&amp;-1&amp;-1\\-1&amp;-1&amp;1&amp;-1\\-1&amp;-1&amp;-1&amp;1\end{bmatrix}\)，求 \((A^{-1})^{10}\)、\(A^{101}\)、\(A^n\)。</p>
+          </div>
+          <span class="tag">週期性</span>
+        </div>
+        <div class="example-body">
+          <div class="note fast">
+            <strong>考前套法：</strong>題目或解答觀察到 \(A^2=I\) 時，這題就結束一半了。\(A^{-1}=A\)，偶次是 \(I\)，奇次是 \(A\)。
+          </div>
+          <div class="steps">
+            <div class="step">
+              <p>由 eigenvalues 或直接乘法可得：</p>
+              <div class="formula">\[
+                A^2=I \Rightarrow A^{-1}=A
+              \]</div>
+            </div>
+            <div class="step">
+              <p>計算 \((A^{-1})^{10}\)：</p>
+              <div class="formula">\[
+                (A^{-1})^{10}=A^{10}=(A^2)^5=I^5=I
+              \]</div>
+            </div>
+            <div class="step">
+              <p>計算 \(A^{101}\)：</p>
+              <div class="formula">\[
+                A^{101}=A(A^2)^{50}=AI^{50}=A
+              \]</div>
+            </div>
+            <div class="step">
+              <p>一般 \(A^n\)：</p>
+              <div class="formula">\[
+                A^n=
+                \begin{cases}
+                I, &amp; n\text{ even}\\
+                A, &amp; n\text{ odd}
+                \end{cases}
+              \]</div>
+            </div>
+          </div>
+          <div class="answer">
+            <strong>答案：</strong>\((A^{-1})^{10}=I\)，\(A^{101}=A\)，\(n\) 偶數時 \(A^n=I\)，\(n\) 奇數時 \(A^n=A\)。
+          </div>
+        </div>
+      </article>
+
+      <article class="example" id="e52-3">
+        <div class="example-head">
+          <div>
+            <h3>5.2-3 全 1 矩陣：直接背 \(A^m=n^{m-1}A\)</h3>
+            <p>\(A\) 是 \(n\times n\) 全部 entries 都是 1 的矩陣。</p>
+          </div>
+          <span class="tag">全 1 矩陣</span>
+        </div>
+        <div class="example-body">
+          <div class="note fast">
+            <strong>考前套法：</strong>全 1 矩陣 \(J_n\) 一定要背：特徵值是 \(n\) 一次、\(0\) 共 \(n-1\) 次，而且 \(A^2=nA\)。
+          </div>
+          <div class="steps">
+            <div class="step">
+              <p>令 \(\mathbf{u}=[1,1,\ldots,1]^T\)。因為每一列加總都是 \(n\)：</p>
+              <div class="formula">\[
+                A\mathbf{u}=n\mathbf{u}
+              \]</div>
+              <p>所以 \(n\) 是 eigenvalue。</p>
+            </div>
+            <div class="step">
+              <p>若 \(\mathbf{v}\perp \mathbf{u}\)，也就是所有分量加總為 0，則：</p>
+              <div class="formula">\[
+                A\mathbf{v}=0
+              \]</div>
+              <p>所以 \(0\) 是 eigenvalue，multiplicity 為 \(n-1\)。</p>
+            </div>
+            <div class="step">
+              <p>minimal polynomial：</p>
+              <div class="formula">\[
+                p(x)=x(x-n)
+              \]</div>
+              <p>代 \(A\)：</p>
+              <div class="formula">\[
+                A(A-nI)=0 \Rightarrow A^2=nA
+              \]</div>
+            </div>
+            <div class="step">
+              <p>用歸納法：</p>
+              <div class="formula">\[
+                A^2=nA,\quad A^3=A(A^2)=A(nA)=nA^2=n^2A
+              \]</div>
+              <div class="formula">\[
+                A^m=n^{m-1}A,\qquad m\ge 1
+              \]</div>
+            </div>
+          </div>
+          <div class="answer">
+            <strong>答案：</strong>\(\lambda=0\) multiplicity \(n-1\)，\(\lambda=n\) multiplicity 1，且 \(A^m=n^{m-1}A\)。每個 entry 都是 \(n^{m-1}\)。
+          </div>
+        </div>
+      </article>
+
+      <article class="example" id="e52-4">
+        <div class="example-head">
+          <div>
+            <h3>5.2-4 高次方 \(A^{300}\)：餘式降冪</h3>
+            <p>\(A=\begin{bmatrix}3&amp;1&amp;1\\1&amp;3&amp;1\\1&amp;1&amp;3\end{bmatrix}\)，求 \(A^{300}\)。</p>
+          </div>
+          <span class="tag amber">高次方</span>
+        </div>
+        <div class="example-body">
+          <div class="note fast">
+            <strong>考前套法：</strong>看到 \(A^{300}\) 不要乘 300 次。先找 minimal polynomial。若只有兩個不同 roots \(2,5\)，把 \(x^{300}\) 寫成 \((x-2)(x-5)\) 的餘式 \(ax+b\)。
+          </div>
+          <div class="steps">
+            <div class="step">
+              <p>特徵值為：</p>
+              <div class="formula">\[
+                \lambda=2,2,5
+              \]</div>
+              <p>因為 \(A\) 可對角化，所以 minimal polynomial 只需要不同 roots：</p>
+              <div class="formula">\[
+                m_A(x)=(x-2)(x-5)
+              \]</div>
+            </div>
+            <div class="step">
+              <p>設餘式：</p>
+              <div class="formula">\[
+                x^{300}=Q(x)(x-2)(x-5)+(ax+b)
+              \]</div>
+              <p>因此：</p>
+              <div class="formula">\[
+                A^{300}=aA+bI
+              \]</div>
+            </div>
+            <div class="step">
+              <p>代 \(x=2\) 與 \(x=5\)：</p>
+              <div class="formula">\[
+                \begin{cases}
+                2^{300}=2a+b\\
+                5^{300}=5a+b
+                \end{cases}
+              \]</div>
+            </div>
+            <div class="step">
+              <p>解 \(a,b\)：</p>
+              <div class="formula">\[
+                a=\frac13(5^{300}-2^{300}),\qquad
+                b=\frac13(5\cdot2^{300}-2\cdot5^{300})
+              \]</div>
+            </div>
+          </div>
+          <div class="answer">
+            <strong>答案：</strong>
+            \[
+              A^{300}=\frac13(5^{300}-2^{300})A+
+              \frac13(5\cdot2^{300}-2\cdot5^{300})I.
+            \]
+          </div>
+        </div>
+      </article>
+
+      <article class="example" id="e52-5">
+        <div class="example-head">
+          <div>
+            <h3>5.2-5 重根最小多項式：算 \(A^{100}\)</h3>
+            <p>\(A=\begin{bmatrix}-3&amp;0&amp;1\\-8&amp;1&amp;2\\-16&amp;0&amp;5\end{bmatrix}\)，求 characteristic polynomial、minimal polynomial、\(A^{100}\)。</p>
+          </div>
+          <span class="tag red">重根降冪</span>
+        </div>
+        <div class="example-body">
+          <div class="note fast">
+            <strong>考前套法：</strong>如果 minimal polynomial 是 \((x-1)^2\)，餘式還是 \(ax+b\)，但因為 root 重複，要代 \(x=1\) 和「微分後再代 \(x=1\)」。
+          </div>
+          <div class="steps">
+            <div class="step">
+              <p>characteristic polynomial：</p>
+              <div class="formula">\[
+                |A-\lambda I|=-(\lambda^3-3\lambda^2+3\lambda-1)
+              \]</div>
+              <p>所以：</p>
+              <div class="formula">\[
+                p(x)=x^3-3x^2+3x-1=(x-1)^3
+              \]</div>
+            </div>
+            <div class="step">
+              <p>由 Cayley-Hamilton：</p>
+              <div class="formula">\[
+                (A-I)^3=0
+              \]</div>
+              <p>又已知 \((A-I)^2=0\)，所以 minimal polynomial 是：</p>
+              <div class="formula">\[
+                m_A(x)=(x-1)^2
+              \]</div>
+            </div>
+            <div class="step">
+              <p>設餘式：</p>
+              <div class="formula">\[
+                x^{100}=Q(x)(x-1)^2+ax+b
+              \]</div>
+            </div>
+            <div class="step">
+              <p>代 \(x=1\)：</p>
+              <div class="formula">\[
+                1=a+b
+              \]</div>
+              <p>兩邊微分再代 \(x=1\)：</p>
+              <div class="formula">\[
+                100x^{99}=Q'(x)(x-1)^2+Q(x)2(x-1)+a
+              \]</div>
+              <div class="formula">\[
+                100=a
+              \]</div>
+              <p>所以 \(a=100\)、\(b=-99\)。</p>
+            </div>
+            <div class="step">
+              <p>代回矩陣：</p>
+              <div class="formula">\[
+                A^{100}=100A-99I
+              \]</div>
+            </div>
+          </div>
+          <div class="answer">
+            <strong>答案：</strong>
+            \[
+              A^{100}=100A-99I
+              =
+              \begin{bmatrix}
+              -399&amp;0&amp;100\\
+              -800&amp;1&amp;200\\
+              -1600&amp;0&amp;401
+              \end{bmatrix}.
+            \]
+          </div>
+        </div>
+      </article>
+
+      <article class="example" id="e52-6">
+        <div class="example-head">
+          <div>
+            <h3>5.2-6 證明 \(A^{-1}\) 可寫成 \(I,A,\ldots,A^{n-1}\) 的線性組合</h3>
+            <p>若 \(A\) nonsingular，證明 \(A^{-1}=\sum_{i=0}^{n-1}c_iA^i\)。</p>
+          </div>
+          <span class="tag amber">證明模板</span>
+        </div>
+        <div class="example-body">
+          <div class="note fast">
+            <strong>考前套法：</strong>這題背 Cayley-Hamilton 後「乘 \(A^{-1}\)」。重點是 nonsingular 才能乘 \(A^{-1}\)。
+          </div>
+          <div class="steps">
+            <div class="step">
+              <p>設 characteristic polynomial：</p>
+              <div class="formula">\[
+                |A-\lambda I|=(-1)^n(\lambda^n-\beta_1\lambda^{n-1}+\beta_2\lambda^{n-2}-\cdots+(-1)^n\beta_n)
+              \]</div>
+            </div>
+            <div class="step">
+              <p>由 Cayley-Hamilton：</p>
+              <div class="formula">\[
+                A^n-\beta_1A^{n-1}+\beta_2A^{n-2}-\cdots+(-1)^n\beta_nI=0
+              \]</div>
+            </div>
+            <div class="step">
+              <p>因為 \(A\) nonsingular，所以 \(A^{-1}\) 存在。兩邊右乘或左乘 \(A^{-1}\)：</p>
+              <div class="formula">\[
+                A^{n-1}-\beta_1A^{n-2}+\beta_2A^{n-3}-\cdots+(-1)^{n-1}\beta_{n-1}I+(-1)^n\beta_nA^{-1}=0
+              \]</div>
+            </div>
+            <div class="step">
+              <p>把 \(A^{-1}\) 移到另一邊：</p>
+              <div class="formula">\[
+                A^{-1}=
+                \frac{(-1)^{n+1}}{\beta_n}
+                \left(A^{n-1}-\beta_1A^{n-2}+\beta_2A^{n-3}-\cdots+(-1)^{n-1}\beta_{n-1}I\right)
+              \]</div>
+              <p>這就是 \(I,A,\ldots,A^{n-1}\) 的線性組合。</p>
+            </div>
+          </div>
+          <div class="answer">
+            <strong>答案句：</strong>By Cayley-Hamilton and nonsingularity of \(A\), \(A^{-1}\) can be expressed as a polynomial in \(A\) of degree at most \(n-1\)。
+          </div>
+        </div>
+      </article>
+
+      <article class="example" id="e52-7">
+        <div class="example-head">
+          <div>
+            <h3>5.2-7 \(e^{At}\) 與長期極限</h3>
+            <p>\(A=\begin{bmatrix}-p&amp;p\\q&amp;-q\end{bmatrix}\)，\(p,q&gt;0\)。求 \(e^{At}\) 與 \(\lim_{t\to\infty}e^{At}\)。</p>
+          </div>
+          <span class="tag amber">指數矩陣</span>
+        </div>
+        <div class="example-body">
+          <div class="note fast">
+            <strong>考前套法：</strong>2x2 且只有兩個 eigenvalues 時，令 \(e^{At}=\alpha A+\beta I\)。把 eigenvalues 代入 \(e^{\lambda t}\)。
+          </div>
+          <div class="steps">
+            <div class="step">
+              <p>特徵值：</p>
+              <div class="formula">\[
+                \lambda_1=0,\qquad \lambda_2=-(p+q)
+              \]</div>
+            </div>
+            <div class="step">
+              <p>設：</p>
+              <div class="formula">\[
+                e^{At}=\alpha A+\beta I
+              \]</div>
+            </div>
+            <div class="step">
+              <p>代 \(\lambda=0\)：</p>
+              <div class="formula">\[
+                e^{0t}=1=\alpha\cdot0+\beta \Rightarrow \beta=1
+              \]</div>
+            </div>
+            <div class="step">
+              <p>代 \(\lambda=-(p+q)\)：</p>
+              <div class="formula">\[
+                e^{-(p+q)t}=-\alpha(p+q)+1
+              \]</div>
+              <div class="formula">\[
+                \alpha=\frac{1-e^{-(p+q)t}}{p+q}
+              \]</div>
+            </div>
+            <div class="step">
+              <p>所以：</p>
+              <div class="formula">\[
+                e^{At}=I+\frac{1-e^{-(p+q)t}}{p+q}A
+              \]</div>
+              <div class="formula">\[
+                e^{At}=
+                \frac{1}{p+q}
+                \begin{bmatrix}
+                q+pe^{-(p+q)t} &amp; p(1-e^{-(p+q)t})\\
+                q(1-e^{-(p+q)t}) &amp; p+qe^{-(p+q)t}
+                \end{bmatrix}
+              \]</div>
+            </div>
+            <div class="step">
+              <p>取 \(t\to\infty\)，因為 \(p+q&gt;0\)，所以 \(e^{-(p+q)t}\to0\)。</p>
+            </div>
+          </div>
+          <div class="answer">
+            <strong>答案：</strong>
+            \[
+              \lim_{t\to\infty}e^{At}
+              =
+              I+\frac{1}{p+q}A
+              =
+              \frac{1}{p+q}
+              \begin{bmatrix}
+              q&amp;p\\q&amp;p
+              \end{bmatrix}.
+            \]
+          </div>
+        </div>
+      </article>
+
+      <article class="example" id="e52-8">
+        <div class="example-head">
+          <div>
+            <h3>5.2-8 Nilpotent matrix：\(e^{At}\) 會自動截斷</h3>
+            <p>\(A=\begin{bmatrix}-1&amp;1&amp;1\\-1&amp;0&amp;1\\-1&amp;1&amp;1\end{bmatrix}\)。判斷是否 nilpotent，若是求 index 與 \(e^{At}\)。</p>
+          </div>
+          <span class="tag red">Nilpotent</span>
+        </div>
+        <div class="example-body">
+          <div class="note fast">
+            <strong>考前套法：</strong>nilpotent 題最重要的是 \(A^m=0\)。一旦 \(A^3=0\)，指數矩陣的無窮級數只剩前三項。
+          </div>
+          <div class="steps">
+            <div class="step">
+              <p>題目解法指出 eigenvalues 全為 0，由 Cayley-Hamilton 可知：</p>
+              <div class="formula">\[
+                A^3=0
+              \]</div>
+            </div>
+            <div class="step">
+              <p>但 \(A^2\neq0\)，實際上：</p>
+              <div class="formula">\[
+                A^2=
+                \begin{bmatrix}
+                -1&amp;0&amp;1\\
+                0&amp;0&amp;0\\
+                -1&amp;0&amp;1
+                \end{bmatrix}
+              \]</div>
+              <p>所以最小使 \(A^m=0\) 的 \(m\) 是 3，index 為 3。</p>
+            </div>
+            <div class="step">
+              <p>使用指數矩陣定義：</p>
+              <div class="formula">\[
+                e^{At}=I+tA+\frac{t^2}{2!}A^2+\frac{t^3}{3!}A^3+\cdots
+              \]</div>
+              <p>因為 \(A^3=0\)，後面全部消失：</p>
+              <div class="formula">\[
+                e^{At}=I+tA+\frac{t^2}{2}A^2
+              \]</div>
+            </div>
+            <div class="step">
+              <p>代入 \(A\) 與 \(A^2\)：</p>
+              <div class="formula">\[
+                e^{At}=
+                \begin{bmatrix}
+                1-t-\frac{t^2}{2} &amp; t &amp; t+\frac{t^2}{2}\\
+                -t &amp; 1 &amp; t\\
+                -t-\frac{t^2}{2} &amp; t &amp; 1+t+\frac{t^2}{2}
+                \end{bmatrix}
+              \]</div>
+            </div>
+          </div>
+          <div class="answer">
+            <strong>答案：</strong>\(A\) 是 nilpotent，index \(m=3\)，且 \(e^{At}=I+tA+\frac{t^2}{2}A^2\)。
+          </div>
+        </div>
+      </article>
+
+      <article class="example" id="e52-9">
+        <div class="example-head">
+          <div>
+            <h3>5.2-9 Cayley-Hamilton 證明題模板</h3>
+            <p>證明若 \(f(\lambda)\) 是 \(A_{n\times n}\) 的 characteristic polynomial，則 \(f(A)=0\)。</p>
+          </div>
+          <span class="tag amber">證明模板</span>
+        </div>
+        <div class="example-body">
+          <div class="note fast">
+            <strong>考前套法：</strong>這題不用自己發明證明。背三個動作：adjugate identity、把 adjugate 寫成 \(\lambda\) 的矩陣多項式、比較係數後 telescoping。
+          </div>
+          <div class="steps">
+            <div class="step">
+              <p>先寫 adjugate identity：</p>
+              <div class="formula">\[
+                (A-\lambda I)\operatorname{adj}(A-\lambda I)=\det(A-\lambda I)I=f(\lambda)I
+              \]</div>
+            </div>
+            <div class="step">
+              <p>把 adjugate 寫成矩陣係數的多項式：</p>
+              <div class="formula">\[
+                \operatorname{adj}(A-\lambda I)
+                =
+                B_{n-1}\lambda^{n-1}+B_{n-2}\lambda^{n-2}+\cdots+B_1\lambda+B_0
+              \]</div>
+              <p>同時設：</p>
+              <div class="formula">\[
+                f(\lambda)=(-1)^n\lambda^n+b_{n-1}\lambda^{n-1}+\cdots+b_1\lambda+b_0
+              \]</div>
+            </div>
+            <div class="step">
+              <p>代回並比較 \(\lambda\) 的係數，可得到一串關係：</p>
+              <div class="formula">\[
+                \begin{cases}
+                -B_{n-1}=(-1)^nI\\
+                AB_{n-1}-B_{n-2}=b_{n-1}I\\
+                AB_{n-2}-B_{n-3}=b_{n-2}I\\
+                \quad \vdots\\
+                AB_1-B_0=b_1I\\
+                AB_0=b_0I
+                \end{cases}
+              \]</div>
+            </div>
+            <div class="step">
+              <p>把這些式子分別乘上 \(A^n,A^{n-1},A^{n-2},\ldots,A,I\) 後相加，中間項會互相抵消。</p>
+              <div class="formula">\[
+                0=(-1)^nA^n+b_{n-1}A^{n-1}+\cdots+b_1A+b_0I=f(A)
+              \]</div>
+            </div>
+          </div>
+          <div class="answer">
+            <strong>答案句：</strong>Therefore, \(f(A)=0\). This is the Cayley-Hamilton Theorem.
+          </div>
+        </div>
+      </article>
+
+      <article class="example" id="e52-10">
+        <div class="example-head">
+          <div>
+            <h3>5.2-10 全 1 矩陣應用：\(B=A^{10}-5^8A^3\)</h3>
+            <p>\(A\) 是 \(5\times5\) 全 1 矩陣，求 \(B=A^{10}-5^8A^3\)。</p>
+          </div>
+          <span class="tag">全 1 矩陣</span>
+        </div>
+        <div class="example-body">
+          <div class="note fast">
+            <strong>考前套法：</strong>這題直接套 5.2-3 的公式。\(n=5\)，所以 \(A^m=5^{m-1}A\)。
+          </div>
+          <div class="steps">
+            <div class="step">
+              <p>用全 1 矩陣公式：</p>
+              <div class="formula">\[
+                A^m=5^{m-1}A
+              \]</div>
+            </div>
+            <div class="step">
+              <p>分別算：</p>
+              <div class="formula">\[
+                A^{10}=5^9A,\qquad A^3=5^2A=25A
+              \]</div>
+            </div>
+            <div class="step">
+              <p>代入 \(B\)：</p>
+              <div class="formula">\[
+                B=A^{10}-5^8A^3=5^9A-5^8\cdot25A
+              \]</div>
+              <div class="formula">\[
+                B=5^9A-5^{10}A=(5^9-5^{10})A=5^9(1-5)A=-4\cdot5^9A
+              \]</div>
+            </div>
+          </div>
+          <div class="answer">
+            <strong>答案：</strong>\(B=-4\cdot5^9A\)，其中 \(A\) 是 \(5\times5\) 全 1 矩陣。
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section id="last-page">
+      <h2>最後一頁背誦</h2>
+      <div class="grid two">
+        <div class="panel">
+          <h3>矩陣函數</h3>
+          <ul>
+            <li>可對角化：\(A=SDS^{-1}\Rightarrow f(A)=Sf(D)S^{-1}\)。</li>
+            <li>Jordan：\(\begin{bmatrix}\lambda&amp;1\\0&amp;\lambda\end{bmatrix}\Rightarrow \begin{bmatrix}f(\lambda)&amp;f'(\lambda)\\0&amp;f(\lambda)\end{bmatrix}\)。</li>
+            <li>\(e^{A^2}\) 要看成 \(h(A)\)，\(h(x)=e^{x^2}\)。</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>高次方</h3>
+          <ul>
+            <li>用 minimal polynomial 降冪。</li>
+            <li>不同 roots：代 root 解餘式。</li>
+            <li>重根：除了代 root，還要微分再代 root。</li>
+            <li>全 1 矩陣：\(A^m=n^{m-1}A\)。</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>微分系統</h3>
+          <ul>
+            <li>\(X'=AX\)：\(\sum c_iv_ie^{\lambda_i t}\)。</li>
+            <li>\(X'=AX+B(t)\)：令 \(X=SZ\)，變成 \(Z'=DZ+S^{-1}B(t)\)。</li>
+            <li>有初值時，先算 \(Z(0)=S^{-1}X(0)\)。</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>Cayley-Hamilton</h3>
+          <ul>
+            <li>只要 \(f(\lambda)=\det(A-\lambda I)\)，就有 \(f(A)=0\)。</li>
+            <li>證 \(A^{-1}\) 是 \(A\) 的多項式：C-H 後乘 \(A^{-1}\)。</li>
+            <li>nilpotent：若 \(A^3=0\)，\(e^{At}=I+tA+\frac{t^2}{2}A^2\)。</li>
+          </ul>
+        </div>
+      </div>
+      <div class="note warn" style="margin-top:16px;">
+        <strong>考前提醒：</strong>遇到矩陣函數不要硬展開無窮級數；先問自己「能不能對角化？有沒有 minimal polynomial？是不是全 1 或 nilpotent？」這三個問題通常就能決定解法。
+      </div>
+    </section>
+  </main>
+</body>
+</html>

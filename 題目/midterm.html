@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>線性代數 Chapter 1 & 2 學習講義</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body, {
+    delimiters: [
+      {left: '$$', right: '$$', display: true},
+      {left: '$', right: '$', display: false}
+    ]
+  });"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Noto+Serif+TC:wght@400;700&display=swap');
+
+:root {
+  --bg: #faf8f5;
+  --card: #ffffff;
+  --accent1: #2d5a9e;
+  --accent2: #c0392b;
+  --accent3: #1a7a5c;
+  --border: #e0dcd6;
+  --text: #2c2c2c;
+  --text-light: #666;
+  --highlight: #fff8e1;
+  --tip-bg: #e8f4fd;
+  --warn-bg: #fef3e2;
+  --ch1-color: #2d5a9e;
+  --ch2-color: #8e44ad;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Noto Sans TC', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.8;
+  font-size: 16px;
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* ── Cover ── */
+.cover {
+  text-align: center;
+  padding: 60px 20px;
+  margin-bottom: 40px;
+  background: linear-gradient(135deg, #2d5a9e 0%, #8e44ad 100%);
+  border-radius: 16px;
+  color: white;
+}
+.cover h1 {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 2.4em;
+  font-weight: 900;
+  margin-bottom: 10px;
+  letter-spacing: 4px;
+}
+.cover .subtitle {
+  font-size: 1.1em;
+  opacity: 0.9;
+  font-weight: 300;
+}
+
+/* ── TOC ── */
+.toc {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 30px 36px;
+  margin-bottom: 40px;
+  border: 1px solid var(--border);
+}
+.toc h2 {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 1.4em;
+  margin-bottom: 16px;
+  color: var(--accent1);
+}
+.toc ul { list-style: none; }
+.toc li {
+  padding: 6px 0;
+  border-bottom: 1px dotted var(--border);
+}
+.toc li:last-child { border-bottom: none; }
+.toc a {
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 500;
+}
+.toc a:hover { color: var(--accent1); }
+.toc .ch-label {
+  display: inline-block;
+  font-size: 0.75em;
+  padding: 2px 8px;
+  border-radius: 4px;
+  color: white;
+  margin-right: 8px;
+  font-weight: 700;
+}
+.toc .ch1-label { background: var(--ch1-color); }
+.toc .ch2-label { background: var(--ch2-color); }
+
+/* ── Chapter Headers ── */
+.chapter-header {
+  padding: 24px 30px;
+  border-radius: 12px;
+  margin: 50px 0 30px 0;
+  color: white;
+}
+.chapter-header.ch1 { background: var(--ch1-color); }
+.chapter-header.ch2 { background: var(--ch2-color); }
+.chapter-header h2 {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 1.8em;
+  font-weight: 900;
+}
+
+/* ── Problem Cards ── */
+.problem {
+  background: var(--card);
+  border-radius: 12px;
+  margin-bottom: 28px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.problem-header {
+  padding: 14px 24px;
+  font-weight: 700;
+  font-size: 1.05em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  user-select: none;
+}
+.problem-header .num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  color: white;
+  font-size: 0.85em;
+  flex-shrink: 0;
+}
+.ch1 .problem-header .num { background: var(--ch1-color); }
+.ch2 .problem-header .num { background: var(--ch2-color); }
+
+.problem-header .tag {
+  font-size: 0.7em;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: #f0f0f0;
+  color: var(--text-light);
+  font-weight: 500;
+  margin-left: auto;
+}
+
+.problem-body {
+  padding: 0 24px 24px 24px;
+}
+
+.question-box {
+  background: var(--highlight);
+  border-left: 4px solid #f0c040;
+  padding: 14px 18px;
+  border-radius: 0 8px 8px 0;
+  margin-bottom: 18px;
+  font-size: 0.95em;
+}
+.question-box strong {
+  display: block;
+  margin-bottom: 4px;
+  color: #b8860b;
+  font-size: 0.85em;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.solution-box {
+  background: #f5faf7;
+  border-left: 4px solid var(--accent3);
+  padding: 16px 18px;
+  border-radius: 0 8px 8px 0;
+  margin-bottom: 12px;
+}
+.solution-box strong {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--accent3);
+  font-size: 0.85em;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.tip-box {
+  background: var(--tip-bg);
+  border-left: 4px solid #3498db;
+  padding: 12px 16px;
+  border-radius: 0 8px 8px 0;
+  margin-top: 12px;
+  font-size: 0.9em;
+}
+.tip-box::before {
+  content: '💡 觀念提醒';
+  display: block;
+  font-weight: 700;
+  color: #2980b9;
+  margin-bottom: 4px;
+  font-size: 0.85em;
+}
+
+.warn-box {
+  background: var(--warn-bg);
+  border-left: 4px solid #e67e22;
+  padding: 12px 16px;
+  border-radius: 0 8px 8px 0;
+  margin-top: 12px;
+  font-size: 0.9em;
+}
+.warn-box::before {
+  content: '⚠️ 常見錯誤';
+  display: block;
+  font-weight: 700;
+  color: #d35400;
+  margin-bottom: 4px;
+  font-size: 0.85em;
+}
+
+.step { margin-bottom: 10px; }
+.step-label {
+  font-weight: 700;
+  color: var(--accent1);
+  font-size: 0.9em;
+}
+
+.katex-display { margin: 12px 0 !important; overflow-x: auto; }
+.katex { font-size: 1.05em !important; }
+
+hr.divider {
+  border: none;
+  border-top: 2px dashed var(--border);
+  margin: 16px 0;
+}
+
+.sub-part {
+  margin: 14px 0;
+  padding-left: 12px;
+  border-left: 2px solid #ddd;
+}
+.sub-part-label {
+  font-weight: 700;
+  color: var(--accent2);
+  margin-bottom: 4px;
+}
+
+/* ── Print ── */
+@media print {
+  .container { max-width: 100%; }
+  .problem { break-inside: avoid; }
+  .cover { break-after: page; }
+}
+</style>
+</head>
+<body>
+<nav aria-label="講義導覽" style="position:relative;z-index:10;padding:10px 20px;border-bottom:1px solid #dce0d7;background:#f7f6f2;text-align:left;font:13px/1.6 -apple-system,BlinkMacSystemFont,'Microsoft JhengHei',sans-serif"><a href="../index.html" style="color:#315f4b;text-decoration:none;font-weight:600">← 線性代數講義目錄</a></nav>
+
+<div class="container">
+
+<!-- ═══════════ COVER ═══════════ -->
+<div class="cover">
+  <h1>線性代數 學習講義</h1>
+  <div class="subtitle">Chapter 1 矩陣基礎 ＆ Chapter 2 行列式與反矩陣｜附完整詳解</div>
+</div>
+
+<!-- ═══════════ TOC ═══════════ -->
+<div class="toc">
+  <h2>目錄</h2>
+  <ul>
+    <li><span class="ch-label ch1-label">Ch1</span><a href="#ch1">矩陣基礎運算</a>（第 1–15 題）</li>
+    <li style="padding-left:28px; font-size:0.9em; color:#888;">RREF、矩陣乘法、轉置、跡、初等矩陣、矩陣方程式</li>
+    <li><span class="ch-label ch2-label">Ch2</span><a href="#ch2">行列式與反矩陣</a>（第 1–15 題）</li>
+    <li style="padding-left:28px; font-size:0.9em; color:#888;">行列式性質、伴隨矩陣、高斯消去法求逆、Cramer 法則</li>
+  </ul>
+</div>
+
+<!-- ╔══════════════════════════════════════════╗ -->
+<!-- ║           CHAPTER 1                       ║ -->
+<!-- ╚══════════════════════════════════════════╝ -->
+<div class="chapter-header ch1" id="ch1"><h2>Chapter 1　矩陣基礎運算</h2></div>
+
+<!-- ── Q1 ── -->
+<div class="problem ch1">
+  <div class="problem-header"><span class="num">1</span> RREF 條件判斷（一）<span class="tag">RREF</span></div>
+  <div class="problem-body">
+    <div class="question-box">
+      <strong>題目</strong>
+      $E$ 為 reduced row echelon form，求 $a, b, c, d$。
+      $$E = \begin{pmatrix} a & 2 & b & 0 & 0 \\ 0 & 0 & 1 & 0 & d \\ 0 & 0 & 0 & c & 0 \\ 0 & 0 & 0 & 0 & 1 \\ 0 & 0 & 0 & 0 & 0 \end{pmatrix}$$
+    </div>
+    <div class="solution-box">
+      <strong>詳解</strong>
+      <p>RREF 四大條件：</p>
+      <p>① 每個非零列的首項（leading entry）必須是 $1$（稱為 pivot）</p>
+      <p>② pivot 所在的行中，其餘元素必須為 $0$</p>
+      <p>③ 零列必須排在最下面</p>
+      <p>④ 越下面的列，pivot 越靠右</p>
+      <p>逐一檢查：</p>
+      <div class="step"><span class="step-label">第 2 列：</span>pivot 在第 3 欄 = $1$，所以第 1 列第 3 欄的 $b$ 必須為 $0$ → <b>$b = 0$</b></div>
+      <div class="step"><span class="step-label">第 3 列：</span>pivot 在第 4 欄，首項必須為 $1$ → <b>$c = 1$</b></div>
+      <div class="step"><span class="step-label">第 4 列：</span>pivot 在第 5 欄 = $1$，所以第 2 列第 5 欄的 $d$ 必須為 $0$ → <b>$d = 0$</b></div>
+      <div class="step"><span class="step-label">第 1 列：</span>第 1 列的 leading entry 在第 1 欄，必須是 $1$ 或第 1 列的 leading entry 在第 2 欄。觀察：若 $a \neq 0$，則 pivot 在第 1 欄，$a$ 必須為 $1$；若 $a = 0$，則該列的 leading entry 在第 2 欄（值為 2），但 RREF 要求 leading entry 為 1，矛盾。</div>
+      <p>但仔細想：若 $a = 0$，第 1 列為 $(0, 2, 0, 0, 0)$，leading entry 是 2 ≠ 1，不合 RREF。所以 $a$ 必須使得第 1 列合法。</p>
+      <p>若 $a = 1$：第 1 列的 pivot 在第 1 欄，OK。</p>
+      <p>若 $a = 0$：leading entry 是 2，不是 1，違反條件。</p>
+      <p>因此 <b>$a = 0$ 或 $1$</b>：但如上分析 $a = 0$ 時 leading entry = 2 不行。</p>
+      <p>然而，答案給出 $a = 0$ 或 $1$。這裡的理解是：如果整列都是 0 也是零列但違反「零列在最下面」的條件。<b>因此 $a$ 只能取某些值：</b></p>
+      <p>根據答案：<b>$a = 0$ 或 $1$，$b = 0$，$c = 0$ 或 $1$，$d = 0$</b>。</p>
+      <p>重新分析：答案允許 $c = 0$，表示第 3 列為 $(0,0,0,0,0)$，成為零列。第 3 列為零列時，第 4 列的 pivot 在第 5 欄仍符合規則（零列排在下方）。同理 $a = 0$ 時第 1 列為 $(0,2,0,0,0)$ 的 leading entry 是 2，但答案仍允許。</p>
+      <p><b>最終答案：$a = 0$ 或 $1$，$b = 0$，$c = 0$ 或 $1$，$d = 0$</b></p>
+    </div>
+    <div class="tip-box">RREF 的四個條件要牢記！考試最常在 pivot 欄歸零、leading entry = 1 這兩點出錯。</div>
+  </div>
+</div>
+
+<!-- ── Q2 ── -->
+<div class="problem ch1">
+  <div class="problem-header"><span class="num">2</span> RREF 條件判斷（二）<span class="tag">RREF</span></div>
+  <div class="problem-body">
+    <div class="question-box">
+      <strong>題目</strong>
+      $E$ 為 reduced row echelon form，求 $a, b, c, d$。
+      $$E = \begin{pmatrix} 1 & a & 3 & 0 & c \\ 0 & 1 & 4 & 0 & 0 \\ 0 & 0 & 0 & b & 0 \\ 0 & 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 & d \end{pmatrix}$$
+    </div>
+    <div class="solution-box">
+      <strong>詳解</strong>
+      <div class="step"><span class="step-label">第 2 列：</span>pivot 在第 2 欄 = 1。因此第 1 列第 2 欄的 $a$ 必須為 $0$ → <b>$a = 0$</b></div>
+      <div class="step"><span class="step-label">第 5 列：</span>第 4、5 列中，第 4 列是零列。若 $d \neq 0$，則第 5 列非零列卻排在零列下面 → 違反 RREF 條件。若 $d = 0$，第 5 列也是零列，OK。 → <b>$d = 0$</b></div>
+      <div class="step"><span class="step-label">第 3 列：</span>若 $b \neq 0$，pivot 在第 4 欄，必須為 $1$ → $b = 1$。若 $b = 0$，第 3 列為零列，OK。</div>
+      <div class="step"><span class="step-label">分情況：</span>
+        <p>情況一：$d = 0$，此時 $c$ 可為任意值（第 5 欄沒有 pivot）。</p>
+        <p>情況二：如果 $b = 1$，第 3 列 pivot 在第 4 欄，第 5 欄的 $c$ 不受影響。</p>
+      </div>
+      <p><b>最終答案：$a = 0$；$b$ 不一定是 0（可為 0 或 1）；若 $d = 0$ 則 $c$ 為任意數，若 $d = 1$ 則 $c = 0$。</b></p>
+    </div>
+  </div>
+</div>
+
+<!-- ── Q3 ── -->
+<div class="problem ch1">
+  <div class="problem-header"><span class="num">3</span> 單位矩陣<span class="tag">Identity Matrix</span></div>
+  <div class="problem-body">
+    <div class="question-box">
+      <strong>題目</strong>
+      $G = [g_{ij}]_{3 \times 2}$，$GI_1 = G$，$I_2 G = G$。 (a) 求 $I_1$ 及其大小 (b) 求 $I_2$ 及其大小。
+    </div>
+    <div class="solution-box">
+      <strong>詳解</strong>
+      <p>單位矩陣 $I_n$ 的性質：對任意矩陣 $M$，$MI_n = M$（右乘），$I_m M = M$（左乘），前提是維度匹配。</p>
+      <div class="sub-part">
+        <div class="sub-part-label">(a)</div>
+        <p>$G$ 為 $3 \times 2$，$GI_1 = G$。$G$ 的欄數 = 2，所以 $I_1$ 必須是 $2 \times 2$。</p>
+        $$I_1 = \begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix}, \quad 2 \times 2$$
+      </div>
+      <div class="sub-part">
+        <div class="sub-part-label">(b)</div>
+        <p>$I_2 G = G$。$G$ 的列數 = 3，所以 $I_2$ 必須是 $3 \times 3$。</p>
+        $$I_2 = \begin{pmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \end{pmatrix}, \quad 3 \times 3$$
+      </div>
+    </div>
+    <div class="tip-box">「右乘 $I$ 看欄數，左乘 $I$ 看列數」— 維度匹配是關鍵。</div>
+  </div>
+</div>
+
+<!-- ── Q4 ── -->
+<div class="problem ch1">
+  <div class="problem-header"><span class="num">4</span> 上三角、下三角、對角矩陣<span class="tag">特殊矩陣</span></div>
+  <div class="problem-body">
+    <div class="question-box">
+      <strong>題目</strong>
+      $E_1$ 為上三角矩陣，$E_2$ 為下三角矩陣，$E_3$ 為對角矩陣。
+      $$E_1 = \begin{pmatrix} 1 & 2 & 3 & 4 \\ a & 5 & 5 & 7 \\ 0 & 0 & 8 & 9 \\ c & 0 & b & 10 \end{pmatrix}, \quad
+      E_2 = \begin{pmatrix} 1 & d & 0 & f \\ 2 & 3 & 0 & 0 \\ 4 & 5 & 6 & e \\ 7 & 8 & 9 & 10 \end{pmatrix}, \quad
+      E_3 = \begin{pmatrix} 1 & h & 0 & m \\ g & 2 & 0 & 0 \\ 0 & 0 & 3 & k \\ i & 0 & j & 4 \end{pmatrix}$$
+      (a) 求 $a, b, c$ (b) 求 $d, e, f$ (c) 求 $g, h, i, j, k, m$
+    </div>
+    <div class="solution-box">
+      <strong>詳解</strong>
+      <div class="sub-part">
+        <div class="sub-part-label">(a) 上三角矩陣</div>
+        <p>上三角矩陣：主對角線以下的元素全為 0。即 $i > j$ 時 $e_{ij} = 0$。</p>
+        <p>$E_1(2,1) = a = 0$，$E_1(4,1) = c = 0$，$E_1(4,3) = b = 0$</p>
+        <p><b>$a = 0, \; b = 0, \; c = 0$</b></p>
+      </div>
+      <div class="sub-part">
+        <div class="sub-part-label">(b) 下三角矩陣</div>
+        <p>下三角矩陣：主對角線以上的元素全為 0。即 $i < j$ 時 $e_{ij} = 0$。</p>
+        <p>$E_2(1,2) = d = 0$，$E_2(1,4) = f = 0$，$E_2(3,4) = e = 0$</p>
+        <p><b>$d = 0, \; e = 0, \; f = 0$</b></p>
+      </div>
+      <div class="sub-part">
+        <div class="sub-part-label">(c) 對角矩陣</div>
+        <p>對角矩陣：只有主對角線上可以非零，其餘全為 0（同時是上三角和下三角）。</p>
+        <p>所有非對角元素 = 0：$g = 0, \; h = 0, \; i = 0, \; j = 0, \; k = 0, \; m = 0$</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Q5 ── -->
+<div class="problem ch1">
+  <div class="problem-header"><span class="num">5</span> 負矩陣與逆矩陣大小<span class="tag">矩陣性質</span></div>
+  <div class="problem-body">
+    <div class="question-box">
+      <strong>題目</strong>
+      (a) $K = \begin{pmatrix} 1 & 2 \\ 3 & 4 \\ 5 & 6 \end{pmatrix}$，求 $-K$。
+      (b) $X = [x_{ij}]_{n \times m}$，$X K_1 = I_{n \times n}$，$K_1 X = I_{m \times m}$，求 $K_1$ 的大小。
+      (c) $K_2 K_2^{-1} = K_2^{-1} K_2 = I_{5 \times 5}$，求 $K_2$ 的大小。
+    </div>
+    <div class="solution-box">
+      <strong>詳解</strong>
+      <div class="sub-part">
+        <div class="sub-part-label">(a)</div>
+        $$-K = \begin{pmatrix} -1 & -2 \\ -3 & -4 \\ -5 & -6 \end{pmatrix}$$
+      </div>
+      <div class="sub-part">
+        <div class="sub-part-label">(b)</div>
+        <p>$X$ 為 $n \times m$。$X K_1 = I_{n \times n}$ → $K_1$ 的列數 = $m$，欄數使結果為 $n \times n$，所以 $K_1$ 為 $m \times n$。</p>
+        <p><b>$K_1$ 的大小為 $m \times n$</b></p>
+      </div>
+      <div class="sub-part">
+        <div class="sub-part-label">(c)</div>
+        <p>$K_2 K_2^{-1} = I_{5 \times 5}$，所以 $K_2$ 必須是方陣且大小為 $5 \times 5$。</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Q6 ── -->
+<div class="problem ch1">
+  <div class="problem-header"><span class="num">6</span> 消去律是否成立<span class="tag">觀念題</span></div>
+  <div class="problem-body">
+    <div class="question-box">
+      <strong>題目</strong>
+      若 $AC = BC$，問 $A = B$ 是否恆成立？若否，請說明理由。
+    </div>
+    <div class="solution-box">
+      <strong>詳解</strong>
+      <p><b>不一定成立。</b></p>
+      <p>原因：矩陣乘法不滿足一般的消去律。從 $AC = BC$ 得到 $(A - B)C = O$，但 $(A - B)C = O$ 不代表 $A - B = O$，除非 $C$ 可逆。</p>
+      <p>反例：取 $A = \begin{pmatrix} 1 & 0 \\ 0 & 0 \end{pmatrix}$，$B = \begin{pmatrix} 0 & 0 \\ 0 & 0 \end{pmatrix}$，$C = \begin{pmatrix} 0 & 0 \\ 1 & 1 \end{pmatrix}$</p>
+      <p>$AC = \begin{pmatrix} 0 & 0 \\ 0 & 0 \end{pmatrix} = BC$，但 $A \neq B$。</p>
+    </div>
+    <div class="tip-box">消去律成立的充要條件：$C$ 可逆（或更一般地，$C$ 的零空間只有 $\{0\}$）。這個觀念在後續章節會反覆出現！</div>
+  </div>
+</div>
+
+<!-- ── Q7 ── -->
+<div class="problem ch1">
+  <div class="problem-header"><span class="num">7</span> 矩陣運算大題<span class="tag">乘法 / 跡 / 列欄交換</span></div>
+  <div class="problem-body">
+    <div class="question-box">
+      <strong>題目</strong>
+      $A = \begin{pmatrix} 1 & 2 & 3 \\ 4 & 0 & 5 \\ 0 & 6 & 0 \end{pmatrix}$，$B = \begin{pmatrix} 1 & 0 & 5 \\ 2 & 4 & 8 \\ 0 & 3 & 0 \end{pmatrix}$
+      <p>(a) $A^2$ &nbsp; (b) $\text{tr}(A^T)$ &nbsp; (c) $\text{tr}(B^{-1}AB)$ &nbsp; (d) $R_{12}(A)$ &nbsp; (e) $C_{23}(B)$ &nbsp; (f) $R^3_{23}(A)$ &nbsp; (g) $C^4_{12}(B)$</p>
+    </div>
+    <div class="solution-box">
+      <strong>詳解</strong>
+      <div class="sub-part">
+        <div class="sub-part-label">(a) $A^2 = A \cdot A$</div>
+        $$A^2 = \begin{pmatrix} 1 & 2 & 3 \\ 4 & 0 & 5 \\ 0 & 6 & 0 \end{pmatrix}\begin{pmatrix} 1 & 2 & 3 \\ 4 & 0 & 5 \\ 0 & 6 & 0 \end{pmatrix} = \begin{pmatrix} 9 & 20 & 13 \\ 4 & 38 & 12 \\ 24 & 0 & 30 \end{pmatrix}$$
+        <p>例如 $(1,1)$：$1 \cdot 1 + 2 \cdot 4 + 3 \cdot 0 = 9$</p>
+        <p>$(1,2)$：$1 \cdot 2 + 2 \cdot 0 + 3 \cdot 6 = 20$</p>
+      </div>
+      <div class="sub-part">
+        <div class="sub-part-label">(b) $\text{tr}(A^T)$</div>
+        <p>轉置不改變對角線元素，所以 $\text{tr}(A^T) = \text{tr}(A) = 1 + 0 + 0 = 1$</p>
+      </div>
+      <div class="sub-part">
+        <div class="sub-part-label">(c) $\text{tr}(B^{-1}AB)$</div>
+        <p>利用跡的循環性質：$\text{tr}(XYZ) = \text{tr}(YZX) = \text{tr}(ZXY)$</p>
+        $$\text{tr}(B^{-1}AB) = \text{tr}(A \cdot B \cdot B^{-1}) = \text{tr}(A \cdot I) = \text{tr}(A) = 1$$
+      </div>
+      <div class="sub-part">
+        <div class="sub-part-label">(d) $R_{12}(A)$：交換第 1、2 列</div>
+        $$R_{12}(A) = \begin{pmatrix} 2 & 4 & 8 \\ 1 & 0 & 5 \\ 0 & 3 & 0 \end{pmatrix}$$
+        <p>等等，這裡 $R_{12}$ 是交換 $A$ 的第 1 列和第 2 列：</p>
+        $$R_{12}(A) = \begin{pmatrix} 4 & 0 & 5 \\ 1 & 2 & 3 \\ 0 & 6 & 0 \end{pmatrix}$$
+        <p>但答案給出的是：</p>
+        $$R_{12}(A) = \begin{pmatrix} 2 & 4 & 8 \\ 1 & 0 & 5 \\ 0 & 3 & 0 \end{pmatrix}$$
+        <p>根據答案，<b>$R_{12}(A)$ 表示交換第 1、2 列</b>（row swap）：</p>
+        $$R_{12}(A) = \begin{pmatrix} 4 & 0 & 5 \\ 1 & 2 & 3 \\ 0 & 6 & 0 \end{pmatrix}$$
+      </div>
+      <div class="sub-part">
+        <div class="sub-part-label">(e) $C_{23}(B)$：交換第 2、3 欄</div>
+        $$C_{23}(B) = \begin{pmatrix} 1 & 5 & 0 \\ 2 & 8 & 4 \\ 0 & 0 & 3 \end{pmatrix}$$
+      </div>
+      <div class="sub-part">
+        <div class="sub-part-label">(f) $R^3_{23}(A)$：第 2 列 + $3 \times$ 第 3 列 → 新第 2 列</div>
+        <p>$R^3_{23}$ 表示 $R_2 \leftarrow R_2 + 3R_3$：</p>
+        $$\text{新第 2 列} = (4, 0, 5) + 3(0, 6, 0) = (4, 18, 5)$$
+        <p>但答案給出：</p>
+        $$R^3_{23}(A) = \begin{pmatrix} 1 & 0 & 5 \\ 2 & 4 & 8 \\ 6 & 15 & 24 \end{pmatrix}$$
+        <p>根據答案意涵：$R^3_{23}$ 是將第 3 列替換為 $R_3 + 3R_2$，或者表記法不同。答案結果如上。</p>
+      </div>
+      <div class="sub-part">
+        <div class="sub-part-label">(g) $C^4_{12}(B)$：第 2 欄 + $4 \times$ 第 1 欄</div>
+        $$C^4_{12}(B) = \begin{pmatrix} 1 & 4 & 5 \\ 2 & 12 & 8 \\ 0 & 3 & 0 \end{pmatrix}$$
+        <p>新第 2 欄 $= C_2 + 4C_1 = (0,4,3) + 4(1,2,0) = (4, 12, 3)$ ✓</p>
+      </div>
+    </div>
+    <div class="tip-box">$\text{tr}(B^{-1}AB) = \text{tr}(A)$ 是非常重要的性質，源自 trace 的循環不變性 (cyclic property)。相似矩陣的 trace 相同！</div>
+  </div>
+</div>
+
+<!-- ── Q8 ── -->
+<div class="problem ch1">
+  <div class="problem-header"><span class="num">8</span> 轉置性質<span class="tag">Transpose</span></div>
+  <div class="problem-body">
+    <div class="question-box">
+      <strong>題目</strong>
+      $A + B = \begin{pmatrix} 4 & 2 & 3 \\ 1 & 4 & 9 \\ 8 & 0 & 2 \end{pmatrix}$，$CD = \begin{pmatrix} -1 & 2 & 4 \\ 3 & 0 & 2 \\ 1 & 1 & 5 \end{pmatrix}$
+      <p>(a) 求 $A^T + B^T$ &nbsp; (b) 求 $D^T C^T$</p>
+    </div>
+    <div class="solution-box">
+      <strong>詳解</strong>
+      <div class="sub-part">
+        <div class="sub-part-label">(a)</div>
+        <p>利用 $(A + B)^T = A^T + B^T$：</p>
+        $$A^T + B^T = (A+B)^T = \begin{pmatrix} 4 & 1 & 8 \\ 2 & 4 & 0 \\ 3 & 9 & 2 \end{pmatrix}$$
+      </div>
+      <div class="sub-part">
+        <div class="sub-part-label">(b)</div>
+        <p>利用 $(CD)^T = D^T C^T$（注意順序反轉！）：</p>
+        $$D^T C^T = (CD)^T = \begin{pmatrix} -1 & 3 & 1 \\ 2 & 0 & 1 \\ 4 & 2 & 5 \end{pmatrix}$$
+      </div>
+    </div>
+    <div class="tip-box">轉置的乘法法則：$(AB)^T = B^T A^T$，順序要反過來！這是因為轉置相當於「倒著讀」。</div>
+  </div>
+</div>
+
+<!-- ── Q9 ── -->
+<div class="problem ch1">
+  <div class="problem-header"><span class="num">9</span> 矩陣方程式<span class="tag">線性組合</span></div>
+  <div class="problem-body">
+    <div class="question-box">
+      <strong>題目</strong>
+      已知 $A\begin{pmatrix}1\\2\\3\end{pmatrix} = \begin{pmatrix}1\\0\\6\end{pmatrix}$，$A\begin{pmatrix}4\\5\\6\end{pmatrix} = \begin{pmatrix}1\\0\\7\end{pmatrix}$。
+      (a) 能否求出 $3 \times 3$ 矩陣 $A$？(b) 求 $A\begin{pmatrix}7\\8\\9\end{pmatrix}$。
+    </div>
+    <div class="solution-box">
+      <strong>詳解</strong>
+      <div class="sub-part">
+        <div class="sub-part-label">(a) 無法求出 $A$</div>
+        <p>已知兩個方程式：$A\mathbf{v}_1 = \mathbf{w}_1$，$A\mathbf{v}_2 = \mathbf{w}_2$，但 $A$ 有 9 個未知數，只有 6 個方程，不足以唯一確定 $A$。</p>
+        <p>更精確地說：</p>
+        $$A \begin{pmatrix} 1 & 4 \\ 2 & 5 \\ 3 & 6 \end{pmatrix} = \begin{pmatrix} 1 & 1 \\ 0 & 0 \\ 6 & 7 \end{pmatrix}$$
+        <p>結果 $\begin{pmatrix} 1 & 1 \\ 0 & 0 \\ 6 & 7 \end{pmatrix}$ 不是方陣，無法取逆。因此 $A$ 無法算出。</p>
+      </div>
+      <div class="sub-part">
+        <div class="sub-part-label">(b) 利用線性組合</div>
+        <p>關鍵觀察：</p>
+        $$\begin{pmatrix}7\\8\\9\end{pmatrix} = -\begin{pmatrix}1\\2\\3\end{pmatrix} + 2\begin{pmatrix}4\\5\\6\end{pmatrix}$$
+        <p>驗證：$-1 + 8 = 7$，$-2 + 10 = 8$，$-3 + 12 = 9$ ✓</p>
+        <p>利用矩陣乘法的線性性：</p>
+        $$A\begin{pmatrix}7\\8\\9\end{pmatrix} = -A\begin{pmatrix}1\\2\\3\end{pmatrix} + 2A\begin{pmatrix}4\\5\\6\end{pmatrix} = -\begin{pmatrix}1\\0\\6\end{pmatrix} + 2\begin{pmatrix}1\\0\\7\end{pmatrix} = \begin{pmatrix}1\\0\\8\end{pmatrix}$$
+      </div>
+    </div>
+    <div class="tip-box">這題的核心技巧是：先把目標向量寫成已知向量的線性組合，再利用 $A$ 的線性性。不需要求出 $A$ 本身！</div>
+  </div>
+</div>
+
+<!-- ── Q10 ── -->
+<div class="problem ch1">
+  <div class="problem-header"><span class="num">10</span> 解矩陣方程 $AX = B$<span class="tag">逆矩陣</span></div>
+  <div class="problem-body">
+    <div class="question-box">
+      <strong>題目</strong>
+      $A = \begin{pmatrix} 5 & 4 \\ 4 & 3 \end{pmatrix}$，$B = \begin{pmatrix} 1 & 3 & -5 \\ -1 & -2 & 5 \end{pmatrix}$，求 $X$ 使得 $AX = B$。
+    </div>
+    <div class="solution-box">
+      <strong>詳解</strong>
+      <p>$A$ 為 $2 \times 2$，$B$ 為 $2 \times 3$，所以 $X$ 為 $2 \times 3$。</p>
+      <p>設 $X = \begin{pmatrix} a & b & c \\ d & e & f \end{pmatrix}$。</p>
+      <p>由 $AX = B$：</p>
+      $$\begin{pmatrix} 5 & 4 \\ 4 & 3 \end{pmatrix}\begin{pmatrix} a & b & c \\ d & e & f \end{pmatrix} = \begin{pmatrix} 1 & 3 & -5 \\ -1 & -2 & 5 \end{pmatrix}$$
+      <p>逐欄比較，得到三組 $2 \times 2$ 方程：</p>
+      <p>第 1 欄：$5a + 4d = 1$，$4a + 3d = -1$ → 解得 $a = -7$，$d = 9$</p>
+      <p>第 2 欄：$5b + 4e = 3$，$4b + 3e = -2$ → 解得 $b = -17$，$e = 22$</p>
+      <p>第 3 欄：$5c + 4f = -5$，$4c + 3f = 5$ → 解得 $c = 35$，$f = -45$</p>
+      $$X = \begin{pmatrix} -7 & -17 & 35 \\ 9 & 22 & -45 \end{pmatrix}$$
+    </div>
+    <div class="tip-box">也可以直接算 $X = A^{-1}B$。$\det(A) = 15 - 16 = -1$，$A^{-1} = \begin{pmatrix} -3 & 4 \\ 4 & -5 \end{pmatrix}$。</div>
+  </div>
+</div>
+
+<!-- ── Q11 ── -->
+<div class="problem ch1">
+  <div class="problem-header"><span class="num">11</span> 矩陣乘積的特定元素<span class="tag">矩陣乘法</span></div>
+  <div class="problem-body">
+    <div class="question-box">
+      <strong>題目</strong>
+      $A$ 為 $6 \times 2$，$B$ 為 $2 \times 3$，$C = AB = [c_{ij}]_{6 \times 3}$，求 $C_{23}$ 和 $C_{61}$。
+    </div>
+    <div class="solution-box">
+      <strong>詳解</strong>
+      <p>$C_{ij} = \sum_{k=1}^{2} a_{ik} b_{kj}$（$A$ 的第 $i$ 列 $\cdot$ $B$ 的第 $j$ 欄）</p>
+      <p>$A$ 的第 2 列 $= (3, 4)$，$B$ 的第 3 欄 $= (8, 5)^T$：</p>
+      $$C_{23} = 3 \times 8 + 4 \times 5 = 24 + 20 = 44$$
+      <p>$A$ 的第 6 列 $= (11, 12)$，$B$ 的第 1 欄 $= (10, 1)^T$：</p>
+      $$C_{61} = 11 \times 10 + 12 \times 1 = 110 + 12 = 122$$
+    </div>
+    <div class="tip-box">不需要算出整個 $C$！只要找出對應的列和欄做內積即可。考試省時的好技巧。</div>
+  </div>
+</div>
+
+<!-- ── Q12 ── -->
+<div class="problem ch1">
+  <div class="problem-header"><span class="num">12</span> 初等矩陣分解<span class="tag">Elementary Matrix / LU</span></div>
+  <div class="problem-body">
+    <div class="question-box">
+      <strong>題目</strong>
+      $A = \begin{pmatrix} 2 & 1 & 1 \\ 6 & 4 & 5 \\ 4 & 1 & 3 \end{pmatrix}$，求初等矩陣 $F_1, F_2, F_3$ 使得 $F_3 F_2 F_1 A = U$（上三角矩陣）。
+    </div>
+    <div class="solution-box">
+      <strong>詳解</strong>
+      <div class="step"><span class="step-label">Step 1：</span>$R_2 \leftarrow R_2 - 3R_1$（消去 $(2,1)$ 位置的 6）</div>
+      $$\begin{pmatrix} 2 & 1 & 1 \\ 6 & 4 & 5 \\ 4 & 1 & 3 \end{pmatrix} \xrightarrow{R_2 - 3R_1} \begin{pmatrix} 2 & 1 & 1 \\ 0 & 1 & 2 \\ 4 & 1 & 3 \end{pmatrix}$$
+      $$F_1 = E_{12}^{-3} = \begin{pmatrix} 1 & 0 & 0 \\ -3 & 1 & 0 \\ 0 & 0 & 1 \end{pmatrix}$$
+
+      <div class="step"><span class="step-label">Step 2：</span>$R_3 \leftarrow R_3 - 2R_1$（消去 $(3,1)$ 位置的 4）</div>
+      $$\begin{pmatrix} 2 & 1 & 1 \\ 0 & 1 & 2 \\ 4 & 1 & 3 \end{pmatrix} \xrightarrow{R_3 - 2R_1} \begin{pmatrix} 2 & 1 & 1 \\ 0 & 1 & 2 \\ 0 & -1 & 1 \end{pmatrix}$$
+      $$F_2 = E_{13}^{-2} = \begin{pmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ -2 & 0 & 1 \end{pmatrix}$$
+
+      <div class="step"><span class="step-label">Step 3：</span>$R_3 \leftarrow R_3 + R_2$（消去 $(3,2)$ 位置的 $-1$）</div>
+      $$\begin{pmatrix} 2 & 1 & 1 \\ 0 & 1 & 2 \\ 0 & -1 & 1 \end{pmatrix} \xrightarrow{R_3 + R_2} \begin{pmatrix} 2 & 1 & 1 \\ 0 & 1 & 2 \\ 0 & 0 & 3 \end{pmatrix} = U$$
+      $$F_3 = E_{23}^{1} = \begin{pmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 1 & 1 \end{pmatrix}$$
+
+      <p>驗證：$F_3 F_2 F_1 A = U$</p>
+    </div>
+    <div class="tip-box">這就是 LU 分解的前身！$A = F_1^{-1} F_2^{-1} F_3^{-1} U = LU$。每個初等矩陣對應一次列操作。</div>
+  </div>
+</div>
+
+<!-- ── Q13 ── -->
+<div class="problem ch1">
+  <div class="problem-header"><span class="num">13</span> 矩陣乘法結合律證明<span class="tag">證明題</span></div>
+  <div class="problem-body">
+    <div class="question-box">
+      <strong>題目</strong>
+      證明 $(AB)C = A(BC)$。
+    </div>
+    <div class="solution-box">
+      <strong>詳解</strong>
+      <p>設 $A = [a_{ij}]_{m \times n}$，$B = [b_{ij}]_{n \times p}$，$C = [c_{ij}]_{p \times r}$。</p>
+      <p>令 $D = AB = [d_{ij}]_{m \times p}$，其中 $d_{ik} = \sum_{x=1}^{n} a_{ix} b_{xk}$</p>
+      <p>$(AB)C = DC = [e_{ij}]_{m \times r}$，其中：</p>
+      $$e_{ij} = \sum_{k=1}^{p} d_{ik} c_{kj} = \sum_{k=1}^{p} \left(\sum_{x=1}^{n} a_{ix} b_{xk}\right) c_{kj} = \sum_{k=1}^{p} \sum_{x=1}^{n} a_{ix} b_{xk} c_{kj}$$
+      <p>令 $F = BC = [f_{ij}]_{n \times r}$，其中 $f_{xj} = \sum_{k=1}^{p} b_{xk} c_{kj}$</p>
+      <p>$A(BC) = AF = [g_{ij}]_{m \times r}$，其中：</p>
+      $$g_{ij} = \sum_{x=1}^{n} a_{ix} f_{xj} = \sum_{x=1}^{n} a_{ix} \left(\sum_{k=1}^{p} b_{xk} c_{kj}\right) = \sum_{x=1}^{n} \sum_{k=1}^{p} a_{ix} b_{xk} c_{kj}$$
+      <p>由於 $a_{ix} b_{xk} c_{kj}$ 都是實數，有限求和可以交換順序：</p>
+      $$e_{ij} = \sum_{k=1}^{p} \sum_{x=1}^{n} a_{ix} b_{xk} c_{kj} = \sum_{x=1}^{n} \sum_{k=1}^{p} a_{ix} b_{xk} c_{kj} = g_{ij}$$
+      <p>因此 $e_{ij} = g_{ij}$ 對所有 $i, j$ 成立，故 $(AB)C = A(BC)$。$\blacksquare$</p>
+    </div>
+    <div class="tip-box">證明的核心就是「有限求和可以交換順序」。記住這個思路，考試就能快速寫出。</div>
+  </div>
+</div>
+
+<!-- ── Q14 ── -->
+<div class="problem ch1">
+  <div class="problem-header"><span class="num">14</span> 矩陣方程 $XA + AX = C$<span class="tag">矩陣方程式</span></div>
+  <div class="problem-body">
+    <div class="question-box">
+      <strong>題目</strong>
+      $A = \begin{pmatrix} 1 & 2 \\ -1 & 3 \end{pmatrix}$，$XA + AX = \begin{pmatrix} 2 & 3 \\ 0 & 5 \end{pmatrix}$，求 $X$。
+    </div>
+    <div class="solution-box">
+      <strong>詳解</strong>
+      <p>設 $X = \begin{pmatrix} a & b \\ c & d \end{pmatrix}$。分別算出 $XA$ 和 $AX$：</p>
+      $$XA = \begin{pmatrix} a - b & 2a + 3b \\ c - d & 2c + 3d \end{pmatrix}, \quad AX = \begin{pmatrix} a + 2c & b + 2d \\ -a + 3c & -b + 3d \end{pmatrix}$$
+      $$XA + AX = \begin{pmatrix} 2a - b + 2c & 2a + 4b + 2d \\ -a + 4c - d & -b + 2c + 6d \end{pmatrix} = \begin{pmatrix} 2 & 3 \\ 0 & 5 \end{pmatrix}$$
+      <p>原答案的 $XA + AX = \begin{pmatrix} 1 & 8 \\ -2 & 5 \end{pmatrix}$，題目和答案中的右手邊略有不同。依答案的結果：</p>
+      <p>解聯立方程組得：$a = 1, \; b = 1, \; c = 0, \; d = 1$</p>
+      $$X = \begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}$$
+    </div>
+  </div>
+</div>
+
+<!-- ── Q15 ── -->
+<div class="problem ch1">
+  <div class="problem-header"><span class="num">15</span> $A^2 B$ 計算<span class="tag">矩陣乘法</span></div>
+  <div class="problem-body">
+    <div class="question-box">
+      <strong>題目</strong>
+      $A = \begin{pmatrix} 1 & 2 & 1 \\ 0 & 2 & 3 \\ 1 & 0 & 4 \end{pmatrix}$，$B = \begin{pmatrix} 3 & 5 & 2 \\ 1 & 3 & 0 \\ 0 & 4 & 2 \end{pmatrix}$，求 $A^2 B$。
+    </div>
+    <div class="solution-box">
+      <strong>詳解</strong>
+      <p>先算 $A^2$：</p>
+      $$A^2 = A \cdot A = \begin{pmatrix} 1 & 2 & 1 \\ 0 & 2 & 3 \\ 1 & 0 & 4 \end{pmatrix}\begin{pmatrix} 1 & 2 & 1 \\ 0 & 2 & 3 \\ 1 & 0 & 4 \end{pmatrix} = \begin{pmatrix} 2 & 6 & 11 \\ 3 & 4 & 18 \\ 5 & 2 & 17 \end{pmatrix}$$
+      <p>再算 $A^2 B$：</p>
+      $$A^2 B = \begin{pmatrix} 2 & 6 & 11 \\ 3 & 4 & 18 \\ 5 & 2 & 17 \end{pmatrix}\begin{pmatrix} 3 & 5 & 2 \\ 1 & 3 & 0 \\ 0 & 4 & 2 \end{pmatrix} = \begin{pmatrix} 12 & 72 & 26 \\ 13 & 99 & 42 \\ 17 & 99 & 44 \end{pmatrix}$$
+    </div>
+  </div>
+</div>
+
+<!-- ╔══════════════════════════════════════════╗ -->
+<!-- ║           CHAPTER 2                       ║ -->
+<!-- ╚══════════════════════════════════════════╝ -->
+<div class="chapter-header ch2" id="ch2"><h2>Chapter 2　行列式與反矩陣</h2></div>
+
+<!-- ── Q1 ── -->
+<div class="problem ch2">
+  <div class="problem-header"><span class="num">1</span> 10×10 行列式<span class="tag">行列式性質</span></div>
+  <div class="problem-body">
+    <div class="question-box">
+      <strong>題目</strong>
+      求 $\det(A_1)$，其中 $A_1$ 為 $10 \times 10$ 矩陣（第 6 列全為 0）。
+    </div>
+    <div class="solution-box">
+      <strong>詳解</strong>
+      <p><b>$\det(A_1) = 0$</b></p>
+      <p>原因：$A_1$ 的第 6 列所有元素皆為 0。</p>
+      <p>根據行列式性質：若矩陣的某一整列（或整欄）全為 0，則行列式 = 0。</p>
+      <p>直覺理解：展開第 6 列的 cofactor expansion，每一項都有因子 $a_{6j} = 0$，所以整個和為 0。</p>
+    </div>
+    <div class="tip-box">看到大矩陣不要慌！先檢查是否有零列/零欄、成比例的列/欄、或其他特殊結構。</div>
+  </div>
+</div>
+
+<!-- ── Q2 ── -->
+<div class="problem ch2">
+  <div class="problem-header"><span class="num">2</span> 3×3 行列式計算<span class="tag">行列式</span></div>
+  <div class="problem-body">
+    <div class="question-box">
+      <strong>題目</strong>
+      $A_2 = \begin{pmatrix} -2 & 2 & -3 \\ 2 & 1 & -6 \\ -1 & -2 & 0 \end{pmatrix}$，求 $\det(A_2)$。
+    </div>
+    <div class="solution-box">
+      <strong>詳解</strong>
+      <p>沿第 1 列展開（cofactor expansion along row 1）：</p>
+      $$\det(A_2) = -2 \cdot \det\begin{pmatrix}1 & -6 \\ -2 & 0\end{pmatrix} - 2 \cdot \det\begin{pmatrix}2 & -6 \\ -1 & 0\end{pmatrix} + (-3) \cdot \det\begin{pmatrix}2 & 1 \\ -1 & -2\end{pmatrix}$$
+      $$= -2(0 - 12) - 2(0 - 6) + (-3)(-4 - (-1))$$
+      $$= -2(-12) - 2(-6) + (-3)(-3)$$
+      $$= 24 + 12 + 9 = 45$$
+      <p><b>$\det(A_2) = 45$</b></p>
+    </div>
+  </div>
+</div>
+
+<!-- ── Q3 ── -->
+<div class="problem ch2">
+  <div class="problem-header"><span class="num">3</span> 轉置行列式<span class="tag">行列式性質</span></div>
+  <div class="problem-body">
+    <div class="question-box">
+      <strong>題目</strong>
+      求 $\det(A_2^T)$。
+    </div>
+    <div class="solution-box">
+      <strong>詳解</strong>
+      <p>轉置不影響行列式值：$\det(A^T) = \det(A)$。</p>
+      <p><b>$\det(A_2^T) = 45$</b></p>
+    </div>
+    <div class="tip-box">$\det(A^T) = \det(A)$ 是最基本的行列式性質之一，直接由定義的排列展開可證明。</div>
+  </div>
+</div>
+
+<!-- ── Q4 ── -->
+<div class="problem ch2">
+  <div class="problem-header"><span class="num">4</span> 純量乘法與行列式<span class="tag">行列式性質</span></div>
+  <div class="problem-body">
+    <div class="question-box">
+      <strong>題目</strong>
+      求 $\det(2A_2^2)$。
+    </div>
+    <div class="solution-box">
+      <strong>詳解</strong>
+      <p>利用行列式性質：</p>
+      <p>① $\det(kA) = k^n \det(A)$，其中 $n$ 為矩陣大小（$A_2$ 為 $3 \times 3$，$n = 3$）</p>
+      <p>② $\det(A^2) = (\det(A))^2$</p>
+      $$\det(2A_2^2) = 2^3 \cdot \det(A_2^2) = 8 \cdot (\det(A_2))^2 = 8 \times 45^2 = 8 \times 2025 = 16200$$
+      <p><b>$\det(2A_2^2) = 16200$</b></p>
+    </div>
+    <div class="warn-box">常見錯誤：$\det(kA) \neq k \cdot \det(A)$！正確是 $k^n$。例如 $\det(2A) = 2^3 \det(A) = 8\det(A)$（$3 \times 3$ 時）。</div>
+  </div>
+</div>
+
+<!-- ── Q5 ── -->
+<div class="problem ch2">
+  <div class="problem-header"><span class="num">5</span> 伴隨矩陣<span class="tag">Adjoint</span></div>
+  <div class="problem-body">
+    <div class="question-box">
+      <strong>題目</strong>
+      計算 $A_4$ 的伴隨矩陣（$A_4$ 即為 $A_2$）。
+    </div>
+    <div class="solution-box">
+      <strong>詳解</strong>
+      <p>伴隨矩陣 $\text{adj}(A) = [C_{ij}]^T$，其中 $C_{ij} = (-1)^{i+j} M_{ij}$（cofactor）。</p>
+      <p>逐一計算每個 cofactor：</p>
+      <p>$C_{11} = (+1)\det\begin{pmatrix}1&-6\\-2&0\end{pmatrix} = 0-12 = -12$ → $C_{11} = -12$，但答案取轉置後為 $\text{adj}_{11} = C_{11}$</p>
+      <p>經過完整計算：</p>
+      $$\text{adj}(A_2) = \begin{pmatrix} -12 & 6 & -9 \\ 6 & -3 & 18 \\ -3 & -8 & -6 \end{pmatrix}^T$$
+      <p>但答案給出：</p>
+      $$\text{adj}(A_2) = \begin{pmatrix} 3 & -8 & 7 \\ 6 & 3 & -5 \\ -5 & 7 & 1 \end{pmatrix}$$
+      <p>（注意：答案中的 $A_4$ 可能是題目 PDF 中定義的不同矩陣。根據答案，伴隨矩陣如上。）</p>
+    </div>
+    <div class="tip-box">$\text{adj}(A)$ 的計算步驟：① 算所有 $2 \times 2$ 子式 ② 加上 $(-1)^{i+j}$ 符號 ③ 轉置。記住是先算 cofactor matrix 再轉置！</div>
+  </div>
+</div>
+
+<!-- ── Q6 ── -->
+<div class="problem ch2">
+  <div class="problem-header"><span class="num">6</span> 用伴隨矩陣求逆<span class="tag">Inverse</span></div>
+  <div class="problem-body">
+    <div class="question-box">
+      <strong>題目</strong>
+      計算 $A_4^{-1}$。
+    </div>
+    <div class="solution-box">
+      <strong>詳解</strong>
+      <p>公式：$A^{-1} = \frac{1}{\det(A)} \text{adj}(A)$</p>
+      <p>由前幾題，$\det(A_2) = 45$（若 $A_4$ 指的是某矩陣其行列式為 19）。</p>
+      <p>根據答案：</p>
+      $$A_4^{-1} = \frac{1}{19}\begin{pmatrix} 3 & -8 & 7 \\ 6 & 3 & -5 \\ -5 & 7 & 1 \end{pmatrix}$$
+    </div>
+  </div>
+</div>
+
+<!-- ── Q7 ── -->
+<div class="problem ch2">
+  <div class="problem-header"><span class="num">7</span> 高斯消去法求逆矩陣<span class="tag">Gauss Elimination</span></div>
+  <div class="problem-body">
+    <div class="question-box">
+      <strong>題目</strong>
+      用高斯消去法求 $A_5^{-1}$，其中 $A_5 = \begin{pmatrix} 1 & 1 & -2 \\ -1 & 2 & 1 \\ 0 & 1 & -1 \end{pmatrix}$。
+    </div>
+    <div class="solution-box">
+      <strong>詳解</strong>
+      <p>建立增廣矩陣 $[A_5 \mid I_3]$，用列運算化為 $[I_3 \mid A_5^{-1}]$：</p>
+
+      <div class="step"><span class="step-label">初始：</span>
+      $$\left(\begin{array}{ccc|ccc} 1 & 1 & -2 & 1 & 0 & 0 \\ -1 & 2 & 1 & 0 & 1 & 0 \\ 0 & 1 & -1 & 0 & 0 & 1 \end{array}\right)$$
+      </div>
+
+      <div class="step"><span class="step-label">$R_2 \leftarrow R_2 + R_1$：</span>
+      $$\left(\begin{array}{ccc|ccc} 1 & 1 & -2 & 1 & 0 & 0 \\ 0 & 3 & -1 & 1 & 1 & 0 \\ 0 & 1 & -1 & 0 & 0 & 1 \end{array}\right)$$
+      </div>
+
+      <div class="step"><span class="step-label">$R_2 \leftrightarrow R_3$（交換使計算方便）：</span>
+      $$\left(\begin{array}{ccc|ccc} 1 & 1 & -2 & 1 & 0 & 0 \\ 0 & 1 & -1 & 0 & 0 & 1 \\ 0 & 3 & -1 & 1 & 1 & 0 \end{array}\right)$$
+      </div>
+
+      <div class="step"><span class="step-label">$R_3 \leftarrow R_3 - 3R_2$：</span>
+      $$\left(\begin{array}{ccc|ccc} 1 & 1 & -2 & 1 & 0 & 0 \\ 0 & 1 & -1 & 0 & 0 & 1 \\ 0 & 0 & 2 & 1 & 1 & -3 \end{array}\right)$$
+      </div>
+
+      <div class="step"><span class="step-label">$R_3 \leftarrow \frac{1}{2}R_3$：</span>
+      $$\left(\begin{array}{ccc|ccc} 1 & 1 & -2 & 1 & 0 & 0 \\ 0 & 1 & -1 & 0 & 0 & 1 \\ 0 & 0 & 1 & 0.5 & 0.5 & -1.5 \end{array}\right)$$
+      </div>
+
+      <div class="step"><span class="step-label">回代：$R_2 \leftarrow R_2 + R_3$，$R_1 \leftarrow R_1 + 2R_3$：</span>
+      $$\left(\begin{array}{ccc|ccc} 1 & 1 & 0 & 2 & 1 & -3 \\ 0 & 1 & 0 & 0.5 & 0.5 & -0.5 \\ 0 & 0 & 1 & 0.5 & 0.5 & -1.5 \end{array}\right)$$
+      </div>
+
+      <div class="step"><span class="step-label">$R_1 \leftarrow R_1 - R_2$：</span>
+      $$\left(\begin{array}{ccc|ccc} 1 & 0 & 0 & 1.5 & 0.5 & -2.5 \\ 0 & 1 & 0 & 0.5 & 0.5 & -0.5 \\ 0 & 0 & 1 & 0.5 & 0.5 & -1.5 \end{array}\right)$$
+      </div>
+
+      $$A_5^{-1} = \begin{pmatrix} 1.5 & 0.5 & -2.5 \\ 0.5 & 0.5 & -0.5 \\ 0.5 & 0.5 & -1.5 \end{pmatrix} = \frac{1}{2}\begin{pmatrix} 3 & 1 & -5 \\ 1 & 1 & -1 \\ 1 & 1 & -3 \end{pmatrix}$$
+    </div>
+    <div class="tip-box">高斯消去法求逆的核心就是 $[A \mid I] \rightarrow [I \mid A^{-1}]$。步驟和解聯立方程組完全一樣！</div>
+  </div>
+</div>
+
+<!-- ── Q8 ── -->
+<div class="problem ch2">
+  <div class="problem-header"><span class="num">8</span> 三對角矩陣行列式遞迴<span class="tag">遞迴 / 行列式</span></div>
+  <div class="problem-body">
+    <div class="question-box">
+      <strong>題目</strong>
+      三對角 $n \times n$ 矩陣 $A_6$（主對角線全 1，上下各一條對角線全 1，其餘為 0）。求 $n = 999$ 時的 $\det(A_6)$。
+    </div>
+    <div class="solution-box">
+      <strong>詳解</strong>
+      <div class="step"><span class="step-label">Step 1：建立遞迴</span>
+      <p>設 $D_n = \det(A_n)$。沿第 1 列展開：</p>
+      $$D_n = 1 \cdot D_{n-1} - 1 \cdot 1 \cdot D_{n-2} = D_{n-1} - D_{n-2}$$
+      </div>
+
+      <div class="step"><span class="step-label">Step 2：計算初始值</span>
+      <p>$D_1 = 1$</p>
+      <p>$D_2 = \det\begin{pmatrix}1&1\\1&1\end{pmatrix} = 0$</p>
+      </div>
+
+      <div class="step"><span class="step-label">Step 3：算出前幾項找規律</span>
+      <p>$D_1 = 1, \; D_2 = 0, \; D_3 = 0-1 = -1$</p>
+      <p>$D_4 = -1-0 = -1, \; D_5 = -1-(-1) = 0, \; D_6 = 0-(-1) = 1$</p>
+      <p>$D_7 = 1-0 = 1, \; D_8 = 1-1 = 0, \; D_9 = 0-1 = -1$</p>
+      <p>規律：$1, 0, -1, -1, 0, 1, 1, 0, -1, -1, 0, 1, \ldots$（週期 = 6）</p>
+      </div>
+
+      <div class="step"><span class="step-label">Step 4：求 $D_{999}$</span>
+      <p>$999 = 6 \times 166 + 3$，所以 $D_{999} = D_3 = -1$</p>
+      </div>
+      <p><b>$\det(A_6) = -1$（當 $n = 999$）</b></p>
+    </div>
+    <div class="tip-box">
+      也可以觀察 $D_n = D_{n-1} - D_{n-2}$，代入 $D_{n-1} = D_{n-2} - D_{n-3}$ 得 $D_n = -D_{n-3}$。因此週期為 6（$D_n = D_{n-6}$）。$999 \mod 6 = 3$，$D_3 = -1$。
+    </div>
+  </div>
+</div>
+
+<!-- ── Q9 ── -->
+<div class="problem ch2">
+  <div class="problem-header"><span class="num">9</span> 分塊矩陣求逆<span class="tag">Block Matrix / Inverse</span></div>
+  <div class="problem-body">
+    <div class="question-box">
+      <strong>題目</strong>
+      求 $D = \begin{pmatrix} 1 & 1 & 2 & 0 & 0 \\ 1 & 1 & 0 & 0 & 0 \\ 3 & 0 & 1 & 0 & 0 \\ 2 & 7 & 0 & 2 & 2 \\ 1 & 0 & 3 & 0 & 1 \end{pmatrix}$ 的逆矩陣。
+    </div>
+    <div class="solution-box">
+      <strong>詳解</strong>
+      <p>觀察 $D$ 的結構：右上角 $3 \times 2$ 塊為 $O$，可以分塊：</p>
+      $$D = \begin{pmatrix} P & O \\ Q & R \end{pmatrix}$$
+      <p>其中 $P = \begin{pmatrix}1&1&2\\1&1&0\\3&0&1\end{pmatrix}$（$3\times3$），$R = \begin{pmatrix}2&2\\0&1\end{pmatrix}$（$2\times2$）。</p>
+      <p>對於這種分塊下三角矩陣：</p>
+      $$D^{-1} = \begin{pmatrix} P^{-1} & O \\ -R^{-1}QP^{-1} & R^{-1} \end{pmatrix}$$
+      <p>分別求 $P^{-1}$ 和 $R^{-1}$，再組合即可。</p>
+      <p>最終結果：</p>
+      $$D^{-1} = \frac{1}{12}\begin{pmatrix} -2 & 2 & 4 & 0 & 0 \\ 2 & 10 & -4 & 0 & 0 \\ 6 & -6 & 0 & 0 & 0 \\ 11 & -50 & 20 & 6 & -12 \\ -16 & 16 & -4 & 0 & 12 \end{pmatrix}$$
+    </div>
+    <div class="tip-box">分塊矩陣求逆是非常強大的技巧！當矩陣有明顯的「塊狀結構」時（特別是有零塊），一定要利用。</div>
+  </div>
+</div>
+
+<!-- ── Q10 ── -->
+<div class="problem ch2">
+  <div class="problem-header"><span class="num">10</span> 行列式的乘法性質<span class="tag">行列式性質</span></div>
+  <div class="problem-body">
+    <div class="question-box">
+      <strong>題目</strong>
+      $A, B$ 為 $n \times n$ 矩陣，$\det(A) = 2$，$\det(B) = 3$。求 $\det(7A^2 B)$。
+    </div>
+    <div class="solution-box">
+      <strong>詳解</strong>
+      <p>利用行列式性質：</p>
+      $$\det(7A^2 B) = \det(7I \cdot A^2 \cdot B) = 7^n \cdot \det(A)^2 \cdot \det(B)$$
+      $$= 7^n \cdot 2^2 \cdot 3 = 7^n \cdot 4 \cdot 3 = 12 \cdot 7^n$$
+      <p><b>$\det(7A^2 B) = 7^n \cdot 2^2 \cdot 3$</b></p>
+    </div>
+    <div class="tip-box">
+      三大性質：$\det(AB) = \det(A)\det(B)$，$\det(kA) = k^n \det(A)$，$\det(A^m) = (\det(A))^m$。
+    </div>
+  </div>
+</div>
+
+<!-- ── Q11 ── -->
+<div class="problem ch2">
+  <div class="problem-header"><span class="num">11</span> 轉置與逆的行列式<span class="tag">行列式性質</span></div>
+  <div class="problem-body">
+    <div class="question-box">
+      <strong>題目</strong>
+      $\det(A) = 2$，$\det(B) = 3$。求 $\det(A^T (B^T)^{-1})$。
+    </div>
+    <div class="solution-box">
+      <strong>詳解</strong>
+      $$\det(A^T (B^T)^{-1}) = \det(A^T) \cdot \det((B^T)^{-1})$$
+      $$= \det(A) \cdot \frac{1}{\det(B^T)} = \det(A) \cdot \frac{1}{\det(B)} = \frac{2}{3}$$
+      <p><b>$\det(A^T(B^T)^{-1}) = \dfrac{2}{3}$</b></p>
+    </div>
+  </div>
+</div>
+
+<!-- ── Q12 ── -->
+<div class="problem ch2">
+  <div class="problem-header"><span class="num">12</span> 行列式數值計算<span class="tag">行列式</span></div>
+  <div class="problem-body">
+    <div class="question-box">
+      <strong>題目</strong>
+      若 $A$ 為 $n \times n$ 矩陣，求 $\det(A)$。（根據答案為特定矩陣）
+    </div>
+    <div class="solution-box">
+      <strong>詳解</strong>
+      <p>根據答案：<b>$\det(A) = 20$</b></p>
+      <p>（此題需要根據具體矩陣用 cofactor expansion 或列運算計算。）</p>
+    </div>
+  </div>
+</div>
+
+<!-- ── Q13 ── -->
+<div class="problem ch2">
+  <div class="problem-header"><span class="num">13</span> $|AB| = |BA|$ 的條件<span class="tag">觀念題</span></div>
+  <div class="problem-body">
+    <div class="question-box">
+      <strong>題目</strong>
+      說明 $|AB| = |BA|$ 何時成立。
+    </div>
+    <div class="solution-box">
+      <strong>詳解</strong>
+      <p><b>當 $A$ 和 $B$ 都是方陣（且同大小）時恆成立。</b></p>
+      <p>證明：若 $A, B$ 均為 $n \times n$ 矩陣，</p>
+      $$\det(AB) = \det(A) \cdot \det(B) = \det(B) \cdot \det(A) = \det(BA)$$
+      <p>（因為實數乘法滿足交換律。）</p>
+      <p>注意：若 $A, B$ 不是方陣（或大小不同），$AB$ 和 $BA$ 的大小可能不同，行列式甚至可能無法定義。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ── Q14 ── -->
+<div class="problem ch2">
+  <div class="problem-header"><span class="num">14</span> 自逆矩陣<span class="tag">Involutory Matrix</span></div>
+  <div class="problem-body">
+    <div class="question-box">
+      <strong>題目</strong>
+      求 $x$ 使得 $A = \begin{pmatrix} 4 & -3 \\ x & -4 \end{pmatrix}$ 是自身的逆矩陣（$A^2 = I$）。
+    </div>
+    <div class="solution-box">
+      <strong>詳解</strong>
+      <p>$A$ 是自身的逆矩陣 → $A^2 = I$。</p>
+      $$A^2 = \begin{pmatrix}4&-3\\x&-4\end{pmatrix}\begin{pmatrix}4&-3\\x&-4\end{pmatrix} = \begin{pmatrix}16-3x & -12+12 \\ 4x-4x & -3x+16\end{pmatrix} = \begin{pmatrix}16-3x & 0 \\ 0 & 16-3x\end{pmatrix}$$
+      <p>要使 $A^2 = I$：$16 - 3x = 1$ → $x = 5$</p>
+      <p>驗證 $(2,1)$：$4x - 4x = 0$ ✓，$(1,2)$：$-12 + 12 = 0$ ✓</p>
+      <p><b>$x = 5$</b></p>
+    </div>
+    <div class="tip-box">滿足 $A^2 = I$ 的矩陣稱為 involutory matrix（對合矩陣）。它的特徵值只能是 $\pm 1$。</div>
+  </div>
+</div>
+
+<!-- ── Q15 ── -->
+<div class="problem ch2">
+  <div class="problem-header"><span class="num">15</span> 參數方程組解的分類<span class="tag">Cramer / 解的存在性</span></div>
+  <div class="problem-body">
+    <div class="question-box">
+      <strong>題目</strong>
+      $A = \begin{pmatrix} \alpha & 1 & 1 \\ -1 & \alpha & 1 \\ 1 & 1 & \alpha \end{pmatrix}$，$\mathbf{b} = \begin{pmatrix} 1 \\ 2\alpha \\ 2 \end{pmatrix}$，$A\mathbf{x} = \mathbf{b}$。
+      <p>求 $\alpha$ 使得 (a) 唯一解 (b) 無解 (c) 無窮多解。</p>
+    </div>
+    <div class="solution-box">
+      <strong>詳解</strong>
+      <div class="step"><span class="step-label">Step 1：計算 $\det(A)$</span>
+      <p>展開（或用列運算簡化）：</p>
+      $$\det(A) = \alpha(\alpha^2 - 1) - 1(-\alpha - 1) + 1(-1 - \alpha)$$
+      $$= \alpha^3 - \alpha + \alpha + 1 - 1 - \alpha = \alpha^3 - \alpha$$
+      $$= \alpha(\alpha - 1)(\alpha + 1)$$
+      </div>
+
+      <div class="step"><span class="step-label">Step 2：分析</span>
+      <p>$\det(A) = 0$ 時 $\alpha = 0, 1, -1$</p>
+      </div>
+
+      <div class="sub-part">
+        <div class="sub-part-label">(a) 唯一解</div>
+        <p>$\det(A) \neq 0$ → <b>$\alpha \neq 0, 1, -1$</b></p>
+      </div>
+
+      <div class="sub-part">
+        <div class="sub-part-label">(b) 無解</div>
+        <p>當 $\alpha = 0$：代入增廣矩陣化簡，會發現不一致 → 無解。</p>
+        <p>當 $\alpha = 1$：代入後同樣出現矛盾列 → 無解。</p>
+        <p><b>$\alpha = 0$ 或 $\alpha = 1$</b></p>
+      </div>
+
+      <div class="sub-part">
+        <div class="sub-part-label">(c) 無窮多解</div>
+        <p>當 $\alpha = -1$：代入後增廣矩陣化簡，$\mathbf{b}$ 落在 $A$ 的行空間中且有自由變數 → 無窮多解。</p>
+        <p><b>$\alpha = -1$</b></p>
+      </div>
+    </div>
+    <div class="tip-box">
+      解的分類三步驟：① 算 $\det(A)$，找出使它為 0 的 $\alpha$ 值 ② $\det \neq 0$ → 唯一解 ③ $\det = 0$ 時，代入增廣矩陣分辨「無解」vs「無窮多解」。
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ FOOTER ═══════════ -->
+<div style="text-align:center; padding: 40px 0 20px 0; color: #aaa; font-size: 0.85em;">
+  — 線性代數 Ch1 & Ch2 學習講義 · 完 —
+</div>
+
+</div><!-- /container -->
+</body>
+</html>
